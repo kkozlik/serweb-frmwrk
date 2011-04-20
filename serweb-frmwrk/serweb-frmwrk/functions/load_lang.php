@@ -174,7 +174,7 @@ function determine_lang(){
 function load_another_lang($ldir){
     global $_SERWEB, $reference_language, $available_languages, $lang_str, $lang_set;
 
-    $ldir = $_SERWEB["applangdir"].$ldir."/";
+    $ldir = $_SERWEB["langdir"].$ldir."/";
 
     $primary_lang_file   = $ldir.$available_languages[$_SESSION['lang']][1].".php";
     $secondary_lang_file = $ldir.$available_languages[$reference_language][1].".php";
