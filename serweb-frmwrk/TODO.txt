@@ -1,0 +1,25 @@
+ 
+ * check whether following data layer methods can be removed from the framework:
+   - get_did_by_realm
+   - get_domain_flags
+   - get_domain
+   
+ * simplify page_controler:
+   - check whether dependency on SerwebUser class can be removed
+   - make check_perms_to_user() check_perms_to_domains() methods empty
+   
+ * class_definitions: could be following domains safely removed?
+   - Domains
+   - SerwebUser
+   - Ctab
+   - Validator
+     
+ * phplib/local/local.inc should be customizable by apps     
+     
+ * smarty plugins should be customizable by apps
+ 
+ * exceptions catching and logging 
+
+ * write some documentations
+ 
+  

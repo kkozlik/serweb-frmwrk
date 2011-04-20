@@ -1,0 +1,24 @@
+
+Configuration
+-------------
+
+You should set the environment variable SERWEB_SET_DIRS to the file that 
+configure paths to application directories. In appache it could be done by:
+
+SetEnv SERWEB_SET_DIRS "/foo/bar/my_app/config/set_dirs.php"
+
+
+
+The directories:
+
+serweb_frmwrk/pages/styles
+serweb_frmwrk/pages/js
+
+should be accessible from the web as paths: 
+
+$config->js_src_path."/core"
+$config->style_src_path."/core"
+
+This could be achieved either by create symlinks inside $config->js_src_path and
+$config->js_src_path directories or by configuring Aliases in apache.
+ 
