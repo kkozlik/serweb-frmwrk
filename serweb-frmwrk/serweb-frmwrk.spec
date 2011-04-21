@@ -1,7 +1,7 @@
 Summary:      Serweb Framwork
 Name:	      serweb-frmwrk
 Version:      1.0.0
-Release:      1
+Release:      13
 Copyright:    GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz

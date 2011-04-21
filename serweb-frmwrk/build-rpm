@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# script for building rpm package of serweb-frmwrk
+
+# stop on any error
+set -e
+
+# sources to include in tarball
+SOURCES="serweb-frmwrk.spec TODO.txt INSTALL.txt COPYING serweb-frmwrk"
+
+# get version and release from spec file
+VERSION=`cat serweb-frmwrk.spec |grep -e "^Version:"|awk '{print $2}'`
+RELEASE=`cat serweb-frmwrk.spec |grep -e "^Release:"|awk '{print $2}'`
+# and increment releasein spec file
+let RELEASE=RELEASE+1
+sed -i "s/^Release:.*$/Release:      $RELEASE/" serweb-frmwrk.spec 
+
+echo "Building serweb-frmwrm rpm"
+echo "Version: $VERSION"
+echo "Release: $RELEASE"
+
+# create temp dir for tarball creation
+TEMP=`mktemp -d`
+mkdir $TEMP/serweb-frmwrk-$VERSION
+
+# copy the sources and create tarball
+cp -r $SOURCES $TEMP/serweb-frmwrk-$VERSION/
+echo "Creating source tarball"
+tar -czf serweb-frmwrk-$VERSION-$RELEASE.tar.gz -C $TEMP serweb-frmwrk-$VERSION
+
+# remove temp dir
+rm -rf $TEMP
+
+# build the rpm
+echo "Calling rpmbuild command"
+rpmbuild -ta serweb-frmwrk-$VERSION-$RELEASE.tar.gz
+
+
+
+
+
