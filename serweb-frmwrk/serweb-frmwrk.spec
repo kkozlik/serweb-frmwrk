@@ -7,7 +7,7 @@ Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
 URL:          http://iptel.org/
 BuildRoot:    /var/tmp/%{name}-%{version}-root
-Requires:     php >= 5.0
+Requires:     php >= 5.0 php-pecl-runkit
 
 %description
 Serweb Framework
