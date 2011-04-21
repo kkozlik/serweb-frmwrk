@@ -1,8 +1,8 @@
-Summary:      Serweb Framwork
+Summary:      Serweb Framework
 Name:	      serweb-frmwrk
 Version:      1.0.0
 Release:      15
-Copyright:    GPL
+License:      GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
 URL:          http://iptel.org/
@@ -11,7 +11,7 @@ BuildRoot:    /var/tmp/%{name}-%{version}-root
 Requires:     php >= 5.0 php-pecl-runkit
 
 %description
-Serweb Framework
+Framework for making very customizable web applications.
 
 %prep
 
@@ -24,7 +24,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/serweb-frmwrk
 cp -r serweb-frmwrk/* %{buildroot}/usr/share/serweb-frmwrk
 mkdir -p %{buildroot}/usr/share/doc/serweb-frmwrk
-cp TODO.txt INSTALL.txt COPYING %{buildroot}/usr/share/doc/serweb-frmwrk
+cp -r TODO.txt INSTALL.txt COPYING example-app %{buildroot}/usr/share/doc/serweb-frmwrk
 
 %clean
 rm -rf %{buildroot}
