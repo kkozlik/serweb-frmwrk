@@ -1,11 +1,12 @@
 Summary:      Serweb Framwork
 Name:	      serweb-frmwrk
 Version:      1.0.0
-Release:      13
+Release:      15
 Copyright:    GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
 URL:          http://iptel.org/
+BuildArch:    noarch
 BuildRoot:    /var/tmp/%{name}-%{version}-root
 Requires:     php >= 5.0 php-pecl-runkit
 
