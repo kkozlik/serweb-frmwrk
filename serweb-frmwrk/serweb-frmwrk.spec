@@ -1,8 +1,8 @@
 Summary:      Serweb Framwork
 Name:	      serweb-frmwrk
 Version:      1.0.0
-Release:      15
-Copyright:    GPL
+Release:      16
+License:      GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
 URL:          http://iptel.org/
