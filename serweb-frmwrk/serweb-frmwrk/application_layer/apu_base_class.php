@@ -40,7 +40,11 @@ class apu_base_class{
     var $controler;
     /** custom function called after determine action */
     var $custom_post_determine_action;
-
+    /** javascript executed before HTML for is validated */
+    var $js_before = "";
+    /** javascript executed after HTML for is validated */
+    var $js_after  = "";
+    
     /* constructor */
     function apu_base_class(){
         global $lang_str;
@@ -48,6 +52,11 @@ class apu_base_class{
         /* set instance id for identification this object when multiple instances is used */
         $this->opt['instance_id']=get_class($this).apu_base_class::get_Instance();
 
+        /* form */
+        $this->opt['smarty_form'] =         'form';
+        /* name of html form */
+        $this->opt['form_name'] =           'data_form';
+        
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['b_submit']);
     
@@ -220,7 +229,10 @@ class apu_base_class{
 
     /* return info need to assign html form to smarty */
     function pass_form_to_html(){
-        return false;
+        return array('smarty_name' => $this->opt['smarty_form'],
+                     'form_name'   => $this->opt['form_name'],
+                     'after'       => $this->js_before,
+                     'before'      => $this->js_after);
     }
 }
 
