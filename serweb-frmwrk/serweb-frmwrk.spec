@@ -1,7 +1,7 @@
 Summary:      Serweb Framework
 Name:	      serweb-frmwrk
 Version:      1.0.0
-Release:      16
+Release:      17
 License:      GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
@@ -25,6 +25,9 @@ mkdir -p %{buildroot}/usr/share/serweb-frmwrk
 cp -r serweb-frmwrk/* %{buildroot}/usr/share/serweb-frmwrk
 mkdir -p %{buildroot}/usr/share/doc/serweb-frmwrk
 cp -r TODO.txt INSTALL.txt COPYING example-app %{buildroot}/usr/share/doc/serweb-frmwrk
+mkdir -p %{buildroot}/etc/serweb-frmwrk
+mv %{buildroot}/usr/share/serweb-frmwrk/config/* %{buildroot}/etc/serweb-frmwrk/
+rmdir %{buildroot}/usr/share/serweb-frmwrk/config
 
 %clean
 rm -rf %{buildroot}
@@ -41,6 +44,7 @@ rm -f /usr/share/serweb-frmwrk/config
 %defattr(-,root,root)
 /usr/share/serweb-frmwrk/*
 /usr/share/doc/serweb-frmwrk/*
+%config /etc/serweb-frmwrk/*
 
 %changelog
 

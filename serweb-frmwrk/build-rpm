@@ -11,7 +11,7 @@ SOURCES="serweb-frmwrk.spec TODO.txt INSTALL.txt COPYING serweb-frmwrk example-a
 # get version and release from spec file
 VERSION=`cat serweb-frmwrk.spec |grep -e "^Version:"|awk '{print $2}'`
 RELEASE=`cat serweb-frmwrk.spec |grep -e "^Release:"|awk '{print $2}'`
-# and increment releasein spec file
+# and increment release in spec file
 let RELEASE=RELEASE+1
 sed -i "s/^Release:.*$/Release:      $RELEASE/" serweb-frmwrk.spec 
 
@@ -34,8 +34,6 @@ rm -rf $TEMP
 # build the rpm
 echo "Calling rpmbuild command"
 rpmbuild -ta serweb-frmwrk-$VERSION-$RELEASE.tar.gz
-
-
 
 
 
