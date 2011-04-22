@@ -81,9 +81,9 @@ class apu_filter extends apu_base_class{
         
         /*** names of variables assigned to smarty ***/
         /* form */
-        $this->opt['smarty_form'] =         'form';
+        $this->opt['smarty_form'] =         'filter_form';
         /* name of html form */
-        $this->opt['form_name'] =           '';
+        $this->opt['form_name'] =           'filter_form';
 
         $this->opt['smarty_form_label'] =   'filter_label';
         $this->opt['smarty_filter_applied'] =   'filter_applied';

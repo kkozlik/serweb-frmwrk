@@ -81,9 +81,9 @@ class apu_filter_dropdown extends apu_base_class{
         
         /*** names of variables assigned to smarty ***/
         /* form */
-        $this->opt['smarty_form'] =         'form';
+        $this->opt['smarty_form'] =         'filter_form';
         /* name of html form */
-        $this->opt['form_name'] =           '';
+        $this->opt['form_name'] =           'filter_form';
         $this->opt['smarty_filter_applied'] =   'filter_applied';
 
         $this->opt['form_submit']=array('type' => 'button',
