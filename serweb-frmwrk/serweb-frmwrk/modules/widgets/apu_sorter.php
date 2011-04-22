@@ -201,7 +201,11 @@ class apu_sorter extends apu_base_class{
         $smarty->assign($this->opt['smarty_order'], $this->get_sort_col());
         $smarty->assign($this->opt['smarty_dir'], $this->get_sort_dir());
     }
-        
+
+   	function pass_form_to_html(){
+        return false;
+    }
+    
     
     function get_sort_col(){
         return $this->session['sort_col'];
