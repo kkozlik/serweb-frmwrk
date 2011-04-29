@@ -37,7 +37,7 @@
 	function init_module($module){
 	    static $initiated_modules = array();
 
-        /* if module is laready initited -> exit */
+        /* if module is already initited -> exit */
         if (!empty($initiated_modules[$module])) return;
 	    
         $module = str_replace("-", "_", $module);
