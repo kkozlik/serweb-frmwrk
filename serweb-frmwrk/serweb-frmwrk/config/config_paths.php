@@ -21,7 +21,7 @@ else
 $config->zonetab_file =   "/usr/share/zoneinfo/zone.tab";
 
 /* relative paths of serweb tree */
-$config->img_src_path =     $config->root_path."img/";
+$config->img_src_path =     $config->root_path."images/";
 $config->js_src_path =      $config->root_path."js/";
 $config->style_src_path =   $config->root_path."styles/";
 $config->user_pages_path =  null;
