@@ -31,8 +31,6 @@ class CData_Layer_get_DB_time {
 
         $this->connect_to_db();
         
-        if (!$this->connect_to_db($errors)) return false;
-
         $q="select unix_timestamp(now())";
         $res=$this->db->query($q);
         if (DB::isError($res)) throw new DBException($res);
