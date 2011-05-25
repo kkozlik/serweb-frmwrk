@@ -941,8 +941,36 @@ class Validator{
      *  @return bool                 
      */         
     function validate_IPv4($value, $err_msg, $var_name=null){
-        if (false === self::validate_ip_reg($value, $err_msg, $var_name)) return false;
-        if (false === self::validate_ip_range($value, $err_msg, $var_name)) return false;
+        if (false === self::validate_IPv4_reg($value, $err_msg, $var_name)) return false;
+        if (false === self::validate_IPv4_range($value, $err_msg, $var_name)) return false;
+        return true;
+    }
+
+    /**
+     *  Validate given value to IPv4 address and mask {IP}/{mask}
+     *  
+     *  @param  string  $value      the value to validate
+     *  @param  string  $err_msg    error message to display
+     *  @param  string  $var_name   name of variable (to be used in the err_msg)
+     *  @return bool                 
+     */         
+    function validate_IPv4mask($value, $err_msg, $var_name=null){
+        $reg = &Creg::singleton();  // get instance of Creg class
+        if (empty($value)) return false;
+
+        $value_a = explode("/", $value, 2);
+        if (!isset($value_a[1])) $value_a[1] = "";
+
+        if (!self::validate_IPv4($value_a[0], $err_msg, $var_name)) return false;
+
+        if (!$reg->check_netmask($value_a[1])){
+            ErrorHandler::add_error(
+                str_replace(array("#VALUE#", "<name>"), 
+                            array($value, $var_name), 
+                            $err_msg));
+            return false;
+        }
+
         return true;
     }
 
