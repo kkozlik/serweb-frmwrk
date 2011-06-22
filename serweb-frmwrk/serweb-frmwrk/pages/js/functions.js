@@ -168,6 +168,26 @@ function remClassNameFromEl(el, className){
 }
 
 /**
+ *	Enable form element and remove CSS class "disabled" from it
+ * 
+ *	@param	object	el  
+ */
+function enableFormEl(el){
+    el.disabled = false;
+    remClassNameFromEl(el, "disabled");
+}
+
+/**
+ *	Disable form element and set CSS class "disabled" to it
+ * 
+ *	@param	object	el  
+ */
+function disableFormEl(el){
+    el.disabled = true;
+    addClassNameToEl(el, "disabled");
+}
+
+/**
  *  toggle visibility of an element 
  */
 function toggle_visibility(el){

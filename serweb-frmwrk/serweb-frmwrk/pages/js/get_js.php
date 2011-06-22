@@ -23,9 +23,7 @@ elseif (file_exists($_SERWEB["coremodulesdir"].$_GET['mod']."/".$_GET['js'])){
     require($_SERWEB["coremodulesdir"].$_GET['mod']."/".$_GET['js']);
 }
 else{
-    echo '<script type="text/javascript" language="JavaScript">
-        alert("file: '.$_GET['js'].' not found in module: '.$_GET['mod'].'");
-    </script>';
+    echo 'alert("file: '.$_GET['js'].' not found in module: '.$_GET['mod'].'");';
 }
 
 ?>
