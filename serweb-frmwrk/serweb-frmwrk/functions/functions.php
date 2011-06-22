@@ -482,35 +482,43 @@ class Creg{
      *  check if given IPv4 address is valid netmask
      *  
      *  @param  string  $adr    IPv4 address
+     *  @param  array   $format allowed formats of netmask. It can contain following values:
+     *                          "bitcount", "decimal", "hexadecimal"
+     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
-    function check_netmask($adr){
+    function check_netmask($adr, $format = array("bitcount", "decimal", "hexadecimal")){
     
-        if (is_numeric($adr) and (int)$adr >=0 and (int)$adr <= 32) return true;
-    
-        // check if given string is IPv4 address
-        if (!$this->is_ipv4address($adr)) return false;
-        
-        $parts = explode(".", $adr);
-        
-        $starting = true;
-        foreach ($parts as $v){
-            if (!is_numeric($v)) return false;      // part is not numeric
-        
-            $v = (int)$v;
-            if ($starting){
-                /* allow ones at the begining */ 
-                if ($v == 255) continue;
-                if (!in_array($v, array(254, 252, 248, 240, 224, 192, 128, 0))){
-                    return false;
-                }
-                $starting = false;
-            }
-            /* allow only zeros at the end */
-            elseif ($v != 0) return false;
+        if (in_array("bitcount", $format)){
+            if (is_numeric($adr) and (int)$adr >=0 and (int)$adr <= 32) return true;
         }
-        
-        return true;
+    
+        // if decimal format allowed and the given string looks like IPv4 address
+        if (in_array("decimal", $format) and $this->is_ipv4address($adr)){
+            
+            $parts = explode(".", $adr);
+            
+            $starting = true;
+            foreach ($parts as $v){
+                if (!is_numeric($v)) return false;      // part is not numeric
+            
+                $v = (int)$v;
+                if ($starting){
+                    /* allow ones at the begining */ 
+                    if ($v == 255) continue;
+                    if (!in_array($v, array(254, 252, 248, 240, 224, 192, 128, 0))){
+                        return false;
+                    }
+                    $starting = false;
+                }
+                /* allow only zeros at the end */
+                elseif ($v != 0) return false;
+            }
+            
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -524,7 +532,7 @@ class Creg{
     function check_network_address($ip, $netmask){
         // check if given string is IPv4 address
         if (!$this->is_ipv4address($ip)) return false;
-        if (!$this->check_netmask($netmask)) return false;
+        if (!$this->check_netmask($netmask, array("decimal"))) return false;
         
         $parts_ip = explode(".", $ip);
         $parts_mask = explode(".", $netmask);
@@ -647,9 +655,12 @@ class Creg{
      *  check if given IPv4 address and netmask is valid
      *  
      *  @param  string  $ip_addr
+     *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
+     *                          "bitcount", "decimal", "hexadecimal"
+     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
-    function check_ipv4_addr_netmask($ip_addr){
+    function check_ipv4_addr_netmask($ip_addr, $mask_format = array("bitcount", "decimal", "hexadecimal")){
 
         $value_a = explode("/", $ip_addr, 2);
         
@@ -662,7 +673,7 @@ class Creg{
                 !$this->ipv4address_check_part_range($value_a[0])){
                 return false;
             }
-            elseif (!$this->check_netmask($value_a[1])){
+            elseif (!$this->check_netmask($value_a[1], $mask_format)){
                 return false;
             }
         }
