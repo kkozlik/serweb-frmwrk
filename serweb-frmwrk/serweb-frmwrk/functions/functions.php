@@ -681,6 +681,30 @@ class Creg{
         return true;
     }
 
+
+    /**
+     *  check if given IP (v4 or v6) address and netmask is valid
+     *  
+     *  @param  string  $ip_addr
+     *  @param  array   $mask_format allowed formats of netmask (for v4 only). It can contain following values:
+     *                          "bitcount", "decimal", "hexadecimal"
+     *                          Note: "hexadecimal" is not implemented yet
+     *  @return bool
+     */
+    function check_ip_addr_netmask($ip_addr, $mask_format = array("bitcount", "decimal", "hexadecimal")){
+
+        $value_a = explode("/", $ip_addr, 2);
+
+        if (!isset($value_a[1])) $value_a[1] = "";
+        // if the given address is IPv6 validate the given netmask is in range 0-128
+        if (preg_match(pregize("^".$this->ipv6address."$"), $value_a[0])){
+            if (is_numeric($value_a[1]) and (int)$value_a[1] >=0 and (int)$value_a[1] <= 128) return true;
+            else return false;
+        } 
+        // in other case check if it is a  valid IPv4 addr+netmask 
+        else return $this->check_ipv4_addr_netmask($ip_addr, $mask_format);
+    }
+
     /**
      *  check if given IPv4 address and port is valid
      *  
