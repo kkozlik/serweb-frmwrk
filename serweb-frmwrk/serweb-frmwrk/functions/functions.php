@@ -739,6 +739,32 @@ class Creg{
     }
 }
 
+/**
+ *  Quote delimiter characters in pcre regular expression
+ *  
+ *  Takes str and puts a backslash in front of every character that is used as
+ *  delimiter of the pcre regular expression. This is useful if you have 
+ *  a regular expression that you need to use in preg* function and it contain 
+ *  delimiter characters inside.   
+ *  
+ *  @param  string  $str
+ *  @param  string  $delim  The delimiter used by in pcre reg.expIt is "/" by default
+ *  @return string   
+ */ 
+function preg_quote_delim($str, $delim="/"){
+    return str_replace($delim, "\\".$delim, $str);
+}
+
+/**
+ *  Add delimiters to regular expression so it can be used in preg* functions
+ *   
+ *  @param  string  $regexp 
+ *  @return string 
+ */ 
+function pregize($regexp){
+    return "/".preg_quote_delim($regexp)."/";
+}
+
 
 /**
  * send email
