@@ -687,6 +687,10 @@ class Shm_Semaphore{
 class Filter {
     var $name;
     var $value="";
+    /**
+     *  supported operators: "=", "!=", ">", ">=", "<", "<=", "like", "is_null", "in"
+     *  Note: operator 'in' expects an array in $this->value     
+     */      
     var $op="like";
     var $asterisks=true;
     var $case_sensitive = false;
@@ -700,6 +704,7 @@ class Filter {
     }
     
     function to_sql($var=null, $int=false){
+        global $data;
 
         if (is_null($var)) $var = $this->name;
         if ($this->op == "is_null")     return $var." is null";
@@ -715,6 +720,10 @@ class Filter {
             $val = str_replace('?', '_', $val);
             
             if ($this->asterisks) $val = "%".$val."%";
+        }
+        
+        if ($this->op == "in"){
+            return $data->get_sql_in($var, $val, !$int);
         }
         
         

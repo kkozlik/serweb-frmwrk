@@ -1,0 +1,8 @@
+top version
+===========
+
+* 'Filter' class used by data_layer get* functions now supports "in" operator.
+
+
+Version 1.0.0
+=============
