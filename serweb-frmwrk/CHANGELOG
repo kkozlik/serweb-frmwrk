@@ -2,6 +2,7 @@ top version
 ===========
 
 * 'Filter' class used by data_layer get* functions now supports "in" operator.
+* Adding support for optional "Reset" button to widgets/apu_filter_dropdown
 
 
 Version 1.0.0

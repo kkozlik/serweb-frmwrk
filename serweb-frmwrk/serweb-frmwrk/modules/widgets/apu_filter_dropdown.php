@@ -231,6 +231,8 @@ class apu_filter_dropdown extends apu_base_class{
     function create_html_form(&$errors){
         parent::create_html_form($errors);
         
+        global $lang_str;
+        
         $this->form_elements = $this->base_apu->get_filter_form();
 
         /* if option 'filter_items' is set, 
@@ -277,7 +279,7 @@ class apu_filter_dropdown extends apu_base_class{
                                      "value"=>$this->session['f_field'],
                                      "size"=>1,
                                      "options"=>$f_options,
-                                     "extra_html"=>"onchange='if (this.selectedIndex==0) {this.form.filter_op.disabled=true;this.form.filter_val.disabled=true;} else {this.form.filter_op.disabled=false;this.form.filter_val.disabled=false;}'"));
+                                     "extra_html"=>"onchange='if (this.selectedIndex==0) {this.form.filter_op.disabled=true;this.form.filter_val.disabled=true; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=true;} else {this.form.filter_op.disabled=false;this.form.filter_val.disabled=false; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=false;}'"));
 
         $this->f->add_element(array("type"=>"select",
                                      "name"=>"filter_op",
@@ -289,6 +291,13 @@ class apu_filter_dropdown extends apu_base_class{
         $this->f->add_element(array("type"=>"text",
                                      "name"=>"filter_val",
                                      "value"=>$this->session['f_val'],
+                                     "disabled"=>!(bool)$this->session['f_field']));
+        
+        $this->f->add_element(array("type"=>"button",
+                                     "name"=>"filter_reset",
+                                     "button_type"=>"button",
+                                     "content"=>$lang_str['b_reset'],
+                                     "extra_html"=>"onclick='this.form.filter_field.selectedIndex=0; this.form.filter_field.onchange();'",
                                      "disabled"=>!(bool)$this->session['f_field']));
         
         $this->f->add_element(array("type"=>"hidden",

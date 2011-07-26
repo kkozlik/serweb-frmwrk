@@ -37,6 +37,7 @@ $lang_str['b_add'] = 							"Add";
 $lang_str['b_insert'] = 						"Insert";
 $lang_str['b_select'] = 						"Select";
 $lang_str['b_ok'] = 							"OK";
+$lang_str['b_reset'] = 							"Reset";
 
 $lang_str['not_exists'] = 						"does not exists";
 
