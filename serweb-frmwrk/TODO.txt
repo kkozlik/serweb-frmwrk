@@ -1,3 +1,9 @@
+ * determine_lang() may fail with "Fatal error" in some cases. The reason 
+   is the framework do not contain classes for user/domain attributes 
+   (User_Attrs, Attributes). There should be some customizable hooks do get 
+   user preffered language. Workaround is disable the language determination
+   with $config->force_lang variable.
+
  
  * check whether following data layer methods can be removed from the framework:
    - get_did_by_realm
