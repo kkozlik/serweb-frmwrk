@@ -30,6 +30,7 @@ $_SERWEB["templatesdir"] = $_SERWEB["coretemplatesdir"];
 $_SERWEB["modulesdir"] =   $_SERWEB["coremodulesdir"];
 $_SERWEB["langdir"] =      $_SERWEB["corelangdir"];
 $_SERWEB["configdir"] =    $_SERWEB["coreconfigdir"];
+$_SERWEB["smartypluginsdir"] = null;
 
 unset ($dir);
 

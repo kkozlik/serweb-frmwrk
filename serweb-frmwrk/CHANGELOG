@@ -1,3 +1,10 @@
+version 1.0.2
+=============
+
+* Allow applications to create customized smarty plugins. To do so the application
+  should set variable $_SERWEB["smartypluginsdir"] to directory where are the
+  customized plugins stored.
+
 version 1.0.1
 =============
 

@@ -43,6 +43,9 @@ class Smarty_Serweb extends Smarty {
         $this->cache_dir =    $_SERWEB["templatesdir"].'cache/';
 
         $this->plugins_dir = array();
+        if (!empty($_SERWEB["smartypluginsdir"])){
+            $this->plugins_dir[] = $_SERWEB["smartypluginsdir"];
+        }
         $this->plugins_dir[] = $_SERWEB["corefunctionsdir"]."smarty_plugins/";
         $this->plugins_dir[] = $_SERWEB["smartydir"]."plugins/";
 
