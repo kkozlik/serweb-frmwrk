@@ -151,6 +151,9 @@ global $config;
          *  see mysql manual for more info
          *
          *  $config->data_sql->collation = "utf8_general_ci";
+         *  
+         *  Note: When $config->data_sql->set_charset is set to true, the mysql 
+         *  should implicitly set collation to defautl collation for the charset.
          */
 
         $config->data_sql->collation = "";
@@ -164,7 +167,7 @@ global $config;
          *  $config->data_sql->set_charset = true;
          */
 
-        $config->data_sql->set_charset = false;
+        $config->data_sql->set_charset = true;
 
 
         /**
