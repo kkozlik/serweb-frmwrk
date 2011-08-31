@@ -6,7 +6,7 @@
 set -e
 
 # sources to include in tarball
-SOURCES="serweb-frmwrk.spec TODO.txt INSTALL.txt COPYING serweb-frmwrk example-app"
+SOURCES="serweb-frmwrk.spec TODO.txt INSTALL.txt COPYING CHANGELOG serweb-frmwrk example-app"
 
 # get version and release from spec file
 VERSION=`cat serweb-frmwrk.spec |grep -e "^Version:"|awk '{print $2}'`
