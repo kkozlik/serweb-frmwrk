@@ -215,11 +215,11 @@ $lang_set['ldir'] = $available_languages[$_SESSION['lang']][2];
 global $data;
 
 if (!empty($config->data_sql->set_charset)){
-    $data->set_db_charset($lang_set['charset'], null, $errors);
+    $data->set_db_charset($lang_set['charset'], null);
 }
 
 if (!empty($config->data_sql->collation)){
-    $data->set_db_collation($config->data_sql->collation, null, $errors);
+    $data->set_db_collation($config->data_sql->collation, null);
 }
 
 ?>
