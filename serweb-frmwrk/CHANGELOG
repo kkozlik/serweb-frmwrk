@@ -1,6 +1,7 @@
 latest
 ======
 
+* adding new function to proper validation of IPv6 addresses
 * fixing error: Notice: Undefined variable: errors in functions/load_lang.php on line 218
 
 version 1.0.3

@@ -683,6 +683,50 @@ class Creg{
 
 
     /**
+     *  check if given IPv6 address is valid 
+     *  
+     *  Check if it is in form 1, 2 or 3 accroding RFC4291 section 2.2
+     *  This function is slightly modified function from: 
+     *  http://crisp.tweakblogs.net/blog/3049/ipv6-validation-more-caveats.html     
+     *  
+     *  @param  string  $ip_addr
+     *  @return bool
+     */
+    function check_ipv6_address($ip_addr){
+
+        // fast exit for localhost 
+        if (strlen($ip_addr) < 3) return $ip_addr == '::';
+    
+        // Check if part is in IPv4 format 
+        if (strpos($ip_addr, '.')){
+            $lastcolon = strrpos($ip_addr, ':');
+            if (!($lastcolon && $this->check_ipv4_address(substr($ip_addr, $lastcolon + 1))))
+                return false;
+
+            // replace IPv4 part with dummy 
+            $ip_addr = substr($ip_addr, 0, $lastcolon) . ':0:0';
+        }
+    
+        // check uncompressed 
+        if (strpos($ip_addr, '::') === false){
+            return preg_match('/\A(?:'.$this->hex4.':){7}'.$this->hex4.'\z/i', $ip_addr);
+        }
+
+        // check colon-count for compressed format     
+        $colonCount = substr_count($ip_addr, ':');
+        if ($colonCount < 8){
+            return preg_match('/\A(?::|(?:'.$this->hex4.':)+):(?:(?:'.$this->hex4.':)*'.$this->hex4.')?\z/i', $ip_addr);
+        }
+    
+        // special case with ending or starting double colon
+        if ($colonCount == 8){
+            return preg_match('/\A(?:::)?(?:'.$this->hex4.':){6}'.$this->hex4.'(?:::)?\z/i', $ip_addr);
+        }
+    
+        return false; 
+    }
+
+    /**
      *  check if given IP (v4 or v6) address and netmask is valid
      *  
      *  @param  string  $ip_addr
