@@ -1,7 +1,7 @@
 Summary:      Serweb Framework
 Name:	      serweb-frmwrk
 Version:      1.0.3
-Release:      1
+Release:      7
 License:      GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
@@ -28,17 +28,11 @@ cp -r TODO.txt INSTALL.txt COPYING CHANGELOG example-app %{buildroot}/usr/share/
 mkdir -p %{buildroot}/etc/serweb-frmwrk
 mv %{buildroot}/usr/share/serweb-frmwrk/config/* %{buildroot}/etc/serweb-frmwrk/
 rmdir %{buildroot}/usr/share/serweb-frmwrk/config
+ln -sf /etc/serweb-frmwrk %{buildroot}/usr/share/serweb-frmwrk/config
 
 %clean
 rm -rf %{buildroot}
 
-%post
-echo "Creating serweb-frmwrk symlinks"
-ln -s /etc/serweb-frmwrk /usr/share/serweb-frmwrk/config
-
-%postun
-echo "Removing serweb-frmwrk symlinks"
-rm -f /usr/share/serweb-frmwrk/config
 
 %files
 %defattr(-,root,root)
@@ -47,6 +41,9 @@ rm -f /usr/share/serweb-frmwrk/config
 %config /etc/serweb-frmwrk/*
 
 %changelog
+
+* Fri Sep 9 2011 Karel Kozlik <karel@iptel.org>
+- fixing problem with creating/removing symlink to config directory during upgrade
 
 * Thu Apr 21 2011 Pavel Kasparek <pavel@iptel.org>
 - initial rpm spec version
