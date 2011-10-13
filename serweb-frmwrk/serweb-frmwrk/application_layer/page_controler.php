@@ -1014,151 +1014,176 @@ class page_conroler{
     function start(){
         global $smarty, $lang_str, $lang_set, $page_attributes, $config;
 
-        /* check if admin have perms to manage user */
-        if ($this->check_perms_to_user){
-            if (! $this->check_perms_to_user()){
-                page_close();           
-                die("You haven't permissions to manage user '".$this->user_id->get_username()."@".$this->user_id->get_realm()."'");
+        try{
+            /* check if admin have perms to manage user */
+            if ($this->check_perms_to_user){
+                if (! $this->check_perms_to_user()){
+                    page_close();           
+                    die("You haven't permissions to manage user '".$this->user_id->get_username()."@".$this->user_id->get_realm()."'");
+                }
             }
-        }
-
-        /* check if admin have perms to manage domain */
-        if ($this->check_perms_to_domain){
-            if (! $this->check_perms_to_domain()){
-                page_close();           
-                die("You haven't permissions to manage domain with id:'".$this->domain_id."'");
+        
+            /* check if admin have perms to manage domain */
+            if ($this->check_perms_to_domain){
+                if (! $this->check_perms_to_domain()){
+                    page_close();           
+                    die("You haven't permissions to manage domain with id:'".$this->domain_id."'");
+                }
             }
-        }
-        
-        /* do not allow change parameters of default domain */
-        if ($this->domain_id == '0'){
-            $_SESSION['page_controler_domain_id'] = null;
-            page_close();           
-            die("Change parameters of default domain is not possible");
-        }
-
-        /* make code portable - if magic_quotes_gpc is set to on, strip slashes */
-        if (get_magic_quotes_gpc()) {
-           function stripslashes_deep($value){
-               $value = is_array($value) ?
-                           array_map('stripslashes_deep', $value) :
-                           stripslashes($value);
-        
-               return $value;
-           }
-        
-           $_POST = array_map('stripslashes_deep', $_POST);
-           $_GET = array_map('stripslashes_deep', $_GET);
-           $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-           $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-        }
-
-        /* translate chars '<', '>', etc. to &lt; &gt; etc.. */
-        if ($this->perform_hack_protect) $this->hack_protection();
-
-        /* propagate user_id and reference to this to all application units */
-        foreach($this->apu_objects as $key=>$val){
-            $this->apu_objects[$key]->user_id=$this->user_id;
-            $this->apu_objects[$key]->domain_id=$this->domain_id;
-            $this->apu_objects[$key]->controler=&$this;
-        }
-
-        /* run all init methods */
-        foreach($this->apu_objects as $key=>$val){
-            $this->apu_objects[$key]->init();
-        }
-
-        if (!empty($this->post_init)) call_user_func_array($this->post_init, array(&$this));
-
-        /* determine actions of all application units 
-           and check if some APU needs validate form or send header 'location'
-         */
-        $this->_determine_actions();
-
-        /* call post_determine_action methods for each APU */
-        $this->_post_determine_actions();
-    
-        /* create html form by all application units */
-        $this->_create_html_form();
-        
-        /* validate html form */
-        $form_valid = $this->_validate_html_form();
-        
-        /* if form(s) valid, execute actions of all application units */
-        if ($form_valid)
-            $this->_execute_actions();
-        /* otherwise load defaults to the form(s) */
-        else {
-            $this->_form_invalid();
-            $this->_form_load_defaults();
-        }
-
-        /** get messages **/
-        $this->_get_messages();
-
-        /** assign values and form(s) to smarty **/
-        $this->_smarty_assign();
-
-        if (is_object($this->user_id)){
-            $smarty->assign('user_auth', $this->user_id->to_smarty());
-        }
-
-        
-        $cfg=new stdclass();
-        $cfg->img_src_path =        $config->img_src_path;
-        $cfg->js_src_path =         $config->js_src_path;
-        $cfg->style_src_path =      $config->style_src_path;
-        $cfg->user_pages_path =     $config->user_pages_path;
-        $cfg->admin_pages_path =    $config->admin_pages_path;
-        $cfg->domains_path =        $config->domains_path;
-        $smarty->assign("cfg", $cfg);        
-        
-        //page atributes - get user real name
-        
-        $page_attributes['errors']=&$this->errors;  
-        $page_attributes['message']=&$this->messages;
-        
-        /* obtain list of required javascripts */
-        foreach($this->apu_objects as $val){
-            $this->required_javascript = array_merge($this->required_javascript, $val->get_required_javascript());
-        }
-        $this->required_javascript = array_unique($this->required_javascript);
-
-        if (!isset($page_attributes['required_javascript']) or
-            !is_array($page_attributes['required_javascript']))
-            $page_attributes['required_javascript'] = array();
             
-        $page_attributes['required_javascript'] = 
-                        array_merge($page_attributes['required_javascript'],
-                                    $this->required_javascript);
-
-        
-        $smarty->assign('parameters', $page_attributes);
-        $smarty->assign('lang_str', $lang_str);
-        $smarty->assign('lang_set', $lang_set);
-        $smarty->assign('come_from_admin_interface', $this->come_from_admin_interface);
-
-        /* ----------------------- HTML begin ---------------------- */
-
-        print_html_head($page_attributes);
-        
-        print_html_body_begin($page_attributes);
-                
-        $smarty->display($this->template_name);
-
-        print_html_body_end($page_attributes);
-        
-        
-        if (count($this->js_after_document)){
-            echo "\n<script type=\"text/javascript\" language=\"JavaScript\">\n<!--\n";
-            foreach($this->js_after_document as $v){
-                echo $v;
+            /* do not allow change parameters of default domain */
+            if ($this->domain_id == '0'){
+                $_SESSION['page_controler_domain_id'] = null;
+                page_close();           
+                die("Change parameters of default domain is not possible");
             }
-            echo "\n// -->\n</script>\n";
-        }
         
-        echo "</html>\n";
-        page_close();
+            /* make code portable - if magic_quotes_gpc is set to on, strip slashes */
+            if (get_magic_quotes_gpc()) {
+               function stripslashes_deep($value){
+                   $value = is_array($value) ?
+                               array_map('stripslashes_deep', $value) :
+                               stripslashes($value);
+            
+                   return $value;
+               }
+            
+               $_POST = array_map('stripslashes_deep', $_POST);
+               $_GET = array_map('stripslashes_deep', $_GET);
+               $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+               $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+            }
+        
+            /* translate chars '<', '>', etc. to &lt; &gt; etc.. */
+            if ($this->perform_hack_protect) $this->hack_protection();
+        
+            /* propagate user_id and reference to this to all application units */
+            foreach($this->apu_objects as $key=>$val){
+                $this->apu_objects[$key]->user_id=$this->user_id;
+                $this->apu_objects[$key]->domain_id=$this->domain_id;
+                $this->apu_objects[$key]->controler=&$this;
+            }
+        
+            /* run all init methods */
+            foreach($this->apu_objects as $key=>$val){
+                $this->apu_objects[$key]->init();
+            }
+        
+            if (!empty($this->post_init)) call_user_func_array($this->post_init, array(&$this));
+        
+            /* determine actions of all application units 
+               and check if some APU needs validate form or send header 'location'
+             */
+            $this->_determine_actions();
+        
+            /* call post_determine_action methods for each APU */
+            $this->_post_determine_actions();
+        
+            /* create html form by all application units */
+            $this->_create_html_form();
+            
+            /* validate html form */
+            $form_valid = $this->_validate_html_form();
+            
+            /* if form(s) valid, execute actions of all application units */
+            if ($form_valid)
+                $this->_execute_actions();
+            /* otherwise load defaults to the form(s) */
+            else {
+                $this->_form_invalid();
+                $this->_form_load_defaults();
+            }
+        
+            /** get messages **/
+            $this->_get_messages();
+        
+            /** assign values and form(s) to smarty **/
+            $this->_smarty_assign();
+        
+            if (is_object($this->user_id)){
+                $smarty->assign('user_auth', $this->user_id->to_smarty());
+            }
+        
+            
+            $cfg=new stdclass();
+            $cfg->img_src_path =        $config->img_src_path;
+            $cfg->js_src_path =         $config->js_src_path;
+            $cfg->style_src_path =      $config->style_src_path;
+            $cfg->user_pages_path =     $config->user_pages_path;
+            $cfg->admin_pages_path =    $config->admin_pages_path;
+            $cfg->domains_path =        $config->domains_path;
+            $smarty->assign("cfg", $cfg);        
+            
+            //page atributes - get user real name
+            
+            $page_attributes['errors']=&$this->errors;  
+            $page_attributes['message']=&$this->messages;
+            
+            /* obtain list of required javascripts */
+            foreach($this->apu_objects as $val){
+                $this->required_javascript = array_merge($this->required_javascript, $val->get_required_javascript());
+            }
+            $this->required_javascript = array_unique($this->required_javascript);
+        
+            if (!isset($page_attributes['required_javascript']) or
+                !is_array($page_attributes['required_javascript']))
+                $page_attributes['required_javascript'] = array();
+                
+            $page_attributes['required_javascript'] = 
+                            array_merge($page_attributes['required_javascript'],
+                                        $this->required_javascript);
+        
+            
+            $smarty->assign('parameters', $page_attributes);
+            $smarty->assign('lang_str', $lang_str);
+            $smarty->assign('lang_set', $lang_set);
+            $smarty->assign('come_from_admin_interface', $this->come_from_admin_interface);
+        
+            /* ----------------------- HTML begin ---------------------- */
+        
+            print_html_head($page_attributes);
+            
+            print_html_body_begin($page_attributes);
+                    
+            $smarty->display($this->template_name);
+        
+            print_html_body_end($page_attributes);
+            
+            
+            if (count($this->js_after_document)){
+                echo "\n<script type=\"text/javascript\" language=\"JavaScript\">\n<!--\n";
+                foreach($this->js_after_document as $v){
+                    echo $v;
+                }
+                echo "\n// -->\n</script>\n";
+            }
+            
+            echo "</html>\n";
+            page_close();
+        }
+        catch(PearErrorException $e){
+            global $serwebLog;
+
+        	//if custom log function is defined, use it for log errors
+        	if (!empty($config->custom_log_function)){
+        		$log_message= $e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
+        		call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());	
+        	}
+        
+        	//otherwise if logging is enabled, use default log function
+        	elseif ($serwebLog){ 
+        		$log_message= "file: ".$e->getFile().":".$e->getLine().": ".$e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
+        		//remove endlines from the log message
+        		$log_message=str_replace(array("\n", "\r"), "", $log_message);
+        		$log_message=ereg_replace("[[:space:]]{2,}", " ", $log_message);
+        		$serwebLog->log($log_message, PEAR_LOG_ALERT);
+        	}
+
+            // @todo: display some pretty screen explaining there is
+            // unexpected error. 
+            // But for now just let the exception unhandled   
+            throw $e;
+        }
     }
 }
 ?>
