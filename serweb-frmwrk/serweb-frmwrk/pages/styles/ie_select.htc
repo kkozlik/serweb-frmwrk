@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!-- -------------------------------------------------------------------
+<!-- ===================================================================
 
  Emulating Disabled Options in IE
  Internet Explorer 6 does not implement disabled OPTION's in a SELECT. 
@@ -9,7 +9,7 @@
  Originally designed by Apptaro:
  http://apptaro.seesaa.net/article/21140090.html
 
- ------------------------------------------------------------------- -->
+ =================================================================== -->
 
 <PUBLIC:COMPONENT LIGHTWEIGHT="true">
 <PUBLIC:ATTACH EVENT="ondocumentready" ONEVENT="onDocumentReady()" />
