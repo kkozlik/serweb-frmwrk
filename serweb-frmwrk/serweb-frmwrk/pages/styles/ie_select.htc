@@ -9,6 +9,13 @@
  Originally designed by Apptaro:
  http://apptaro.seesaa.net/article/21140090.html
 
+ Note: Appache sometimes do not set correct MIME type for .htc files.
+ To correct this you should add following line to appache configuration:
+ 
+    AddType text/x-component .htc
+    
+ see also: http://support.microsoft.com/kb/306231/en-us
+ 
  =================================================================== -->
 
 <PUBLIC:COMPONENT LIGHTWEIGHT="true">
