@@ -1,6 +1,7 @@
 latest
 ======
-
+* function check_ip_addr_netmask(): fixing check of IPv6 addresses to not allow
+  values like 1:1:1
 * write unhandled PearErrorExceptions into logfile
 
 version 1.0.4

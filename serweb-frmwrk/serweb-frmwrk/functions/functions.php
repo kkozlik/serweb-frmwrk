@@ -741,7 +741,7 @@ class Creg{
 
         if (!isset($value_a[1])) $value_a[1] = "";
         // if the given address is IPv6 validate the given netmask is in range 0-128
-        if (preg_match(pregize("^".$this->ipv6address."$"), $value_a[0])){
+        if ($this->check_ipv6_address($value_a[0])){
             if (is_numeric($value_a[1]) and (int)$value_a[1] >=0 and (int)$value_a[1] <= 128) return true;
             else return false;
         } 
