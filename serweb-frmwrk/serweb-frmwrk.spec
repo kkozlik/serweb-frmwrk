@@ -1,6 +1,6 @@
 Summary:      Serweb Framework
 Name:	      serweb-frmwrk
-Version:      1.0.4
+Version:      1.0.5
 Release:      1
 License:      GPL
 Group:        System Environment/Daemons
