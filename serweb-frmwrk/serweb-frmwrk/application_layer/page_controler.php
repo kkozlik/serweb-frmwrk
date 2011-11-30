@@ -3,7 +3,6 @@
  * Page controler
  * 
  * @author     Karel Kozlik
- * @version    $Id: page_controler.php,v 1.36 2008/03/05 10:38:43 kozlik Exp $
  * @package    serweb
  * @subpackage framework
  */ 
@@ -116,6 +115,7 @@ class page_conroler{
     var $session;
     /** post init function */
     var $post_init = null;
+    
     
     /* constructor */
     function page_conroler(){
@@ -535,6 +535,27 @@ class page_conroler{
     function add_reqired_javascript($file){
         $this->required_javascript[] = $file;
     }
+
+    /**
+     *  Return URL that access given javascript file to given module.
+     *  Module directories are not usualy accessible via hhtml directory tree.
+     *  So there is getter script inside the javascript directory that access the
+     *  javascript files and return it content to HTML browser.
+     * 
+     *  In rare cases this might not work. I.e. webserwer from webmin execute 
+     *  only files with .cgi extension. To solve it this method could be 
+     *  overriden with another one that will return URL to customized getter 
+     *  script.
+     *  
+     *  @param  string  $module     The module from which we require a javascript file                            
+     *  @param  string  $file       The filename of the required file                            
+     */
+    function js_from_mod_getter($module, $file){
+        return "core/get_js.php?mod=".rawurlencode($module).
+                               "&js=".rawurlencode($file);
+    }
+    
+
 
     /**
      *  Create new shared html form if still not exists and assign APU to it
@@ -1123,15 +1144,24 @@ class page_conroler{
             foreach($this->apu_objects as $val){
                 $this->required_javascript = array_merge($this->required_javascript, $val->get_required_javascript());
             }
-            $this->required_javascript = array_unique($this->required_javascript);
-        
-            if (!isset($page_attributes['required_javascript']) or
-                !is_array($page_attributes['required_javascript']))
-                $page_attributes['required_javascript'] = array();
+
+            $js_files = array();
+            if (isset($page_attributes['required_javascript']) and 
+                is_array($page_attributes['required_javascript'])){
                 
-            $page_attributes['required_javascript'] = 
-                            array_merge($page_attributes['required_javascript'],
-                                        $this->required_javascript);
+                $js_files = $page_attributes['required_javascript'];
+            }
+            $js_files = array_merge($js_files, $this->required_javascript);
+
+            foreach($js_files as $k=>$file){
+                if (preg_match("/^module:(?P<module>[-_0-9a-z]+):(?P<file>.+)$/i",
+                               $file, $matches)){
+                
+                    $js_files[$k] = $this->js_from_mod_getter($matches['module'], $matches['file']);
+                }
+            }
+
+            $page_attributes['required_javascript'] = array_unique($js_files);
         
             
             $smarty->assign('parameters', $page_attributes);
