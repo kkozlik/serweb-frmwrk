@@ -36,12 +36,6 @@
  * @param array
  * @param Smarty
  * @return string
- *
- *  08-May-2007         Rajiv Krishan       Modified for PR 118789. To make code
- *                                          GUI Compliance
- *  23-May-2007         Rajiv Krishan       Modified for Comments from Tekelec to
- *                                          introduce an optional parameter to disable
- *                                          page links ( PR 121140)
  */
 
   function smarty_function_pager($params, &$smarty){

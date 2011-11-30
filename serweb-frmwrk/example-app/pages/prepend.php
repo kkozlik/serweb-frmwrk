@@ -10,7 +10,7 @@ require_once($thisdir."/../../serweb-frmwrk/functions/bootstrap.php");
 
 $GLOBALS['page_attributes']=array(
     'title' => null,
-    'html_title' => "Tekelec Application Server",
+    'html_title' => "Serweb based example application",
 //  'tab_collection' => $config->admin_tabs,
 //  'path_to_pages' => $config->admin_pages_path,
 //  'run_at_html_body_begin' => '_disable_unneeded_tabs',

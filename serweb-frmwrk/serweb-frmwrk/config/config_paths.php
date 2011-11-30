@@ -1,7 +1,4 @@
 <?
-/*
- * $Id: config_paths.php,v 1.8 2006/04/14 10:58:04 kozlik Exp $
- */
 
 global $config;
 
@@ -30,9 +27,6 @@ $config->domains_path =     null;
 
 /* Directory where smarty stores compiled templates */
 $config->smarty_compile_dir = "/tmp/smarty/";
-
-/* Directory where tklc gui files are located */
-$config->gui_dir = getenv('TC_GUI_DIR')."/";
 
 /* names of HTML documents surrounding
    serweb pages -- these may typically include banner, trailers,
