@@ -526,14 +526,25 @@ class page_conroler{
     function disable_html_output(){
         $this->standard_html_output = false;
     }
-    
+        
     /**
      *  Add file to set of required javascript files
      *  
      *  @param string $file name of javascript file
      */
-    function add_reqired_javascript($file){
+    function add_required_javascript($file){
         $this->required_javascript[] = $file;
+    }
+
+    /**
+     *  Same as add_required_javascript() function. This function was here
+     *  for a long time with typo in its name. So leaving it here for backward
+     *  compatibility, but obsoleted now.
+     *  
+     *  @obsoleted by add_required_javascript()
+     */         
+    function add_reqired_javascript($file){
+        $this->add_required_javascript($file);
     }
 
     /**

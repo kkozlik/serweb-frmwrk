@@ -119,7 +119,7 @@ require_once ($_SERWEB["corefunctionsdir"] . "load_lang.php");
 phplib_load(array("auth", "perm"));
 
 require_once ($_SERWEB["corefunctionsdir"] . "load_apu.php");
-$GLOBALS['controler']->add_reqired_javascript('core/phplib.js');
+$GLOBALS['controler']->add_required_javascript('core/phplib.js');
 
 init_modules();
 
