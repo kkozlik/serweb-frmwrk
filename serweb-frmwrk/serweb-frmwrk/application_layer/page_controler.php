@@ -538,9 +538,9 @@ class page_conroler{
 
     /**
      *  Return URL that access given javascript file to given module.
-     *  Module directories are not usualy accessible via hhtml directory tree.
+     *  Module directories are not usualy accessible via html directory tree.
      *  So there is getter script inside the javascript directory that access the
-     *  javascript files and return it content to HTML browser.
+     *  javascript file and return its content to HTML browser.
      * 
      *  In rare cases this might not work. I.e. webserwer from webmin execute 
      *  only files with .cgi extension. To solve it this method could be 
@@ -551,10 +551,28 @@ class page_conroler{
      *  @param  string  $file       The filename of the required file                            
      */
     function js_from_mod_getter($module, $file){
-        return "core/get_js.php?mod=".rawurlencode($module).
-                               "&js=".rawurlencode($file);
+        return "core/get_js.php?mod=".RawURLEncode($module).
+                               "&js=".RawURLEncode($file);
     }
     
+    /**
+     *  Return URL that access given css file from templates directory.
+     *  Templates directory is not usualy accessible via html directory tree.
+     *  So there is getter script inside the styles directory that access the
+     *  css file and return its content to HTML browser.
+     * 
+     *  In rare cases this might not work. I.e. webserwer from webmin execute
+     *  only files with .cgi extension. To solve it this method could be
+     *  overriden with another one that will return URL to customized getter
+     *  script.
+     *  
+     *  @param  string  $file       The filename of the required file with path
+     *                              relatively to templates directory
+     */
+    function css_from_tpl_getter($file){
+        global $config;
+        return $config->style_src_path."core/get_css.php?css=".RawURLEncode($file);
+    }
 
 
     /**
