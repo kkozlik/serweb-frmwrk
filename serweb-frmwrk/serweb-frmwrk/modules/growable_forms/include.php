@@ -12,7 +12,7 @@ require_once( dirname(__FILE__)."/classes.php" );
 // load the javascript if controler object already exists
 if (isset($GLOBALS['controler'])){	
     $GLOBALS['controler']->add_required_javascript('core/functions.js');
-    $GLOBALS['controler']->add_required_javascript('core/get_js.php?mod=growable_forms&js=growable_forms.js');
+    $GLOBALS['controler']->add_required_javascript('module:growable_forms:growable_forms.js');
 }
 	
 ?>
