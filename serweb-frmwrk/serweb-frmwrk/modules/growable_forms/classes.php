@@ -99,7 +99,7 @@ class Growable_Forms{
      *  @param  string      $form_name              name attribute of the html form
      *  @param  function    $add_item_to_form_fn    callback function creating form 
      *                                              entries for one item
-     *  @param  string      $item_clas              name of PHP class representing one item
+     *  @param  string      $item_class             name of PHP class representing one item
      *  @param  string      $add_item_url           URL that is accessed via AJAX 
      *                                              when new item should be added 
      *                                              to the form. It should invoke 
@@ -451,7 +451,7 @@ class Growable_Forms{
         $item = call_user_func(array($this->item_class, $this->item_creator));
         $item->{$this->item_id_var} = $id;
         
-        // create html for for the item
+        // create html for the item
         call_user_func_array($this->add_item_to_form_fn, array(&$f, $item));    
 
         // copy already set template vars to the new smarty object 
