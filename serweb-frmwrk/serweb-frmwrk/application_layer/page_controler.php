@@ -1243,6 +1243,13 @@ class page_conroler{
             // But for now just let the exception unhandled   
             throw $e;
         }
+        
+        // All DB transactions should be commited now. If there is any
+        // transacton in progress - most probably because of an error that 
+        // throwed exception - rollback the transaction. 
+        if ($GLOBALS['data']->is_transaction_in_progress()){
+            $GLOBALS['data']->transaction_rollback();
+        }
     }
 }
 ?>

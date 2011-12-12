@@ -705,7 +705,12 @@ class CData_Layer{
         return true;        
     }
 
-    
+    /**
+     *  Return TRUE if there is a transaction in progress
+     */         
+    function is_transaction_in_progress(){
+        return ($this->transaction_semaphore > 0);
+    }
 
     /**
      *  Return a limit phrase for SQL queries depending on which DB host is useing
