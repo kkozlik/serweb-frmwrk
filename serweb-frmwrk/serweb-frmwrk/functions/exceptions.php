@@ -20,4 +20,15 @@ Class XMLRPCException extends PearErrorException {
 
 }
 
+Class ApuConfigErrorException extends RuntimeException {
+    var $apu;
+
+    public function __construct($apu, $msg){
+        parent::__construct($msg);
+        $this->apu = $apu;
+    }
+}
+
+
+
 ?>
