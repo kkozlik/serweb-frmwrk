@@ -695,7 +695,7 @@ class Filter {
     var $asterisks=true;
     var $case_sensitive = false;
 
-    function Filter($name, $value=null, $op="like", $asterisks=true, $case_sensitive=false){
+    function Filter($name, $value=null, $op="=", $asterisks=false, $case_sensitive=false){
         $this->name = $name;
         $this->value = $value;
         $this->op = $op;
