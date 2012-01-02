@@ -862,7 +862,7 @@ function send_mail($to, $text, $headers = array()){
 	foreach ($headers as $k=>$v){
 		/* exclude header 'subject'. It is given throught another parameter of function */
 		if ($k=='subject') continue;
-		$str_headers .= $k.": ".$v."\n";
+		$str_headers .= ucfirst($k).": ".$v."\n";
 	}
 
 	/* get charset */
