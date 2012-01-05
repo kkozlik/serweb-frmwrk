@@ -55,6 +55,14 @@ class Growable_Forms{
     var $item_class = "";
     /** name of static function of the class that create one instance */
     var $item_creator = "create";
+    /** callback (as for PHP function call_user_func) that return new instance
+     *  of one item. If is set, this callback overrides $this->item_creator 
+     *  property and is used instead of calling $item_class::$item_creator
+     *  
+     *  The callback function should accept one parameter which contain ID of 
+     *  the item to be created.
+     */
+    var $item_create_fn = null;
     /** name of variable of the class that holds ID of item */
     var $item_id_var = "id";
     /** name of variable of the class that holds ordering of the item */
@@ -373,8 +381,13 @@ class Growable_Forms{
 
         /* add inserted items to array of items to be added to form */
         foreach($this->ins_ids as $v){
-            $this->items[$v] = call_user_func(array($this->item_class, $this->item_creator));
-            $this->items[$v]->{$this->item_id_var} = $v;
+            if (!is_null($this->item_create_fn)){
+                $this->items[$v] = call_user_func($this->item_create_fn, $v);
+            }
+            else{
+                $this->items[$v] = call_user_func(array($this->item_class, $this->item_creator));
+                $this->items[$v]->{$this->item_id_var} = $v;
+            }
         }
 
         /* if order variables are specified, update ordering value by the _POST vars */
@@ -448,8 +461,13 @@ class Growable_Forms{
         $sm = new Smarty_Serweb();
 
         // create instance of one item
-        $item = call_user_func(array($this->item_class, $this->item_creator));
-        $item->{$this->item_id_var} = $id;
+        if (!is_null($this->item_create_fn)){
+            $item = call_user_func($this->item_create_fn, $id);
+        }
+        else{
+            $item = call_user_func(array($this->item_class, $this->item_creator));
+            $item->{$this->item_id_var} = $id;
+        }
         
         // create html for the item
         call_user_func_array($this->add_item_to_form_fn, array(&$f, $item));    
