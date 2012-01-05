@@ -132,7 +132,7 @@ GF_separate_table.prototype.create_table = function(){
     // if table containing items does not exists, create it
     if (null == this.html_table_el){
         container_el = document.getElementById(this.html_container_id);
-        container_el.innerHTML = '<table id="'+this.html_table_id+'" border="0" cellspacing="0" cellpadding="0" align="center"><tbody></tbody></table>';
+        container_el.innerHTML = '<table id="'+this.html_table_id+'" border="0" cellspacing="0" cellpadding="0"></table>';
         this.html_table_el = document.getElementById(this.html_table_id);
     }
 }
