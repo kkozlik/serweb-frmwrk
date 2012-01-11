@@ -62,8 +62,7 @@ function smarty_function_html_tabs($params, &$smarty){
 				$out.='<li class="swActiveTab"><div class="swTabsL"></div><strong><span>'.$value->get_name().'</span></strong><div class="swTabsR"></div></li>';
 			}
 			else{
-				$separator = strpos($path.$value->get_page(), "?") ? "&" : "?";
-				$out.='<li><div class="swTabsL"></div><a href="'.htmlspecialchars($controler->url($path.$value->get_page().$separator."kvrk=".uniqID("")), ENT_QUOTES).'" '.$anchor_extra_html.' class="tabl"><span>'.$value->get_name().'</span></a><div class="swTabsR"></div></li>';
+				$out.='<li><div class="swTabsL"></div><a href="'.htmlspecialchars($controler->url($path.$value->get_page()), ENT_QUOTES).'" '.$anchor_extra_html.' class="tabl"><span>'.$value->get_name().'</span></a><div class="swTabsR"></div></li>';
 			}//if ($value->get_page()==$selected)
 		}// if ($value->is_enabled())
 	} //foreach		
