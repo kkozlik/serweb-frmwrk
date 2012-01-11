@@ -766,7 +766,7 @@ Growable_Forms_ctl.prototype.add_item_callback = function(http_request){
 
         if (typeof(this.on_add) == "function"){
             // if callback "on add" is set, call it.
-            this.on_add(this, row_ids);
+            this.on_add(this, row_ids, response);
         }
     }
 };

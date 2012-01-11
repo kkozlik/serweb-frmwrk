@@ -67,8 +67,11 @@ class Growable_Forms{
     var $item_id_var = "id";
     /** name of variable of the class that holds ordering of the item */
     var $item_order_var = null;
-    /** name of method of the class that that converts item for smarty */
+    /** name of method of the class that converts item for smarty */
     var $item_to_smarty_fn = "to_smarty";
+    /** name of method of the class that return data to be included to json
+     *  response (in the 'items' key) */
+    var $item_to_response_fn = null;
     
 
     /** name of javascript variable holding the javascript object */
@@ -502,6 +505,12 @@ class Growable_Forms{
         $response = $this->get_empty_response();
         $response->tableRows = str_replace(array("\n", "\r"), array('', ''), $sm->fetch($this->smarty_template));
         $response->formElements = $f->get_hidden_els_as_string();
+        $response->customData = array();
+        $response->items = array();
+        
+        if ($this->item_to_response_fn and method_exists($item, $this->item_to_response_fn)){
+            $response->items[$id] = $item->{$this->item_to_response_fn}();
+        }
 
         return $response;    
     }
@@ -538,6 +547,8 @@ class Growable_Forms{
         $response = new stdClass();
         $response->tableRows = "";
         $response->formElements = "";
+        $response->customData = array();
+        $response->items = array();
         
         return $response;
     }
@@ -549,7 +560,20 @@ class Growable_Forms{
     function join_responses($resp1, $resp2){
         $resp1->tableRows    .= $resp2->tableRows;
         $resp1->formElements .= $resp2->formElements;
+        $resp1->customData    = array_merge($resp1->customData, $resp2->customData);
+        $resp1->items         = array_merge($resp1->items, $resp2->items);
         return $resp1;
+    }
+    
+    /**
+     *  Set custom data to be send in response
+     *  
+     *  @param Object   $response   
+     *  @param String   $var_name   name of variable to be set
+     *  @param mixed    $var_value  value of the variable          
+     */    
+    function set_response_custom_data(&$response, $var_name, $var_value){
+        $response->customData[$var_name] = $var_value;
     }
 }
 ?>
