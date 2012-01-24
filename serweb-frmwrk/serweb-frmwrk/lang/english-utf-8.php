@@ -38,16 +38,18 @@ $lang_str['err_value_not_selected'] =           "[Error Code 0006] - The <name> 
 $lang_str['err_greater_than'] =                 "[Error Code 0007] - The <var1> must be greater than the <var2>.";
 $lang_str['err_desc_order_list'] =              "[Error Code 0008] - The input values of the <var_list> shall be in a strictly descending order.";
 $lang_str['err_out_of_range'] =                 "[Error Code 0009] - The input value of the <name> is outside the valid range <min> - <max>.";
-$lang_str['err_invalid_regexp'] =               "[Error Code 0100] - The input value \"#VALUE#\" for the <name> is not a valid regular expression.";
-$lang_str['err_invalid_number'] =               "[Error Code 0101] - The input value \"#VALUE#\" for the <name> is not a valid number.";
-$lang_str['err_invalid_ip_addr'] =              "[Error Code 0103] - The input value \"#VALUE#\" for the <name> is not a valid IPv4 address.";
+$lang_str['err_invalid_value'] =                "[Error Code 0100] - The input value \"#VALUE#\" for the <name> is not valid.";
+$lang_str['err_invalid_regexp'] =               "[Error Code 0101] - The input value \"#VALUE#\" for the <name> is not a valid regular expression.";
+$lang_str['err_invalid_number'] =               "[Error Code 0102] - The input value \"#VALUE#\" for the <name> is not a valid number.";
+$lang_str['err_invalid_ip4_addr'] =             "[Error Code 0103] - The input value \"#VALUE#\" for the <name> is not a valid IPv4 address.";
 $lang_str['err_invalid_sip_uri'] =              "[Error Code 0104] - The input value \"#VALUE#\" for the <name> is not a valid SIP URI.";
-$lang_str['err_invalid_ip_addr_port'] =         "[Error Code 0105] - The input value \"#VALUE#\" for the <name> is not a valid {IPv4 address}:{port number}.";
-$lang_str['err_invalid_ip_addr_fqdn'] =         "[Error Code 0106] - The input value \"#VALUE#\" for the <name> is neither a valid IPv4 address nor a valid fully qualified domain name.";
-$lang_str['err_invalid_ip_addr_netmask'] =      "[Error Code 0107] - The input value \"#VALUE#\" for the <name> is not a valid {IP address}/{netmask}.";
+$lang_str['err_invalid_ip4_addr_port'] =        "[Error Code 0105] - The input value \"#VALUE#\" for the <name> is not a valid {IPv4 address}:{port number}.";
+$lang_str['err_invalid_ip4_addr_fqdn'] =        "[Error Code 0106] - The input value \"#VALUE#\" for the <name> is neither a valid IPv4 address nor a valid fully qualified domain name.";
+$lang_str['err_invalid_ip4_addr_netmask'] =     "[Error Code 0107] - The input value \"#VALUE#\" for the <name> is not a valid {IP address}/{netmask}.";
 $lang_str['err_invalid_phone_number'] =         "[Error Code 0108] - The input value \"#VALUE#\" for the <name> is not a valid telephone number.";
 $lang_str['err_invalid_obj_name'] =             "[Error Code 0109] - The input value \"#VALUE#\" for the <name> is not a valid object name.";
 $lang_str['err_invalid_fqdn'] =                 "[Error Code 0110] - The input value \"#VALUE#\" for the <name> is not a valid fully qualified domain name.";
 $lang_str['err_invalid_fqdn_ip_ipport'] =       "[Error Code 0111] - The input value \"#VALUE#\" for the <name> is neither a valid IPv4 address nor a valid <IP address>:<port number> nor a valid fully qualified domain name.";
+$lang_str['err_invalid_hostname'] =             "[Error Code 0112] - The input value \"#VALUE#\" for the <name> is not a valid hostname.";
 
 ?>
