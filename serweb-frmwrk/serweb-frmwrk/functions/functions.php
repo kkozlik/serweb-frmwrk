@@ -479,6 +479,21 @@ class Creg{
 	}
 
     /**
+     *  Check given netmask and return format it is written in.
+     *  
+     *  @return string  "bitcount", "decimal", "hexadecimal" or FALSE if netmask match no format
+     */         
+    function get_netmask_format($netmask){
+        if (is_numeric($netmask)) return "bitcount";
+        if ($this->is_ipv4address($netmask)) return "decimal";
+    
+        // I am not sure about this regexp, can't find correct RFC now.    
+        if (preg_match("/0x[0-9a-fA-F]{8}/")) return "hexadecimal";
+    
+        return false;
+    }
+
+    /**
      *  check if given IPv4 address is valid netmask
      *  
      *  @param  string  $adr    IPv4 address
@@ -525,24 +540,48 @@ class Creg{
     /**
      *  check if given IPv4 address is network address of network with given netmask
      *  
-     *  @param  string  $ip         IPv4 address
-     *  @param  string  $netmask    IPv4 address
+     *  @param  string  $ip         network address (IPv4)
+     *  @param  string  $netmask    netmask
+     *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
+     *                          "bitcount", "decimal", "hexadecimal"
+     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
-    function check_network_address($ip, $netmask){
+    function check_network_address($ip, $netmask, $mask_format = array("bitcount", "decimal", "hexadecimal")){
         // check if given string is IPv4 address
         if (!$this->is_ipv4address($ip)) return false;
-        if (!$this->check_netmask($netmask, array("decimal"))) return false;
+        if (!$this->check_netmask($netmask, $mask_format)) return false;
         
-        $parts_ip = explode(".", $ip);
-        $parts_mask = explode(".", $netmask);
-        
-        for ($i=0; $i<4; $i++){
-            $ip = (int)$parts_ip[$i];
-            $mask = (int)$parts_mask[$i];
-            if ($ip != ($ip & $mask)) return false;
+        $mask_format = $this->get_netmask_format($netmask);
+        if (!$mask_format) return false;
+
+        if ($mask_format == "decimal"){
+            $parts_ip = explode(".", $ip);
+            $parts_mask = explode(".", $netmask);
+            
+            for ($i=0; $i<4; $i++){
+                $ip = (int)$parts_ip[$i];
+                $mask = (int)$parts_mask[$i];
+                if ($ip != ($ip & $mask)) return false;
+            }
+        }        
+
+        if ($mask_format == "bitcount"){
+            $parts_ip = explode(".", $ip);
+            $mask_table = array(0, 128, 192, 224, 240, 248, 252, 254, 255);
+
+            for ($i=0; $i<4; $i++){
+                $ip = (int)$parts_ip[$i];
+                $part_mask = (int)$netmask;
+                if ($part_mask > 8) $part_mask = 8;
+                $netmask = $netmask - $part_mask;
+                
+                // convert bitcount to the mask
+                $part_mask = $mask_table[$part_mask];
+                if ($ip != ($ip & $part_mask)) return false;
+            }
         }
-        
+
         return true;
     }
     
