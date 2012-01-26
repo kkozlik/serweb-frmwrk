@@ -70,7 +70,9 @@ function print_html_head($parameters=array()){
     }
 
     if (!empty($parameters['ie_selects'])){
-        echo '    <LINK REL="StyleSheet" HREF="'.htmlspecialchars($config->style_src_path."core/ie_select.css.php").'" TYPE="text/css" />'."\n";
+        // Workaround for ability to enable/disable options of selects.
+        // It is not needed since IE8 as IE finaly support it by itself.
+        echo '    <!--[if lt IE 8]><LINK REL="StyleSheet" HREF="'.htmlspecialchars($config->style_src_path."core/ie_select.css.php").'" TYPE="text/css" /><![endif]-->'."\n";
     }
 
     if (isset($parameters['required_javascript']) and is_array($parameters['required_javascript'])){
