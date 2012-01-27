@@ -1,3 +1,8 @@
+version 1.0.6
+=============
+* workaround for enable/disable options of selects is active for only for IE7 
+  and older. It is not needed since IE8
+  
 version 1.0.5
 =============
 * function check_ip_addr_netmask(): fixing check of IPv6 addresses to not allow
