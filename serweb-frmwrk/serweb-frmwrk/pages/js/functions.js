@@ -168,6 +168,16 @@ function remClassNameFromEl(el, className){
 }
 
 /**
+ *  Check whether html element has given class
+ * 
+ *	@param	object	el  
+ *	@param	string	className
+ */ 
+function hasClassName(el, className) {
+    return el.className && new RegExp("(^|\\s)" + className + "(\\s|$)").test(el.className);
+}
+
+/**
  *	Enable form element and remove CSS class "disabled" from it
  * 
  *	@param	object	el  
