@@ -36,8 +36,11 @@ $lang_str['err_dup_entry'] =                    "[Error Code 0004] - The <object
 $lang_str['err_missing_entry'] =                "[Error Code 0005] - The <object> no longer exists in the system.";
 $lang_str['err_value_not_selected'] =           "[Error Code 0006] - The <name> must be selected.";
 $lang_str['err_greater_than'] =                 "[Error Code 0007] - The <var1> must be greater than the <var2>.";
-$lang_str['err_desc_order_list'] =              "[Error Code 0008] - The input values of the <var_list> shall be in a strictly descending order.";
-$lang_str['err_out_of_range'] =                 "[Error Code 0009] - The input value of the <name> is outside the valid range <min> - <max>.";
+$lang_str['err_less_than'] =                    "[Error Code 0008] - The <var1> must be less than the <var2>.";
+$lang_str['err_desc_order_list'] =              "[Error Code 0009] - The input values of the <var_list> shall be in a strictly descending order.";
+$lang_str['err_out_of_range'] =                 "[Error Code 0010] - The input value \"#VALUE#\" for the <name> is outside the valid range <min> - <max>.";
+$lang_str['err_out_of_range_min'] =             "[Error Code 0011] - The input value \"#VALUE#\" for the <name> must be greater or equal to <min>.";
+$lang_str['err_out_of_range_max'] =             "[Error Code 0012] - The input value \"#VALUE#\" for the <name> must be less or equal to <max>.";
 $lang_str['err_invalid_value'] =                "[Error Code 0100] - The input value \"#VALUE#\" for the <name> is not valid.";
 $lang_str['err_invalid_regexp'] =               "[Error Code 0101] - The input value \"#VALUE#\" for the <name> is not a valid regular expression.";
 $lang_str['err_invalid_number'] =               "[Error Code 0102] - The input value \"#VALUE#\" for the <name> is not a valid number.";
@@ -51,5 +54,6 @@ $lang_str['err_invalid_obj_name'] =             "[Error Code 0109] - The input v
 $lang_str['err_invalid_fqdn'] =                 "[Error Code 0110] - The input value \"#VALUE#\" for the <name> is not a valid fully qualified domain name.";
 $lang_str['err_invalid_fqdn_ip_ipport'] =       "[Error Code 0111] - The input value \"#VALUE#\" for the <name> is neither a valid IPv4 address nor a valid <IP address>:<port number> nor a valid fully qualified domain name.";
 $lang_str['err_invalid_hostname'] =             "[Error Code 0112] - The input value \"#VALUE#\" for the <name> is not a valid hostname.";
+$lang_str['err_invalid_sip_uri_user'] =         "[Error Code 0113] - The input value \"#VALUE#\" for the <name> is not a valid user part of SIP URI.";
 
 ?>
