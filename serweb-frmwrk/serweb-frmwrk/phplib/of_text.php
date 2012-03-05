@@ -61,6 +61,13 @@ class of_text extends of_element {
         $str .= " title='".htmlspecialchars($this->title, ENT_QUOTES)."'";
     }
 
+    if (!empty($this->placeholder)){
+        $str .= " placeholder='".htmlspecialchars(
+                str_replace(array("\n", "\r"),
+                            array("", ""),
+                            $this->placeholder), ENT_QUOTES)."'";
+    }
+
 
     $str .= " />";
     

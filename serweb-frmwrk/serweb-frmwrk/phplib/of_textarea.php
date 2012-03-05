@@ -52,6 +52,13 @@ class of_textarea extends of_element {
         $str .= " title='".htmlspecialchars($this->title, ENT_QUOTES)."'";
     }
 
+    if (!empty($this->placeholder)){
+        $str .= " placeholder='".htmlspecialchars(
+                str_replace(array("\n", "\r"),
+                            array("", ""),
+                            $this->placeholder), ENT_QUOTES)."'";
+    }
+
     $str .= ">" . htmlspecialchars($this->value) ."</textarea>";
     
     $count = 1;
