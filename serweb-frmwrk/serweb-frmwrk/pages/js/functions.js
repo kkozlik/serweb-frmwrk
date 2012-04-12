@@ -213,6 +213,32 @@ function get_radio_by_value(el, val){
 }
 
 /**
+ *  Return the value of the radio button that is checked. Return null value 
+ *  if none are checked.
+ */
+function get_radio_value(el){
+ 
+   for(var i=0; i<el.length; i++){
+      if(el[i].checked){
+         return el[i].value;
+      }
+   }
+   return null;
+}
+
+/**
+ *  Set the radio button with the given value as being checked. 
+ *  If the given value does not exist, all the radio buttons are reset to unchecked. 
+ */
+function set_radio_value(el, val) {
+
+    for(var i=0; i<el.length; i++) {
+        el[i].checked = (el[i].value == val);
+    }
+}
+
+
+/**
  *  Get element identified by its tag name and class name. Function return 
  *  only first matched element or null
  *      
@@ -275,6 +301,32 @@ function in_array(value, ar){
 		if (ar[i] == value) return true;
 	}
 	return false;
+};
+
+/**
+ *  Get value of selected option in dropdown. Return null if no option is selected
+ *  in "select-one" element. Return array of values if the element 
+ *  is "select-multiple".
+ */ 
+function get_select_value(el){
+
+    if (el.type == "select-one"){
+        var index = el.selectedIndex;
+
+        if (index < 0) return null;
+        else           return el.options[index].value;
+    }
+    else if (el.type == "select-multiple"){
+        for(var i=1; i<el.options.length; i++){
+        var sdValues = [];
+           if(el.options[i].selected == true){
+               sdValues.push(el.options[i].value);
+           }
+        }
+        return sdValues;
+    }
+    
+    return null;
 }
 
 /**
