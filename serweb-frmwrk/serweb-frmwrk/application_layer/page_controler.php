@@ -192,7 +192,7 @@ class page_conroler{
             $get = implode('&', $get);
         }
         else{
-            $get = RawURLEncode('pctl_set_msgs[]').'='.RawURLEncode($v);
+            $get = RawURLEncode('pctl_set_msgs[]').'='.RawURLEncode($msg);
         }
         return $get;
     }
