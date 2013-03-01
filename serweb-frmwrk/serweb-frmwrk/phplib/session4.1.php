@@ -409,9 +409,6 @@ class Session {
       break;
     }
 
-    // Encode naughty characters in the URL
-    $url = str_replace(array("<", ">", " ", "\"", "'"), 
-                       array("%3C", "%3E", "+", "%22", "%27"), $url);
     return $url;
   } // end func url
 
