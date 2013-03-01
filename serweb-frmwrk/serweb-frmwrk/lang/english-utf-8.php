@@ -21,6 +21,7 @@ $lang_str['b_cancel'] =                         "Cancel";
 $lang_str['b_search'] =                         "Search";
 $lang_str['b_ok'] =                             "OK";
 $lang_str['b_reset'] =                          "Reset";
+$lang_str['b_clear_filter'] =                   "Clear";
 
 
 
