@@ -162,6 +162,11 @@ Tooltip.prototype.onMouseMove = function(e){
     
     CSE = evt.target ? evt.target : evt.srcElement;
 
+    // On mouse move over disabled element in IE the CSE is empty object with
+    // no methods and no attributes. Handle this case and exit, so IE do not
+    // generate errors. 
+    if (!CSE.setAttribute) return;
+
     if (CSE.title != ''){
         // move the title to another attribute. In oposite case Opera display 
         // the tooltip twice 

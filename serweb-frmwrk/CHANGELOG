@@ -1,3 +1,7 @@
+Version 1.0.7
+=============
+* adding few js functions for better manipulation with values of html form elements
+
 version 1.0.6
 =============
 * workaround for enable/disable options of selects is active for only for IE7 
