@@ -59,7 +59,7 @@ class apu_filter extends apu_base_class{
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
-        return array("filter.js");
+        return array("module:widgets:filter.js");
     }
     
     /**
@@ -284,7 +284,7 @@ class apu_filter extends apu_base_class{
             $js_elements[] = $js_el;
         }
         
-        $this->opt['form_clear']['extra_html'] = "onclick='filter_form_ctl.filter_clear(); return false;'";
+        $this->opt['form_clear']['extra_html'] = "onclick='filter_form_ctl.filter_clear();'";
         $this->f->add_extra_submit("f_clear", $this->opt['form_clear']);
 
         $onload_js = "
