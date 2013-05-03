@@ -10,6 +10,6 @@ Homepage: http://developer.berlios.de/projects/serweb-frmwrk/
 
 Package: serweb-frmwrk
 Architecture: all
-Depends: php (>= 5.0), php-pear, php-pecl-runkit, ${misc:Depends}
+Depends: php5, php-pear, php-pecl-runkit, ${misc:Depends}
 Description: Framework for making very customizable web applications.
  Framework for making very customizable web applications.
