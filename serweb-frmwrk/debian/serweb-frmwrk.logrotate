@@ -1,0 +1,8 @@
+# logrotate configuration for serweb framework
+/var/log/serweb {
+    weekly
+    rotate 4
+    missingok
+    compress
+}
+   

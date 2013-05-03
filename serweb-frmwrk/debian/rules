@@ -1,0 +1,35 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DESTDIR=$(CURDIR)/debian/serweb-frmwrk
+
+%:
+	dh $@ 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+	echo destdir: $(DESTDIR)
+	mkdir -p $(DESTDIR)/usr/share/serweb-frmwrk
+	mkdir -p $(DESTDIR)/usr/share/doc/serweb-frmwrk
+	mkdir -p $(DESTDIR)/etc/serweb-frmwrk
+	cp -r $(CURDIR)/serweb-frmwrk/* $(DESTDIR)/usr/share/serweb-frmwrk
+	cp -r $(CURDIR)/TODO.txt $(CURDIR)/INSTALL.txt $(CURDIR)/COPYING $(CURDIR)/CHANGELOG $(CURDIR)/example-app $(DESTDIR)/usr/share/doc/serweb-frmwrk
+	mv $(DESTDIR)/usr/share/serweb-frmwrk/config/* $(DESTDIR)/etc/serweb-frmwrk/
+	rmdir $(DESTDIR)/usr/share/serweb-frmwrk/config
+	ln -sf /etc/serweb-frmwrk $(DESTDIR)/usr/share/serweb-frmwrk/config
+
+binary-indep: install
+
+binary: binary-indep binary-arch
+

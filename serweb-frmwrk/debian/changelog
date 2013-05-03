@@ -1,0 +1,5 @@
+serweb-frmwrk (1.0.7.git5d876c7-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Karel Kozlík <karel@iptel.org>  Fri, 03 May 2013 23:33:41 +0200

@@ -1,0 +1,15 @@
+Source: serweb-frmwrk
+Section: php
+Priority: extra
+Maintainer: Karel Kozlík <karel@iptel.org>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://developer.berlios.de/projects/serweb-frmwrk/
+#Vcs-Git: git://git.debian.org/collab-maint/serweb-frmwrk.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/serweb-frmwrk.git;a=summary
+
+Package: serweb-frmwrk
+Architecture: all
+Depends: php (>= 5.0), php-pear, php-pecl-runkit, ${misc:Depends}
+Description: Framework for making very customizable web applications.
+ Framework for making very customizable web applications.
