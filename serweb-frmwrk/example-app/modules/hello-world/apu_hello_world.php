@@ -79,7 +79,7 @@ class apu_hello_world extends apu_base_class{
 
 
         /* message on attributes update */
-        $this->opt['msg_update']['long']  =     &$lang_str['msg_changes_saved_l'];
+        $this->opt['msg_update']['long']  =     &$lang_str['msg_changes_saved'];
         
         /*** names of variables assigned to smarty ***/
         /* form */
