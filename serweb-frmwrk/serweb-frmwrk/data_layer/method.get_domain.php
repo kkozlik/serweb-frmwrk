@@ -77,7 +77,7 @@ class CData_Layer_get_domain {
 		}
 		
 		$res=$this->db->query($q);
-		if (DB::isError($res)) {ErrorHandler::log_errors($res); return false;}
+		if ($this->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
 		
 		$out=array();
 		for ($i=0; $row=$res->fetchRow(DB_FETCHMODE_ASSOC); $i++){

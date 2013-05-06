@@ -365,8 +365,13 @@ class CData_Layer{
      *  @access private
      */
     function set_this_db_host($dsn){
+        global $config;
+
         $this->db_host['dsn'] = $dsn;
-        $this->db_host['parsed'] = DB::parseDSN($dsn); 
+        if ($config->data_sql->abstraction_layer=="MDB2")
+            $this->db_host['parsed'] = MDB2::parseDSN($dsn);
+        else 
+            $this->db_host['parsed'] = DB::parseDSN($dsn);
     }
 
     /**
@@ -390,11 +395,21 @@ class CData_Layer{
             $dsn = $_SESSION['data_conn'][$this->name]['db_dsn'];
             $this->set_this_db_host($dsn);
             
-            $db = DB::connect($this->db_host['parsed'], true);
+            if ($config->data_sql->abstraction_layer=="MDB2"){
+                $db = MDB2::factory($this->db_host['parsed'], true);
 
-            if (DB::isError($db)) { 
-                throw new DBException($db);
+                if (MDB2::isError($db)) { 
+                    throw new DBException($db);
 //              log_errors($db, $errors); return false; 
+                }
+            }
+            else{
+                $db = DB::connect($this->db_host['parsed'], true);
+    
+                if (DB::isError($db)) { 
+                    throw new DBException($db);
+//              log_errors($db, $errors); return false; 
+                }
             }
         }
         else{
@@ -419,11 +434,21 @@ class CData_Layer{
                         $cfg->host[$serv]['name'];
         
                 $this->set_this_db_host($dsn);
-                $db = DB::connect($this->db_host['parsed'], true);
+
+                if ($config->data_sql->abstraction_layer=="MDB2"){
+                    $db = MDB2::connect($this->db_host['parsed'], true);
+                    $isError = MDB2::isError($db);
+                    $codeFailed = MDB2_ERROR_CONNECT_FAILED;
+                }
+                else{
+                    $db = DB::connect($this->db_host['parsed'], true);
+                    $isError = DB::isError($db);
+                    $codeFailed = DB_ERROR_CONNECT_FAILED;
+                }
         
-                if (DB::isError($db)) { 
+                if ($isError) { 
                     //if connect failed and multiple servers is defined
-                    if (($db->getCode() == DB_ERROR_CONNECT_FAILED) and ($num>1)){ 
+                    if (($db->getCode() == $codeFailed) and ($num>1)){ 
                         //try another server
                         $tries++;
                         $serv++; $serv %= $num;
@@ -557,7 +582,7 @@ class CData_Layer{
     
             $ldap = DB::connect($dsn, true);
     
-            if (DB::isError($ldap)) {   
+            if ($this->dbIsError($ldap)) {   
                 //if connect failed and multiple servers is defined
                 if (($ldap->getCode() == DB_ERROR_CONNECT_FAILED) and ($num>1)){ 
                     //try another server
@@ -648,6 +673,17 @@ class CData_Layer{
     }
     
 
+    function dbIsError($res){
+        global $config;
+
+        if ($config->data_sql->abstraction_layer=="MDB2"){
+            return MDB2::isError($res);
+        }
+        else{
+            return DB::isError($res);
+        }
+    }
+
     /**
      *  Start a transaction on the current connection
      */
@@ -663,7 +699,7 @@ class CData_Layer{
         /* don't call "start transaction" in nested transactions */
         if ($this->transaction_semaphore == 0){
             $res=$this->db->query("start transaction");
-            if (DB::isError($res)) throw new DBException($res); 
+            if ($this->dbIsError($res)) throw new DBException($res); 
         }
         
         $this->transaction_semaphore++;
@@ -686,7 +722,7 @@ class CData_Layer{
         /* don't call "commit" in nested transactions or if rollback was called */
         if ($this->transaction_semaphore == 0 and !$this->transaction_rollback){
             $res=$this->db->query("commit");
-            if (DB::isError($res)) throw new DBException($res);
+            if ($this->dbIsError($res)) throw new DBException($res);
         }
 
         return true;        
@@ -700,7 +736,7 @@ class CData_Layer{
         $this->transaction_rollback = true;
 
         $res=$this->db->query("rollback");
-        if (DB::isError($res)) throw new DBException($res);
+        if ($this->dbIsError($res)) throw new DBException($res);
 
         return true;        
     }

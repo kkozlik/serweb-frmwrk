@@ -27,7 +27,7 @@ class CData_Layer_set_db_collation {
 			$q="set collation_connection='".$this->db_collation."'";
 	
 			$res=$this->db->query($q);
-			if (DB::isError($res))   throw new DBException($res);
+			if ($this->dbIsError($res))   throw new DBException($res);
 		}
 		
 		/* otherwise do nothing, collation will be set after connect to DB */

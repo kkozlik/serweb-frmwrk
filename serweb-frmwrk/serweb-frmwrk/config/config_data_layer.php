@@ -125,6 +125,11 @@ global $config;
 
         $config->data_sql=new stdClass();
 
+        $config->data_sql->abstraction_layer="DB";          //database abstraction layer. Use:
+                                                            // * "DB" for pear-db (default)
+                                                            // * "MDB2" for pear-mdb2
+
+
         $config->data_sql->type="mysql";            //type of db host, enter "mysql" for MySQL or "pgsql" for PostgreSQL
 
         $i=0;

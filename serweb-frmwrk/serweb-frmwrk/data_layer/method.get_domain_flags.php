@@ -49,7 +49,7 @@ class CData_Layer_get_domain_flags {
 			where ".$cd->did."=".$this->sql_format($did, "s"); 
 
 		$res=$this->db->query($q);
-		if (DB::isError($res)) {ErrorHandler::log_errors($res); return false;}
+		if ($this->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
 		
 		$disabled = true;
 		$deleted = true;

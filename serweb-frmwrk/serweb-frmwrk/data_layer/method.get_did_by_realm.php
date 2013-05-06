@@ -70,7 +70,7 @@ class CData_Layer_get_did_by_realm {
 				   ".$c_da->flags." & ".$flags_clear." = 0 ";
 		
 		$res=$this->db->query($q);
-		if (DB::isError($res)) {
+		if ($this->dbIsError($res)) {
 			log_errors($res, $errors); 
 			ErrorHandler::add_error($errors);
 			return false;
@@ -101,7 +101,7 @@ class CData_Layer_get_did_by_realm {
 				  ".$c_d->flags." & ".$flags_clear." = 0 ";
 
 		$res=$this->db->query($q);
-		if (DB::isError($res)) {
+		if ($this->dbIsError($res)) {
 			log_errors($res, $errors); 
 			ErrorHandler::add_error($errors);
 			return false;

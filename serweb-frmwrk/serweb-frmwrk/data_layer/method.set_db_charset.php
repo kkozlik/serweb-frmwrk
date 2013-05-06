@@ -68,7 +68,7 @@ class CData_Layer_set_db_charset {
 			}
 		
 			$res=$this->db->query($q);
-			if (DB::isError($res)) throw new DBException($res);
+			if ($this->dbIsError($res)) throw new DBException($res);
 		}
 		
 		/* otherwise do nothing, charset will be set after connect to DB */

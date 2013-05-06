@@ -33,7 +33,7 @@ class CData_Layer_get_DB_time {
         
         $q="select unix_timestamp(now())";
         $res=$this->db->query($q);
-        if (DB::isError($res)) throw new DBException($res);
+        if ($this->dbIsError($res)) throw new DBException($res);
         $row=$res->fetchRow(DB_FETCHMODE_ORDERED);
         $res->free();
     
