@@ -95,8 +95,11 @@ class SerwebUser {
     var $domainname = null;
     var $uri = null;
 
-    function &instance($uid, $username, $did, $realm){
-        $obj = new SerwebUser();
+    static function &instance($uid, $username, $did, $realm){
+
+        $class = get_called_class();
+
+        $obj = new $class();
         $obj->uid = $uid;
         $obj->username = $username;
         $obj->did = $did;
@@ -105,8 +108,11 @@ class SerwebUser {
         return $obj;
     }
 
-    function &instance_by_refs(&$uid, &$username, &$did, &$realm){
-        $obj = new SerwebUser();
+    static function &instance_by_refs(&$uid, &$username, &$did, &$realm){
+
+        $class = get_called_class();
+
+        $obj = new $class();
         $obj->uid = &$uid;
         $obj->username = &$username;
         $obj->did = &$did;
@@ -115,7 +121,7 @@ class SerwebUser {
         return $obj;
     }
 
-    function &recreate_from_get_param($val){
+    static function &recreate_from_get_param($val){
 
         $val.=":"; //add stop mark to input string
         $parts = array();
@@ -141,7 +147,7 @@ class SerwebUser {
         if ($parts[0]=="") $parts[0] = null;    //if UID is empty, set it to null
         if ($parts[1]=="") $parts[1] = null;    //if DID is empty, set it to null
 
-        $obj = &SerwebUser::instance($parts[0], $parts[2], $parts[1], $parts[3]);
+        $obj = &static::instance($parts[0], $parts[2], $parts[1], $parts[3]);
         return $obj;
     }
     

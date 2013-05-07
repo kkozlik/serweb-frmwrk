@@ -237,8 +237,16 @@ class page_conroler{
     
         //second if userauth param is given, get user_id from it
         if (!empty($_GET[$this->ch_user_param_name()])) {
-            $uid = &SerwebUser::recreate_from_get_param($_GET[$this->ch_user_param_name()]);
+            $serwebUserClass = "SerwebUser";
 
+            // if 'auth' object exists, get name "SerwebUser" class from this object
+            if (isset($_SESSION['auth']) and is_a($_SESSION['auth'], "Auth")) {
+                $serwebUserClass = $_SESSION['auth']::$user_class;
+            }
+            
+            $uid = &call_user_func(array($serwebUserClass, 'recreate_from_get_param'),
+                                   $_GET[$this->ch_user_param_name()]);
+            
             if (is_a($uid, 'SerwebUser')){
                 $this->check_perms_to_user = true;
 

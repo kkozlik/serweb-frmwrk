@@ -9,6 +9,12 @@
  * @package   PHPLib
  */
 class Auth {
+
+    /**
+     *  Name of class holding info about user. 
+     *  It could be overriden in child classes.     
+     */         
+    static $user_class = "SerwebUser";
 	
 	var $lifetime = 15;           ## Max allowed idle time before
 	                              ## reauthentication is necessary.
@@ -94,10 +100,12 @@ class Auth {
 
 	function create_serweb_auth_references(){
 
-		$this->serweb_auth = &SerwebUser::instance_by_refs($this->auth['uid'],
-		                                                   $this->auth['uname'],
-		                                                   $this->auth['did'],
-		                                                   $this->auth['realm']);
+        $this->serweb_auth = &call_user_func_array(array(static::$user_class, 'instance_by_refs'),
+                                        array(&$this->auth['uid'],
+                                              &$this->auth['uname'],
+                                              &$this->auth['did'],
+                                              &$this->auth['realm']));
+
 
 /*		if (! is_object($this->serweb_auth)){
 			$this->serweb_auth = new SerwebUser();	
