@@ -30,11 +30,13 @@ class CData_Layer_get_DB_time {
         global $config;
 
         $this->connect_to_db();
+
+        $fetchmode = defined('MDB2_FETCHMODE_ASSOC') ? MDB2_FETCHMODE_ASSOC : DB_FETCHMODE_ASSOC;
         
         $q="select unix_timestamp(now())";
         $res=$this->db->query($q);
         if ($this->dbIsError($res)) throw new DBException($res);
-        $row=$res->fetchRow(DB_FETCHMODE_ORDERED);
+        $row=$res->fetchRow($fetchmode);
         $res->free();
     
         return $row[0];
