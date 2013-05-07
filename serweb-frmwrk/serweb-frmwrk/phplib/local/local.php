@@ -110,7 +110,7 @@ class phplib_Auth extends Auth {
 	 *	@return	string				UID if credentials are valid, false otherwise
 	 */
 
-	function validate_credentials($username, $did, $password, &$optionals){
+	static function validate_credentials($username, $did, $password, &$optionals){
 		global $lang_str, $data_auth, $config;
 
 		$o_check_pw = isset($optionals['check_pw']) ? (bool)$optionals['check_pw'] : true;
@@ -192,7 +192,7 @@ class phplib_Auth extends Auth {
 	 *	@return	string				domain ID, FALSE on error
 	 */
 	
-	function find_out_did($realm, $opt){
+	static function find_out_did($realm, $opt){
 		global $config;
 
 		if (!$config->multidomain) return $config->default_did;
@@ -233,7 +233,7 @@ class phplib_Auth extends Auth {
 	 *	@return	array				array of permissions or FALSE on error
 	 */
 
-	function find_out_perms($uid, $opt){
+	static function find_out_perms($uid, $opt){
 		global $lang_str, $data_auth, $config;
 
 		$an = $config->attr_names;

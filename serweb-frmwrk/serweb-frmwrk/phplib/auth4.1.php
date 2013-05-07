@@ -366,7 +366,7 @@ class Auth {
 	 *	@return	string				UID if credentials are valid, false otherwise
 	 */
 	
-	function validate_credentials($username, $did, $password, &$opt){
+	static function validate_credentials($username, $did, $password, &$opt){
 		$opt['realm'] = $did;
 		return $username."@".$did;
 	}
@@ -383,7 +383,7 @@ class Auth {
 	 *	@return	string				domain ID, FALSE on error
 	 */
 
-	function find_out_did($realm, $opt){
+	static function find_out_did($realm, $opt){
 		return $realm;
 	}
 	
@@ -399,7 +399,7 @@ class Auth {
 	 *	@return	array				array of permissions or FALSE on error
 	 */
 
-	function find_out_perms($uid, $opt){
+	static function find_out_perms($uid, $opt){
 		return array();
 	}
 	
