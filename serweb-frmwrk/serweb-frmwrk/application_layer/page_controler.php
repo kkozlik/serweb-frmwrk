@@ -123,6 +123,7 @@ class page_conroler{
         $this->reg = Creg::singleton();             // create regular expressions class
 
         $eh = &ErrorHandler::singleton();
+        $this->errors = clone_array($eh->get_errors_array());
         $eh -> set_errors_ref($this->errors);
 
         $this->errors_from_get_param();
