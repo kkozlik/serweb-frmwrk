@@ -119,6 +119,11 @@ require_once ($_SERWEB["corefunctionsdir"] . "page.php");
 require_once ($_SERWEB["corefunctionsdir"] . "load_phplib.php");
 phplib_load("sess");
 require_once ($_SERWEB["corefunctionsdir"] . "load_lang.php");
+
+if (!empty($_SERWEB["hookpreauth"])){
+    call_user_func($_SERWEB["hookpreauth"]);
+}
+
 phplib_load(array("auth", "perm"));
 
 require_once ($_SERWEB["corefunctionsdir"] . "load_apu.php");

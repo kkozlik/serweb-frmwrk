@@ -10,7 +10,7 @@
 
 global $_SERWEB;
 
-$_SERWEB = array();
+if (!isset($_SERWEB))   $_SERWEB = array();
 
 $dir = realpath(dirname(__FILE__)."/..");
 $_SERWEB["serwebdir"] =         $dir."/";
