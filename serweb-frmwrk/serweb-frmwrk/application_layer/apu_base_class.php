@@ -152,7 +152,7 @@ class apu_base_class{
         /* if html form isn't shared validate it, otherwise it do controler */
         if (!$this->controler->shared_html_form){
             if ($err = $this->f->validate()) {          // Is the data valid?
-                ErrorHandler::add_error($res);          // No!
+                ErrorHandler::add_error($err);          // No!
                 return false;
             }
         }
