@@ -10,14 +10,14 @@
 
 global $_SERWEB;
 
-require($_SERWEB["phplibdir"] . "session4.1.php");   /* Required for everything below.      */
-require($_SERWEB["phplibdir"] . "auth4.1.php");      /* Disable this, if you are not using authentication. */
-require($_SERWEB["phplibdir"] . "perm4.1.php");      /* Disable this, if you are not using permission checks. */
+require_once($_SERWEB["phplibdir"] . "session4.1.php");   /* Required for everything below.      */
+require_once($_SERWEB["phplibdir"] . "auth4.1.php");      /* Disable this, if you are not using authentication. */
+require_once($_SERWEB["phplibdir"] . "perm4.1.php");      /* Disable this, if you are not using permission checks. */
 
 
-require($_SERWEB["phplibdir"] . "local/local.php");     /* Required, contains your local configuration. */
-require($_SERWEB["phplibdir"] . "page4.1.php");      /* Required, contains the page management functions. */
-require($_SERWEB["phplibdir"] . "oohforms.php");  /* Required for object oriented HTML forms. */
+require_once($_SERWEB["phplibdir"] . "local/local.php");     /* Required, contains your local configuration. */
+require_once($_SERWEB["phplibdir"] . "page4.1.php");      /* Required, contains the page management functions. */
+require_once($_SERWEB["phplibdir"] . "oohforms.php");  /* Required for object oriented HTML forms. */
 
 function phplib_load($features = null){
 
