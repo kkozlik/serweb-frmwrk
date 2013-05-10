@@ -206,8 +206,14 @@ setcookie('serweb_lang', $_SESSION['lang'], time()+31536000, $config->root_path)
 
 
 /** load strings of selected language */
-global $lang_set, $lang_str;
-require_once($_SERWEB["corelangdir"].$available_languages[$_SESSION['lang']][1].".php");
+global $lang_set, $lang_str, $reference_language;
+
+if (file_exists($_SERWEB["corelangdir"].$available_languages[$_SESSION['lang']][1].".php")){
+    require_once($_SERWEB["corelangdir"].$available_languages[$_SESSION['lang']][1].".php");
+}
+else{
+    require_once($_SERWEB["corelangdir"].$available_languages[$reference_language][1].".php");
+}
 
 /* set value of $lang_set[ldir] by avaiable_languages array */
 $lang_set['ldir'] = $available_languages[$_SESSION['lang']][2];
