@@ -507,18 +507,24 @@ class page_conroler{
      *  unique identifier.
      *  
      *  @param  string  $url
+     *  @param  bool    $unique     Make the URL unique - add some random param
      *  @return string                    
      */         
-    function url($url){
+    function url($url, $unique = true){
         global $sess;
 
         /* collect all get params to one string */
         $get_param = implode('&', $this->global_get_params_to_str_array());
 
         $param_separator = strpos($url, "?") !== false ?  "&" : "?";
-        
-        $url .= $param_separator."kvrk=".uniqID("").
-                ($get_param ? '&'.$get_param : '');
+
+        if ($unique){
+            $url .= $param_separator."kvrk=".uniqID("").
+                    ($get_param ? '&'.$get_param : '');
+        }
+        else{
+            $url .= ($get_param ? $param_separator.$get_param : '');
+        }
         
         if ($sess instanceof Session) return $sess->url($url);
         else return $url;
