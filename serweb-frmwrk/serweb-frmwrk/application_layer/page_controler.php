@@ -718,6 +718,19 @@ class page_conroler{
         exit;
     }
 
+
+    /**
+     *  Redirect browser to new URL and exit the script execution
+     *  
+     *  @param  string  $url            URL for redirect          
+     *  @param  array   $get_param      array of GET parameters send in the URL
+     *  @return none                    this function finish execution of script
+     */         
+    function redirect($url, $get_params = array()){
+        $this->url_for_reload = $url;
+        $this->reload($get_params);
+    }
+
     /**
      *  determine actions of all application units 
      *  and check if some APU needs validate form or send header 'location'
