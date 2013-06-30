@@ -42,6 +42,8 @@ function print_html_head($parameters=array()){
     }elseif ($config->html_doctype=='transitional'){
         ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <?php
+    }elseif ($config->html_doctype){
+        echo "<!DOCTYPE {$config->html_doctype}>\n";
     }
 
     echo "<html>\n<head>\n";
