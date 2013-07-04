@@ -175,10 +175,14 @@ class Session {
     $this->set_tokenname(); 
     $this->put_headers();
 
+    $ok = true;
+    // check whether the session is already started and 
+    // start the session if it is not
+    if (session_id() === ""){
+        @$ok = session_start();
+    }
 
-    @$ok = session_start();
     $this->id = session_id();
-
 	$this->set_cookie();
 
     # set the  mode for this run
@@ -200,9 +204,7 @@ class Session {
    * Sets cookie if it is not set yet
    */
   function set_cookie(){
-	#we don't trust user input; session in url doesn't
-	#mean cookies are disabled
-    if (("cookie" == $this->mode) && (! isset($_COOKIE[$this->name])) ) {
+    if ("cookie" == $this->mode) {
 		if ($this->lifetime > 0) $lifetime = time()+$this->lifetime*60;
 		else $lifetime = 0;
 
