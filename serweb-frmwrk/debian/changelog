@@ -1,3 +1,15 @@
+serweb-frmwrk (1.0.7.git20130712) precise; urgency=low
+
+  * Small fixes
+
+ -- Karel Kozlík <kk@kk-nb>  Fri, 12 Jul 2013 00:38:50 +0200
+
+serweb-frmwrk (1.0.7.git20130704) precise; urgency=low
+
+  * Fixes in session handling
+
+ -- Karel Kozlík <kk@kk-nb>  Thu, 04 Jul 2013 23:29:38 +0200
+
 serweb-frmwrk (1.0.7.git5d876c7-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
