@@ -37,6 +37,11 @@ Filter_Form.prototype.filter_clear = function(){
                 this.form[el.name].value = "";
             }
             break;
+        case "select":
+            if (typeof(this.form[el.name]) != "undefined"){
+                this.form[el.name].selectedIndex = 0;
+            }
+            break;
         case "checkbox":
             if (el.three_state){
                 if (typeof(this.form[el.name+'_en']) != "undefined"){
