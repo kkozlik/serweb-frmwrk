@@ -47,6 +47,41 @@ class CData_Layer{
     var $transaction_rollback = false;
     var $transaction_semaphore = 0;
 
+    static $method_class_map = array();
+
+
+    /**
+     *  Handle call of unknow methods
+     */         
+    function __call($method, $args){
+
+        // check if the method is known and retrieve class containing ir
+        if (!isset(self::$method_class_map[$method])){
+            // raise an error if the method is unknown, just like PHP would
+            trigger_error(sprintf('Call to undefined function: %s::%s().', get_called_class(), $method), E_USER_ERROR);
+        }
+
+        $class = self::$method_class_map[$method];
+
+        // It seems the only way how to execute method from another class and
+        // preserve $this variable still point to this object is to use 
+        // double column operator. But because the number arguments is different
+        // for each function, we have to combine this approach with eval() function. 
+         
+        // Prepare string containing all arguments that has been passed to function
+        $call_args = "";
+        foreach($args as $k => $v){
+            if ($call_args) $call_args .= ', ';
+            $call_args .= '$args['.$k.']';
+        }
+        
+        // Prepare the string for eval()
+        $call_method = "return $class::$method(".$call_args.");";
+        
+        // Call the function
+        return eval($call_method);
+    }
+
     
     /*
      *   Constructor
@@ -205,6 +240,20 @@ class CData_Layer{
                             array_merge($_data_layer_required_methods, 
                                         $class_vars['required_methods']);
                     }
+                }
+
+                // build map of data layer methods, so we can later easily found
+                // class where the methpd is defined
+                foreach($class_methods as $method){
+                    // skip special method: '_get_required_methods'
+                    if ($method == '_get_required_methods') continue;
+                    
+                    // check for duplicities
+                    if (isset(self::$method_class_map[$method])){
+                        throw new Exception("Cannot redefine data layer function 'CData_Layer_$item:$method' already defined in class: ".self::$method_class_map[$method]);
+                    }
+                    
+                    self::$method_class_map[$method] = "CData_Layer_".$item;
                 }
 
             }

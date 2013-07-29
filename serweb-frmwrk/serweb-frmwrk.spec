@@ -8,7 +8,7 @@ Source:       %{name}-%{version}-%{release}.tar.gz
 URL:          http://iptel.org/
 BuildArch:    noarch
 BuildRoot:    /var/tmp/%{name}-%{version}-root
-Requires:     php >= 5.0 php-pecl-runkit
+Requires:     php >= 5.0 
 
 %description
 Framework for making very customizable web applications.
@@ -41,6 +41,9 @@ rm -rf %{buildroot}
 %config /etc/serweb-frmwrk/*
 
 %changelog
+
+* Mon Jul 29 2013 Karel Kozlik <karel@iptel.org>
+- removing dependency on runkit
 
 * Fri Sep 9 2011 Karel Kozlik <karel@iptel.org>
 - fixing problem with creating/removing symlink to config directory during upgrade

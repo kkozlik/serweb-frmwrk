@@ -1379,6 +1379,17 @@ function my_aggregate_methods(&$object, $class_name){
 		return @classkit_aggregate_methods(get_class($object), $class_name);
 	}
 
+    if (defined('PHP_MAJOR_VERSION') and defined('PHP_MINOR_VERSION') and
+        (PHP_MAJOR_VERSION > 5 or (PHP_MAJOR_VERSION == 5 and PHP_MINOR_VERSION >= 3))){
+
+        // If the PHP version is 5.3 and higher we could rely on __call() function
+        // of CData_Layer class.
+        //
+        // So do nothing
+
+        return true;
+    }
+
 	die("Function aggregate_methods() doesn't exists. This is probably because ".
 		"PHP 5 or later is running on this server. Try install Runkit or ".
 		"Classkit extension from PECL repository (http://pecl.php.net). ".
