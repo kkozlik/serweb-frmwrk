@@ -13,6 +13,9 @@ global $serwebLog;
 global $smarty;
 global $_SERWEB;
 
+/** Create default object holding configuration */
+if (!isset($config)) $config = new stdclass();
+
 require_once(dirname(__FILE__) . "/set_dirs.php");
 
 /** require class defintions */
