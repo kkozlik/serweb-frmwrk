@@ -1,3 +1,9 @@
+serweb-frmwrk (1.0.7.git20130729) precise; urgency=low
+
+  * Removing dependency on runkit
+
+ -- Karel Kozlík <kk@kk-nb>  Mon, 29 Jul 2013 21:15:24 +0200
+
 serweb-frmwrk (1.0.7.git20130712) precise; urgency=low
 
   * Small fixes
