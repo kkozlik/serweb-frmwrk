@@ -1,3 +1,5 @@
+* adding possibility to set default timezone in config file
+
 Version 1.0.7
 =============
 * adding few js functions for better manipulation with values of html form elements

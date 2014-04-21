@@ -132,6 +132,8 @@ class page_conroler{
         $this->init_this_uid_and_did();
         $this->set_interapu_vars();
         
+        $this->set_timezone();
+        
     }
     /**
      *  Take error messages from GET param "pctl_set_errors" and put them 
@@ -414,6 +416,13 @@ class page_conroler{
      */
     function set_timezone($uid = null){
         global $config;
+
+        if (is_null($uid) and $config->timezone){
+            date_default_timezone_set($config->timezone);
+            return true;
+        }
+
+
         if (is_null($uid)) $uid = $this->user_id->get_uid();
 
         $an = &$config->attr_names;
@@ -425,7 +434,7 @@ class page_conroler{
             if (false === $tz = Attributes::get_attribute($an['timezone'], $o)) return false;
 
             if (!is_null($tz)){
-                putenv("TZ=".$tz); //set timezone
+                date_default_timezone_set($tz);
                 $this->is_set_timezone = $uid;
             }
         }
