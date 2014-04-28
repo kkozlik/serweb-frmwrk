@@ -126,9 +126,9 @@ class page_conroler{
         $this->errors = clone_array($eh->get_errors_array());
         $eh -> set_errors_ref($this->errors);
 
+        $this->session_init();
         $this->errors_from_get_param();
         $this->messages_from_get_param();
-        $this->session_init();
         $this->init_this_uid_and_did();
         $this->set_interapu_vars();
         
@@ -170,34 +170,37 @@ class page_conroler{
      */
     function messages_from_get_param(){
     
-        if (isset($_GET['pctl_set_msgs'])){
-            if (is_array($_GET['pctl_set_msgs'])){
-                foreach($_GET['pctl_set_msgs'] as $v){
-                    $this->messages[] = $v;
-                }
+        if (isset($_GET['pctl_msg_id'])){
+            $msg_id = $_GET['pctl_msg_id'];
+
+            if (isset($this->session['messages'][$msg_id])){
+                $this->messages = array_merge($this->messages, $this->session['messages'][$msg_id]);
+
+                unset($this->session['messages'][$msg_id]);
+                unset($this->session['messages_time'][$msg_id]);
             }
-            else{
-                $this->messages[] = $_GET['pctl_set_msgs'];
+        }
+        
+        if (isset($this->session['messages_time'])){
+            $time = time() - 300; //delete session messages older then 5 min
+            foreach($this->session['messages_time'] as $msg_id => $msg_time){
+                if ($msg_time < $time){
+                    unset($this->session['messages'][$msg_id]);
+                    unset($this->session['messages_time'][$msg_id]);
+                }
             }
         }
     }
 
     /**
-     *  Return array of GET params containing all error messages from
-     *  $this->errors array
+     *  This function is obsoleted. All messages in $this->message array are transfered
+     *  via session and GET params when $this->reload() function is executed     
+     *  
+     *  @obsoleted since 2014-04-28
      */
     function message_to_get_param($msg){
-        if (is_array($msg)){
-            $get = array();
-            foreach($msg as $k=>$v){
-                $get[] = RawURLEncode('pctl_set_msgs[]['.$k.']').'='.RawURLEncode($v);
-            }
-            $get = implode('&', $get);
-        }
-        else{
-            $get = RawURLEncode('pctl_set_msgs[]').'='.RawURLEncode($msg);
-        }
-        return $get;
+        $this->add_message($msg);
+        return "";
     }
 
     function session_init(){
@@ -707,6 +710,13 @@ class page_conroler{
      */
     function reload($get_param){
         global $sess;
+
+        if ($this->messages){
+            $msg_id = uniqID();
+            $this->session['messages'][$msg_id] = $this->messages;
+            $this->session['messages_time'][$msg_id] = time();
+            $get_param[] = "pctl_msg_id=".RawURLEncode($msg_id);
+        } 
                 
         /* collect all get params to one string */
         $get_param = implode('&', array_merge($this->global_get_params_to_str_array(), $get_param));
