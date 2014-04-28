@@ -1,4 +1,5 @@
 * adding possibility to set default timezone in config file
+* bug fix: CData_Layer::sql_format() allow float values
 
 Version 1.0.7
 =============

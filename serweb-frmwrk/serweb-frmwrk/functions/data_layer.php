@@ -977,7 +977,7 @@ class CData_Layer{
         case "N":   
             if (is_null($val)) return "NULL";
         case "n":   
-            return (int)$val;
+            return is_float($val) ? (float) $val : (int)$val;
 
         case "B":   
             if (is_null($val)) return "NULL";
