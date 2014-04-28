@@ -107,7 +107,9 @@ class page_conroler{
     var $check_perms_to_user = false;
     /** flag if the check to permissions to domain should be performed */
     var $check_perms_to_domain = false;
+    /** obsoleted */
     var $errors=array();
+    /** info messages */
     var $messages=array();
     /** list of interapu vars */
     var $interapu_vars = array();
@@ -127,7 +129,6 @@ class page_conroler{
         $eh -> set_errors_ref($this->errors);
 
         $this->session_init();
-        $this->errors_from_get_param();
         $this->messages_from_get_param();
         $this->init_this_uid_and_did();
         $this->set_interapu_vars();
@@ -135,46 +136,37 @@ class page_conroler{
         $this->set_timezone();
         
     }
-    /**
-     *  Take error messages from GET param "pctl_set_errors" and put them 
-     *  into $this->errors array
-     */
-    function errors_from_get_param(){
-    
-        if (isset($_GET['pctl_set_errors'])){
-            if (is_array($_GET['pctl_set_errors'])){
-                foreach($_GET['pctl_set_errors'] as $v){
-                    $this->errors[] = $v;
-                }
-            }
-            else{
-                $this->errors[] = $_GET['pctl_set_errors'];
-            }
-        }
-    }
 
     /**
-     *  Return array of GET params containing all error messages from
-     *  $this->errors array
+     *  This function is obsoleted. All errors from ErrorHandler are transfered
+     *  via session and GET params when $this->reload() function is executed     
+     *  
+     *  @obsoleted since 2014-04-28
      */
     function errors_to_get_array(){
-        $get = array();
-        foreach ($this->errors as $v) 
-            $get[] = RawURLEncode('pctl_set_errors[]').'='.RawURLEncode($v);
-        return $get;
+        return "";
     }
 
     /**
-     *  Take messages from GET param "pctl_set_msgs" and put them 
-     *  into $this->messages array
+     *  Take info/error messages from session variable specified by GET param
+     *  "pctl_msg_id" and put them into $this->messages array and into error_handler
      */
-    function messages_from_get_param(){
+    private function messages_from_get_param(){
     
         if (isset($_GET['pctl_msg_id'])){
             $msg_id = $_GET['pctl_msg_id'];
 
             if (isset($this->session['messages'][$msg_id])){
-                $this->messages = array_merge($this->messages, $this->session['messages'][$msg_id]);
+                if (!empty($this->session['messages'][$msg_id]['info'])){
+                    $this->messages = array_merge($this->messages, 
+                                                  $this->session['messages'][$msg_id]['info']);
+                }
+
+                if (!empty($this->session['messages'][$msg_id]['err'])){
+                    foreach($this->session['messages'][$msg_id]['err'] as $err){
+                        ErrorHandler::add_error($err);
+                    }
+                }
 
                 unset($this->session['messages'][$msg_id]);
                 unset($this->session['messages_time'][$msg_id]);
@@ -711,9 +703,12 @@ class page_conroler{
     function reload($get_param){
         global $sess;
 
-        if ($this->messages){
+        $errors = ErrorHandler::get_errors_array();
+
+        if ($this->messages or $errors){
             $msg_id = uniqID();
-            $this->session['messages'][$msg_id] = $this->messages;
+            $this->session['messages'][$msg_id]['info'] = $this->messages;
+            $this->session['messages'][$msg_id]['err'] = $errors;
             $this->session['messages_time'][$msg_id] = time();
             $get_param[] = "pctl_msg_id=".RawURLEncode($msg_id);
         } 
@@ -817,7 +812,7 @@ class page_conroler{
      */
     function _create_html_form(){
         foreach($this->apu_objects as $key=>$val){
-            $this->apu_objects[$key]->create_html_form($this->errors);
+            $this->apu_objects[$key]->create_html_form(ErrorHandler::get_errors_array());
         }
 
         if ($this->shared_html_form) {
@@ -846,7 +841,7 @@ class page_conroler{
                 foreach($this->f as $key=>$val){
                     if ($val['validate']){
                         if ($err = $this->f[$key]['form']->validate()) {            // Is the data valid?
-                            $this->errors = array_merge($this->errors, $err); // No!
+                            foreach($err as $e) ErrorHandler::add_error($e);        // No!
                             return false;
                         }
                     }
@@ -856,7 +851,7 @@ class page_conroler{
             /* validate html form by all application units */
             foreach($this->apu_objects as $key=>$val){
                 if (isset($this->apu_objects[$key]->action['validate_form']) and $this->apu_objects[$key]->action['validate_form']){
-                    if (false === $this->apu_objects[$key]->validate_form($this->errors)) {
+                    if (false === $this->apu_objects[$key]->validate_form(ErrorHandler::get_errors_array())) {
                         return false;
                     }
                 }
@@ -920,7 +915,8 @@ class page_conroler{
             /* call the action method */
             $_apu = &$this->apu_objects[$key];
             $_method = "action_".$this->apu_objects[$key]->action['action'];
-            $_retval = call_user_func_array(array(&$_apu, $_method), array(&$this->errors));
+            $err_ref = ErrorHandler::get_errors_array();
+            $_retval = call_user_func_array(array(&$_apu, $_method), array(&$err_ref));
 
             /* check for the error */               
             if (false === $_retval) return false;
@@ -1213,7 +1209,8 @@ class page_conroler{
             
             //page atributes - get user real name
             
-            $page_attributes['errors']=&$this->errors;  
+            $errors = ErrorHandler::get_errors_array();
+            $page_attributes['errors']=&$errors;  
             $page_attributes['message']=&$this->messages;
             
             /* obtain list of required javascripts */

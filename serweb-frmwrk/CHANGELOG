@@ -1,4 +1,7 @@
 * adding possibility to set default timezone in config file
+* automaticaly save info/error messages to session variable when page_cotroler::reload() is executed 
+  and retrieve them when page is reloaded
+* it's not needed to pass errors to function action_log() anymore
 * bug fix: CData_Layer::sql_format() allow float values
 
 Version 1.0.7

@@ -323,7 +323,10 @@ class ErrorHandler{
      */
      
     function &get_errors_array(){
-        return $this->errors;
+        if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
+        else $in = &ErrorHandler::singleton();
+
+        return $in->errors;
     }   
 }
 
