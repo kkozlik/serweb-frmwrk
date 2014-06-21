@@ -79,7 +79,7 @@ function print_html_head($parameters=array()){
 
     if (isset($parameters['required_javascript']) and is_array($parameters['required_javascript'])){
         foreach($parameters['required_javascript'] as $v) { 
-            echo '    <script type="text/javascript" language="JavaScript" src="'.htmlspecialchars($config->js_src_path.$v).'"></script>'."\n";
+            echo '    <script type="text/javascript" src="'.htmlspecialchars($config->js_src_path.$v).'"></script>'."\n";
         }
     } 
 

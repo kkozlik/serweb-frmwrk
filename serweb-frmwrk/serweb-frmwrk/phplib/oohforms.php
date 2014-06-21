@@ -316,7 +316,7 @@ class form {
 
     if ($this->jvs_name) {
       $jvs_name = $this->jvs_name;
-      $str .= "<script type='text/javascript' language='javascript'>\n<!--\n";
+      $str .= "<script type='text/javascript' >\n<!--\n";
       
       foreach($this->elements as $k=>$v){
             $el = $v["ob"];

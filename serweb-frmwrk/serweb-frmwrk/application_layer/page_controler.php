@@ -1254,7 +1254,7 @@ class page_conroler{
             
             
             if (count($this->js_after_document)){
-                echo "\n<script type=\"text/javascript\" language=\"JavaScript\">\n<!--\n";
+                echo "\n<script type=\"text/javascript\">\n<!--\n";
                 foreach($this->js_after_document as $v){
                     echo $v;
                 }
