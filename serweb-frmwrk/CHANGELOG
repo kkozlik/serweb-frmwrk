@@ -1,3 +1,5 @@
+Version 1.0.8
+=============
 * adding possibility to set default timezone in config file
 * automaticaly save info/error messages to session variable when page_cotroler::reload() is executed 
   and retrieve them when page is reloaded

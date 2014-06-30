@@ -1,3 +1,14 @@
+serweb-frmwrk (1.0.8) stable; urgency=low
+
+  * adding possibility to set default timezone in config file
+  * automaticaly save info/error messages to session variable when
+    page_cotroler::reload() is executed and retrieve them when page is reloaded
+  * it's not needed to pass errors to function action_log() anymore
+  * bug fix: CData_Layer::sql_format() allow float values
+  * apu_filter now exports filter values to smarty template
+
+ -- Karel Kozlík <kk@kk-nb>  Mon, 30 Jun 2014 21:06:50 +0200
+
 serweb-frmwrk (1.0.7.git20130729) precise; urgency=low
 
   * Removing dependency on runkit
