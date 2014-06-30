@@ -3,6 +3,7 @@
   and retrieve them when page is reloaded
 * it's not needed to pass errors to function action_log() anymore
 * bug fix: CData_Layer::sql_format() allow float values
+* apu_filter now exports filter values to smarty template
 
 Version 1.0.7
 =============

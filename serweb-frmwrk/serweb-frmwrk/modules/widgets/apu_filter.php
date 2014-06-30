@@ -87,6 +87,7 @@ class apu_filter extends apu_base_class{
 
         $this->opt['smarty_form_label'] =   'filter_label';
         $this->opt['smarty_filter_applied'] =   'filter_applied';
+        $this->opt['smarty_filter_values'] =   'filter_values';
 
 
         $this->opt['form_submit']=array('type' => 'button',
@@ -302,6 +303,7 @@ class apu_filter extends apu_base_class{
         $smarty->assign($this->opt['smarty_form_label'], $this->labels);
 
         $smarty->assign($this->opt['smarty_filter_applied'], $this->filter_applied);
+        $smarty->assign($this->opt['smarty_filter_values'], $this->session['f_values']);
     }
     
     /**
