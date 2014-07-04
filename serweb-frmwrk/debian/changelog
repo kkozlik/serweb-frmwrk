@@ -1,3 +1,9 @@
+serweb-frmwrk (1.0.8-2) stable; urgency=low
+
+  * changing directory for smarty compiled templates
+
+ -- Karel Kozlík <kk@kk-nb>  Fri, 04 Jul 2014 23:29:08 +0200
+
 serweb-frmwrk (1.0.8) stable; urgency=low
 
   * adding possibility to set default timezone in config file
