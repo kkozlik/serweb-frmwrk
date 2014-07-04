@@ -26,7 +26,7 @@ $config->admin_pages_path = null;
 $config->domains_path =     null;
 
 /* Directory where smarty stores compiled templates */
-$config->smarty_compile_dir = "/tmp/smarty/";
+$config->smarty_compile_dir = "/var/run/serweb-frmwrk/smarty/";
 
 /* names of HTML documents surrounding
    serweb pages -- these may typically include banner, trailers,

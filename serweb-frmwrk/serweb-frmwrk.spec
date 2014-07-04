@@ -34,6 +34,17 @@ ln -sf /etc/serweb-frmwrk %{buildroot}/usr/share/serweb-frmwrk/config
 rm -rf %{buildroot}
 
 
+%post
+
+mkdir -p /var/run/serweb-frmwrk
+chown www-data:www-data /var/run/serweb-frmwrk
+chmod 755 /var/run/serweb-frmwrk
+        
+%postun
+
+rm -rf /var/run/serweb-frmwrk        
+
+        
 %files
 %defattr(-,root,root)
 /usr/share/serweb-frmwrk/*
