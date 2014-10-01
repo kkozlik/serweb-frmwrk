@@ -36,13 +36,13 @@ rm -rf %{buildroot}
 
 %post
 
-mkdir -p /var/run/serweb-frmwrk
-chown www-data:www-data /var/run/serweb-frmwrk
-chmod 755 /var/run/serweb-frmwrk
+mkdir -p /var/lib/serweb-frmwrk
+chown www-data:www-data /var/lib/serweb-frmwrk
+chmod 755 /var/lib/serweb-frmwrk
         
 %postun
 
-rm -rf /var/run/serweb-frmwrk        
+rm -rf /var/lib/serweb-frmwrk        
 
         
 %files
