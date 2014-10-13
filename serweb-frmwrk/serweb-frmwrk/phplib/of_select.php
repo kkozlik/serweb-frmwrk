@@ -55,49 +55,106 @@ class of_select extends of_element {
         }
         $str .= ">";
 
-        reset($this->options);
-        foreach ($this->options as $o){
-
-            if (is_array($o)) {
-                // cast value of option to string for purpose of comparing
-                $o["value"] = (string)$o["value"];
-    
-                $str .= "<option";
-                $str .= " value=\"" .  htmlspecialchars($o["value"], ENT_QUOTES) . "\"";
-                if (!empty($o['disabled'])){
-                    $str .= " disabled";
-                }
-                if (!empty($o['extrahtml'])) $str .= " ".$o['extrahtml'];
-    
-                if (!$this->multiple && ((string)$this->value==$o["value"]))
-                    $str .= " selected";
-                elseif ($this->multiple && is_array($this->value)) {
-                    if (in_array($o["value"], $this->value)){
-                        $str .= " selected"; 
-                    }
-                }
-    
-                $str .= ">" . htmlspecialchars($o["label"], ENT_QUOTES) . "</option>\n";
+        if (!empty($this->optgroup)){
+            foreach ($this->options as $optgroup){
+                $str .= $this->get_optgroup($optgroup);
             }
-            else {
-                // cast value of option to string for purpose of comparing
-                $o = (string)$o;
-    
-                $str .= "<option";
-                if (!$this->multiple && ((string)$this->value==$o))
-                    $str .= " selected";
-                elseif ($this->multiple && is_array($this->value)) {
-                    if (in_array($o, $this->value)){
-                        $str .= " selected"; 
-                    }
-                }
-    
-                $str .= ">" . htmlspecialchars($o, ENT_QUOTES) . "</option>\n";
+        }
+        else{
+            foreach ($this->options as $o){
+                $str .= $this->get_option($o);
             }
         }
         $str .= "</select>";
         
         $count = 1;
+        return $str;
+    }
+
+    function get_optgroup($optgroup){
+        $str = "<optgroup ";
+
+        $str .= " label=\"" .  htmlspecialchars($optgroup["label"], ENT_QUOTES) . "\"";
+        if (!empty($optgroup['disabled'])){
+            $str .= " disabled";
+        }
+
+        if (!empty($optgroup['title'])) {
+            $str .= " title=\"".htmlspecialchars($optgroup['title'], ENT_QUOTES)."\"";
+        }
+
+        if (!empty($optgroup['class'])) {
+            $str .= " class=\"".implode(" ", (array)$optgroup['class'])."\"";
+        }
+
+        if (!empty($optgroup['id'])) {
+            $str .= " id=\"".htmlspecialchars($optgroup['id'], ENT_QUOTES)."\"";
+        }
+
+        if (!empty($optgroup['extrahtml'])) $str .= " ".$optgroup['extrahtml'];
+
+        $str .= ">\n";
+        foreach ($optgroup['options'] as $o){
+            $str .= $this->get_option($o);
+        }
+        $str .= "</optgroup>\n";
+        return $str;
+    }
+    
+    function get_option($o){
+        $str = "";
+    
+        if (is_array($o)) {
+            // cast value of option to string for purpose of comparing
+            $o["value"] = (string)$o["value"];
+
+            $str .= "<option";
+            $str .= " value=\"" .  htmlspecialchars($o["value"], ENT_QUOTES) . "\"";
+            if (!empty($o['disabled'])){
+                $str .= " disabled";
+            }
+
+            if (!empty($o['class'])) {
+                $str .= " class=\"".implode(" ", (array)$o['class'])."\"";
+            }
+    
+            if (!empty($o['id'])) {
+                $str .= " id=\"".htmlspecialchars($o['id'], ENT_QUOTES)."\"";
+            }
+
+            if (!empty($o['title'])) {
+                $str .= " title=\"".htmlspecialchars($o['title'], ENT_QUOTES)."\"";
+            }
+    
+            if (!empty($o['extrahtml'])) $str .= " ".$o['extrahtml'];
+
+            if (!$this->multiple && ((string)$this->value==$o["value"]))
+                $str .= " selected";
+            elseif ($this->multiple && is_array($this->value)) {
+                if (in_array($o["value"], $this->value)){
+                    $str .= " selected"; 
+                }
+            }
+
+            $str .= ">" . htmlspecialchars($o["label"], ENT_QUOTES) . "</option>\n";
+        }
+        else {
+            // cast value of option to string for purpose of comparing
+            $o = (string)$o;
+
+            $str .= "<option";
+            $str .= " value=\"" .  htmlspecialchars($o, ENT_QUOTES) . "\"";
+            if (!$this->multiple && ((string)$this->value==$o))
+                $str .= " selected";
+            elseif ($this->multiple && is_array($this->value)) {
+                if (in_array($o, $this->value)){
+                    $str .= " selected"; 
+                }
+            }
+
+            $str .= ">" . htmlspecialchars($o, ENT_QUOTES) . "</option>\n";
+        }
+        
         return $str;
     }
 
