@@ -1,3 +1,6 @@
+* Adding support for option groups to select HTML element
+* Adding possibility to log to syslog
+
 Version 1.0.8
 =============
 * adding possibility to set default timezone in config file

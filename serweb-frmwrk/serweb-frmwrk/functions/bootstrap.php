@@ -65,7 +65,22 @@ if ($config->use_rpc){
 /** create log instance */
 if ($config->enable_logging){
     require_once 'Log.php';
-    eval('$serwebLog  = &Log::singleton("file", $config->log_file, "serweb", array(), '.$config->log_level.');');
+
+    if (substr($config->log_file, 0 , 6) == 'syslog'){
+        // log to syslog
+        $facility = "LOG_LOCAL0";
+        if (strlen($config->log_file) > 7){ 
+            // if the $config->log_file contain also facility, read it
+            $facility = substr($config->log_file, 7);
+        }
+
+        eval('$serwebLog  = &Log::singleton("syslog", '.$facility.', "serweb", array(), '.$config->log_level.');');
+    }
+    else{
+        // log to file
+        eval('$serwebLog  = &Log::singleton("file", $config->log_file, "serweb", array(), '.$config->log_level.');');
+    }
+
 }
 else{
     $serwebLog  = NULL;
