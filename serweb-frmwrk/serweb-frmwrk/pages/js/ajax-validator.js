@@ -69,3 +69,30 @@ AJAX_validator.prototype.validate_mass_form_handler = function(e){
         }
     }
 }
+
+
+/**
+ *  This is the validation handler for a single action.
+ *  Before the action is executed this function make AJAX request to specified URL. 
+ *  In dependency on server response it could display confirmation message.
+ */ 
+AJAX_validator.prototype.validate_single_action = function(url){
+
+    // send the ajax request
+    var http_request = ajax_sync_request(url);
+
+    // if request has not been succesful 
+    if (!http_request || http_request.status != 200) return false;
+
+    var response = eval('(' + http_request.responseText + ')');
+
+    // if the response contain 'confirm_text' property, display the text in 
+    // confirm dialog. If user do not confirm it, cancel the form submission.
+    if (response.confirm_text){
+        if (!confirm(response.confirm_text)){
+            return false;
+        }
+    }
+
+    return true;
+}
