@@ -412,14 +412,22 @@ class page_conroler{
     function set_timezone($uid = null){
         global $config;
 
-        if (is_null($uid) and $config->timezone){
-            date_default_timezone_set($config->timezone);
-            return true;
+        // if $uid is not provided and a user is logged, set the $uid by the user
+        if (is_null($uid) and $this->user_id) $uid = $this->user_id->get_uid();
+
+        if (is_null($uid)){ 
+            if ($config->timezone){
+                // if we still do not have $uid and default timezone is set in the config use it. 
+                date_default_timezone_set($config->timezone);
+                return true;
+            }
+            else{
+                // We do not have $uid and no timezone is not set in config file. 
+                return false;
+            }
         }
 
-
-        if (is_null($uid)) $uid = $this->user_id->get_uid();
-
+        // get the timezone from user attributes
         $an = &$config->attr_names;
 
         /* if timezone is already set for this user, do not set it again */
