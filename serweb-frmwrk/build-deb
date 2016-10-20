@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# script for building deb package of serweb-frmwrk
+# This script is for building deb package of serweb-frmwrk.
+#
+# Before running it update the debian/changelog file with running commands:
+#  dch -i               # add the changelog entries in this step
+#  dch -r -D stable     # change distribution from UNRELEASED to stable
 
 # stop on any error
 set -e

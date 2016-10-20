@@ -1,3 +1,6 @@
+Version 1.0.9
+=============
+* Adding validate_single_action() to AJAX_validator
 * Adding support for option groups to select HTML element
 * Adding possibility to log to syslog
 

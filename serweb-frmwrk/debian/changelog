@@ -1,3 +1,11 @@
+serweb-frmwrk (1.0.9) stable; urgency=medium
+
+  * Adding validate_single_action() to AJAX_validator
+  * Adding support for option groups to select HTML element
+  * Adding possibility to log to syslog
+
+ -- Karel Kozlik <kk@kk-nb>  Thu, 20 Oct 2016 11:47:49 +0200
+
 serweb-frmwrk (1.0.8-2) stable; urgency=low
 
   * changing directory for smarty compiled templates
