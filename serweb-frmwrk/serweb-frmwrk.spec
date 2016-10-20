@@ -37,7 +37,7 @@ rm -rf %{buildroot}
 %post
 
 mkdir -p /var/lib/serweb-frmwrk
-chown www-data:www-data /var/lib/serweb-frmwrk
+chown apache:apache /var/lib/serweb-frmwrk
 chmod 755 /var/lib/serweb-frmwrk
         
 %postun
