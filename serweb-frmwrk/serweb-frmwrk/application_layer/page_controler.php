@@ -433,12 +433,13 @@ class page_conroler{
         /* if timezone is already set for this user, do not set it again */
         if (is_null($this->is_set_timezone) or $this->is_set_timezone != $uid){
 
-            $o = array('uid' => $uid);
-            if (false === $tz = Attributes::get_attribute($an['timezone'], $o)) return false;
-
-            if (!is_null($tz)){
-                date_default_timezone_set($tz);
-                $this->is_set_timezone = $uid;
+            if ($config->get_user_timezone_fn){
+                $tz = call_user_func($config->get_user_timezone_fn, $uid);
+            
+                if ($tz){
+                    date_default_timezone_set($tz);
+                    $this->is_set_timezone = $uid;
+                }
             }
         }
         

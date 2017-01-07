@@ -38,6 +38,13 @@ $config->do_not_set_lang_by_domain=true;
  */ 
 $config->timezone = null;
 
+
+/* Name of callback function that return timezone set for given user.
+ * The only parameter of the function is user ID
+ */
+$config->get_user_timezone_fn = null;
+
+
 /* ------------------------------------------------------------*/
 /* serweb appearance                                           */
 /* ------------------------------------------------------------*/

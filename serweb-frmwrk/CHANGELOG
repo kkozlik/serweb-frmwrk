@@ -1,3 +1,6 @@
+
+* Fixing set timezone per user by page controler 
+
 Version 1.0.9
 =============
 * Adding validate_single_action() to AJAX_validator
