@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  *	Extension for phplib object oriented html form
  * 

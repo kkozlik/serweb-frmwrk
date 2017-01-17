@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * $Id: config_lang.php,v 1.2 2005/07/21 16:23:03 kozlik Exp $
  */

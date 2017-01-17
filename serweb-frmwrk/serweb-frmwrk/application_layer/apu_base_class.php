@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * The main parent of all application units
  * 

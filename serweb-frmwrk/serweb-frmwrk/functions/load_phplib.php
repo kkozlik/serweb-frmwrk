@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  *	Load all files needed by phplib 
  * 

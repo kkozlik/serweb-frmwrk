@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * $Id: set_domain.php,v 1.2 2004/09/22 09:58:30 kozlik Exp $
  */ 

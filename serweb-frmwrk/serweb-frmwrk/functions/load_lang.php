@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Functions for corect pick language file and load it
  * 
