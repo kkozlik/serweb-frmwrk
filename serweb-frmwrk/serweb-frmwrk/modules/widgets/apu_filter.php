@@ -166,6 +166,9 @@ class apu_filter extends apu_base_class{
                 if (isset($_POST[$v['name']])){
                     $this->session['f_values'][$v['name']] = $_POST[$v['name']];
                 }
+                if (!empty($v['multiple']) and !isset($_POST[$v['name']])){
+                    $this->session['f_values'][$v['name']] = array();
+                }
             }
         }
 
@@ -349,12 +352,16 @@ class apu_filter extends apu_base_class{
                 !empty($v['3state']) and
                 empty($this->session['f_spec'][$v['name']]['enabled'])) continue;
 
-            /* do not include empty values to filter*/
-            if ($fv[$v['name']] === "") continue;
+            if (!empty($v['multiple'])){
+                if (!count($fv[$v['name']])) continue;
+                $op = "in";
+            }
+            else{
+                /* do not include empty values to filter*/
+                if ($fv[$v['name']] === "") continue;
+                $op = "like";
+            }
 
-            $op = "like";
-            if (!empty($v['multiple'])) $op = "in";
-        
             $f_ops[$v['name']] = new Filter($v['name'], $fv[$v['name']], $op, $this->opt['partial_match']);  
         }
 
