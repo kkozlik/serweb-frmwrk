@@ -39,7 +39,16 @@ Filter_Form.prototype.filter_clear = function(){
             break;
         case "select":
             if (typeof(this.form[el.name]) != "undefined"){
-                this.form[el.name].selectedIndex = 0;
+
+                if (this.form[el.name].type == "select-multiple"){
+                    var opts = this.form[el.name].options;
+                    for (var j=0; j < opts.length; j++){
+                        opts[j].selected = false;
+                    }
+                }
+                else{
+                    this.form[el.name].selectedIndex = 0;
+                }
             }
             break;
         case "checkbox":
