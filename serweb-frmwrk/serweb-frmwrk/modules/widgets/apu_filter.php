@@ -351,8 +351,11 @@ class apu_filter extends apu_base_class{
 
             /* do not include empty values to filter*/
             if ($fv[$v['name']] === "") continue;
+
+            $op = "like";
+            if (!empty($v['multiple'])) $op = "in";
         
-            $f_ops[$v['name']] = new Filter($v['name'], $fv[$v['name']], "like", $this->opt['partial_match']);  
+            $f_ops[$v['name']] = new Filter($v['name'], $fv[$v['name']], $op, $this->opt['partial_match']);  
         }
 
 
