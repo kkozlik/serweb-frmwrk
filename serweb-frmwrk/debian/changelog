@@ -1,3 +1,11 @@
+serweb-frmwrk (1.0.10) stable; urgency=medium
+
+  * Get rid of short open tags
+  * Fixing set timezone per user by page controler 
+  * filter widget allow multiple selects
+
+ -- Karel Kozlik <kk@kk-nb>  Fri, 07 Jul 2017 21:13:39 +0200
+
 serweb-frmwrk (1.0.9) stable; urgency=medium
 
   * Adding validate_single_action() to AJAX_validator

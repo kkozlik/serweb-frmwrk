@@ -1,3 +1,5 @@
+Version 1.0.10
+==============
 * Get rid of short open tags
 * Fixing set timezone per user by page controler 
 * filter widget allow multiple selects
