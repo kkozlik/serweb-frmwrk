@@ -393,12 +393,12 @@ function enable_link(en, parentEl){
  *  This function is same as HTMLSpecialChars function from PHP
  */ 
 function HTMLSpecialChars(str){
-    str = str.replace("&", "&amp;", "g");
-    str = str.replace("<", "&lt;", "g");
-    str = str.replace(">", "&gt;", "g");
-    str = str.replace("\"", "&quot;", "g");
-    str = str.replace("'", "&#039;", "g");
-    return str;
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;"); 
 }
 
 function HTMLSpecialCharsDecode(string, quote_style) {
