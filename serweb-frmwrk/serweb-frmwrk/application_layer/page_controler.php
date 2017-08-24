@@ -117,8 +117,10 @@ class page_conroler{
     var $session;
     /** post init function */
     var $post_init = null;
-    
-    
+
+    /** listeners of events and their priorities */    
+    private $listeners = array();
+
     /* constructor */
     function page_conroler(){
 
@@ -134,6 +136,64 @@ class page_conroler{
         $this->set_interapu_vars();
         
         $this->set_timezone();
+
+
+    /**
+     * Attach an event listener.
+     * As of now following events are supported:
+     *  
+     *  - pre_init                  - before init() methods of APUs are executed
+     *  - post_init                 - after init() methods of APUs are executed
+     *  - post_determine_actions
+     *  - post_create_html_form
+     *  - post_validate
+     *  - pre_execute               - before actions are executed (only if validation succeeded)
+     *  - post_execute              - after actions are executed (only if validation succeeded)
+     *  - pre_invalid               - before form_invalid methods of APU are executed (only if validation failed)
+     *  - post_invalid              - after form_invalid methods of APU are executed (only if validation failed)
+     *  - pre_html_output
+     *  - post_html_output
+     * 
+     * The callback function shall accept one parameter of the page_conroller_event object
+     *
+     * @param string   $event_name
+     * @param callback $callback
+     * @param integer  $priority
+     * @return void
+     */
+    public function attach_listener($event_name, $callback, $priority=0)
+    {
+        $this->listeners[$event_name][] = array("priority" => $priority,
+                                                "callback" => $callback);
+    }
+
+    /**
+     * Trigger event of given name. 
+     * This function execute all listeners of given event in their priority order.
+     *
+     * @param string $event_name
+     * @return void
+     */
+    private function trigger_event($event_name)
+    {
+        if (empty($this->listeners[$event_name])) return;
+
+        $listeners = $this->listeners[$event_name];
+
+        usort($listeners, function($a, $b){
+            if ($a['priority'] == $b['priority']) return 0;
+            return ($a['priority'] < $b['priority']) ? -1 : 1;
+        });
+
+        $event = new page_conroller_event($event_name);
+        $event->controller = $this;
+
+        foreach($listeners as $listener){
+            $listener["callback"]($event);
+            if ($event->stop_propagation) break;
+        }
+    }
+
         
     }
 
@@ -912,6 +972,8 @@ class page_conroler{
      *  @access private
      */
     function _execute_actions(){
+
+        $this->trigger_event("pre_execute");
     
         $send_get_param = array();
         foreach($this->apu_objects as $key=>$val){
@@ -933,7 +995,11 @@ class page_conroler{
             /* join GET parameters that will be send */
             if (is_array($_retval)) $send_get_param = array_merge($send_get_param, $_retval);
         }
-        
+
+
+        $this->trigger_event("post_execute");
+
+
         /* if header location should be send */
         if ($this->send_header_location){
             /* send header and break the script execution */
@@ -1165,13 +1231,16 @@ class page_conroler{
                 $this->apu_objects[$key]->domain_id=$this->domain_id;
                 $this->apu_objects[$key]->controler=&$this;
             }
-        
+
+            $this->trigger_event("pre_init");
+
             /* run all init methods */
             foreach($this->apu_objects as $key=>$val){
                 $this->apu_objects[$key]->init();
             }
         
             if (!empty($this->post_init)) call_user_func_array($this->post_init, array(&$this));
+            $this->trigger_event("post_init");
         
             /* determine actions of all application units 
                and check if some APU needs validate form or send header 'location'
@@ -1180,20 +1249,25 @@ class page_conroler{
         
             /* call post_determine_action methods for each APU */
             $this->_post_determine_actions();
+            $this->trigger_event("post_determine_actions");
         
             /* create html form by all application units */
             $this->_create_html_form();
+            $this->trigger_event("post_create_html_form");
             
             /* validate html form */
             $form_valid = $this->_validate_html_form();
+            $this->trigger_event("post_validate");
             
             /* if form(s) valid, execute actions of all application units */
             if ($form_valid)
                 $this->_execute_actions();
             /* otherwise load defaults to the form(s) */
             else {
+                $this->trigger_event("pre_invalid");
                 $this->_form_invalid();
                 $this->_form_load_defaults();
+                $this->trigger_event("post_invalid");
             }
         
             /** get messages **/
@@ -1216,6 +1290,9 @@ class page_conroler{
             $cfg->domains_path =        $config->domains_path;
             $smarty->assign("cfg", $cfg);        
             
+
+            $this->trigger_event("pre_html_output");
+
             //page atributes - get user real name
             
             $errors = ErrorHandler::get_errors_array();
@@ -1271,6 +1348,9 @@ class page_conroler{
             }
             
             echo "</html>\n";
+
+            $this->trigger_event("post_html_output");
+
             page_close();
         }
         catch(PearErrorException $e){
@@ -1305,4 +1385,14 @@ class page_conroler{
         }
     }
 }
-?>
+
+class page_conroller_event{
+    public $name;
+    public $controller;
+    public $stop_propagation;
+
+    public function __construct($name){
+        $this->name = $name;
+        $this->stop_propagation = false;
+    }
+}
