@@ -1,3 +1,4 @@
+* Support for ievent listeners and event triggering in the page controller
 * Fixing HTMLSpecialChars JS function
 
 Version 1.0.10
