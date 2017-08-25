@@ -55,7 +55,7 @@ class CData_Layer{
      */         
     function __call($method, $args){
 
-        // check if the method is known and retrieve class containing ir
+        // check if the method is known and retrieve class containing it
         if (!isset(self::$method_class_map[$method])){
             // raise an error if the method is unknown, just like PHP would
             trigger_error(sprintf('Call to undefined function: %s::%s().', get_called_class(), $method), E_USER_ERROR);
@@ -243,7 +243,7 @@ class CData_Layer{
                 }
 
                 // build map of data layer methods, so we can later easily found
-                // class where the methpd is defined
+                // class where the method is defined
                 foreach($class_methods as $method){
                     // skip special method: '_get_required_methods'
                     if ($method == '_get_required_methods') continue;
