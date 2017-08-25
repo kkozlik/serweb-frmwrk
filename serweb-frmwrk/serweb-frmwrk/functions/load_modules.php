@@ -73,6 +73,7 @@
 	function include_module($mod){
 		global $_SERWEB, $config;
 
+		if (!empty($config->modules[$mod])) return;
 		$config->modules[$mod] = true;
 
 		if (file_exists($_SERWEB["modulesdir"] . $mod."/include.php")){ 
@@ -81,7 +82,7 @@
 		elseif (file_exists($_SERWEB["coremodulesdir"] . $mod."/include.php")){ 
 			require_once ($_SERWEB["coremodulesdir"] . $mod."/include.php");
 		}
-	
+		
         /* if other modules has been already initiated, init module imediately */	
 		if ($GLOBALS['__modules_initiated__']) init_module($mod);
 	}
