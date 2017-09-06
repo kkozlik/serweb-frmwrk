@@ -11,6 +11,19 @@
     /** Flag indicating whether init_modules() function has been already executed */
     $GLOBALS['__modules_initiated__'] = false;
 
+	class Serweb_Modules{
+		private static $modules_included = array();
+
+		public static function is_module_included($module){
+			return !empty(self::$modules_included[$module]);
+		}
+
+		public static function set_module_included($module){
+			self::$modules_included[$module] = true;
+		}
+	}
+
+
 	/**
 	 * Include file "include.php" from each loaded module
 	 */
@@ -18,14 +31,16 @@
 		global $_SERWEB, $config;
 		
 		$loaded_modules = getLoadedModules();
-	
 		foreach($loaded_modules as $module){
+			if (Serweb_Modules::is_module_included($module)) continue;
+
 			if (file_exists($_SERWEB["modulesdir"] . $module."/include.php")){ 
 				require_once ($_SERWEB["modulesdir"] . $module."/include.php");
 			}
 			elseif (file_exists($_SERWEB["coremodulesdir"] . $module."/include.php")){ 
 				require_once ($_SERWEB["coremodulesdir"] . $module."/include.php");
 			}
+			Serweb_Modules::set_module_included($module);
 		}
 		
 		unset($loaded_modules);
@@ -73,7 +88,8 @@
 	function include_module($mod){
 		global $_SERWEB, $config;
 
-		if (!empty($config->modules[$mod])) return;
+		if (Serweb_Modules::is_module_included($mod)) return;
+
 		$config->modules[$mod] = true;
 
 		if (file_exists($_SERWEB["modulesdir"] . $mod."/include.php")){ 
@@ -82,6 +98,7 @@
 		elseif (file_exists($_SERWEB["coremodulesdir"] . $mod."/include.php")){ 
 			require_once ($_SERWEB["coremodulesdir"] . $mod."/include.php");
 		}
+		Serweb_Modules::set_module_included($mod);
 		
         /* if other modules has been already initiated, init module imediately */	
 		if ($GLOBALS['__modules_initiated__']) init_module($mod);
