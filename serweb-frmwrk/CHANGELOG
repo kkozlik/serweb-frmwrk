@@ -1,4 +1,5 @@
-* Support for ievent listeners and event triggering in the page controller
+* Adding ability to write logs to the console
+* Support for event listeners and event triggering in the page controller
 * Fixing HTMLSpecialChars JS function
 
 Version 1.0.10
