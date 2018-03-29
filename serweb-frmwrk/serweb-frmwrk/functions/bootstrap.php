@@ -66,20 +66,54 @@ if ($config->use_rpc){
 if ($config->enable_logging){
     require_once 'Log.php';
 
-    if (substr($config->log_file, 0 , 6) == 'syslog'){
-        // log to syslog
-        $facility = "LOG_LOCAL0";
-        if (strlen($config->log_file) > 7){ 
-            // if the $config->log_file contain also facility, read it
-            $facility = substr($config->log_file, 7);
+    function enable_logging(){
+        global $config;
+
+        $handler = "file";
+        $name = $config->log_file;
+        $ident = "serweb";
+        $conf = array();
+        $level = null;
+
+        if (is_int($config->log_level)) $level = $config->log_level;
+        elseif (is_string($config->log_level)){
+            $level = constant($config->log_level); // convert the constant name to its value
+        }
+        else{
+            die("Invalid log level specified in config:". $config->log_level);
         }
 
-        eval('$serwebLog  = &Log::singleton("syslog", '.$facility.', "serweb", array(), '.$config->log_level.');');
+        if (substr($config->log_file, 0 , 6) == 'syslog'){
+            $handler = "syslog";
+            $name = LOG_LOCAL0; // facility
+            if (strlen($config->log_file) > 7){ 
+                // if the $config->log_file contain also facility, read it
+                $name = substr($config->log_file, 7);
+                $name = constant($name); // convert the constant name to its value
+            }
+        }
+        elseif (substr($config->log_file, 0 , 7) == 'console'){
+            // log to console
+            $handler = "console";
+            $name = "";
+            if (strlen($config->log_file) > 8){ 
+                // if the $config->log_file contain also stream, read it
+                $conf = array('stream' => constant(substr($config->log_file, 8)));
+            }
+        }
+        elseif (substr($config->log_file, 0 , 9) == 'error_log'){
+            $handler = "error_log";
+            $name = PEAR_LOG_TYPE_SYSTEM;
+            if (strlen($config->log_file) > 10){ 
+                // if the $config->log_file contain also log type, read it
+                $name = substr($config->log_file, 10);
+                $name = constant($name); // convert the constant name to its value
+            }
+        }
+
+        $GLOBALS['serwebLog'] = &Log::singleton($handler, $name, $ident, $conf, $level);
     }
-    else{
-        // log to file
-        eval('$serwebLog  = &Log::singleton("file", $config->log_file, "serweb", array(), '.$config->log_level.');');
-    }
+    enable_logging();
 
 }
 else{

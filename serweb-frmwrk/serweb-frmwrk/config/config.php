@@ -125,11 +125,17 @@ $config->custom_act_log_function = null;
 $config->enable_logging = false;
 
 /* Name of file where the log messages will be written.
+
    For logging to syslog, set the $config->log_file to "syslog". It is also 
    possible to set the facility. In this case set $config->log_file to 
    "syslog:<facility>" E.g.: "syslog:LOG_LOCAL7". The facility is set 
    to LOG_LOCAL0 by default. 
    For other possible values check PHP manual: http://php.net/openlog. 
+
+   For logging to console, set the $config->log_file to "console". It is also 
+   possible to set the output stream. In this case set $config->log_file to 
+   "console:<stream>" E.g.: "console:STDERR". The stream is set 
+   to STDOUT by default. 
 */
 $config->log_file = "/var/log/serweb";
 
