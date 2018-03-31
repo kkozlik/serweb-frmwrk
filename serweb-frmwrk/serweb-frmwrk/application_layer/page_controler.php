@@ -134,9 +134,10 @@ class page_conroler{
         $this->messages_from_get_param();
         $this->init_this_uid_and_did();
         $this->set_interapu_vars();
-        
+
         $this->set_timezone();
 
+    }
 
     /**
      * Attach an event listener.
@@ -194,8 +195,6 @@ class page_conroler{
         }
     }
 
-        
-    }
 
     /**
      *  This function is obsoleted. All errors from ErrorHandler are transfered
