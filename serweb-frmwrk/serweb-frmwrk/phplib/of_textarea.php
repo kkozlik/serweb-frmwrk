@@ -143,9 +143,9 @@ class of_textarea extends of_element {
         return $this->max_length_e;
         
       if ($this->valid_e && (((isset($this->icase) and $this->icase) && 
-            !eregi($this->valid_regex,$v)) ||
+            !preg_match('/'.$this->valid_regex.'/i', $v)) ||
            (!(isset($this->icase) and $this->icase) &&
-            !ereg($this->valid_regex,$v))))
+            !preg_match('/'.$this->valid_regex.'/', $v))))
         return $this->valid_e;
     }
     return false;

@@ -19,7 +19,7 @@
  */
 function smarty_modifier_empty2nbsp($str)
 {
-	if (ereg('^[[:space:]]*$', $str)) return "&nbsp;";
+	if (preg_match('/^[[:space:]]*$/', $str)) return "&nbsp;";
 	else return $str;
 }
 

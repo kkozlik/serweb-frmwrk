@@ -918,7 +918,7 @@ class Validator{
      */         
     function validate_IPv4_reg($value, $err_msg, $var_name=null){
         $reg = &Creg::singleton();  // get instance of Creg class
-        if (!ereg("^".$reg->ipv4address."$", $value)){
+        if (!preg_match("/^".$reg->ipv4address."$/", $value)){
             ErrorHandler::add_error(
                 str_replace(array("#VALUE#", "<name>"), 
                             array($value, $var_name), 

@@ -111,7 +111,7 @@ if ($config->enable_logging){
             }
         }
 
-        $GLOBALS['serwebLog'] = &Log::singleton($handler, $name, $ident, $conf, $level);
+        $GLOBALS['serwebLog'] = Log::singleton($handler, $name, $ident, $conf, $level);
     }
     enable_logging();
 

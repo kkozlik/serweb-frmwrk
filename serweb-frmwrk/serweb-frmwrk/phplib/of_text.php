@@ -150,9 +150,9 @@ class of_text extends of_element {
       if ($this->length_e && (strlen($v) < $this->minlength))
         return str_replace("#VALUE#", $v, $this->length_e);
       if ($this->valid_e && (((isset($this->icase) and $this->icase) && 
-            !eregi($this->valid_regex,$v)) ||
+            !preg_match('/'.$this->valid_regex.'/i', $v)) ||
            (!(isset($this->icase) and $this->icase) &&
-            !ereg($this->valid_regex,$v))))
+            !preg_match('/'.$this->valid_regex.'/', $v))))
         return str_replace("#VALUE#", $v, $this->valid_e);
     }
     return false;

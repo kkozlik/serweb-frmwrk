@@ -26,7 +26,7 @@ function smarty_modifier_add_html_attrib_to_tag($string, $attribs, $from_beginni
 {
 	if ($from_beginning){
 		/* put attribs after tag name - form complex tabs as <select ... > .... </select> */
-		if (!ereg("^([^<]*<[[:blank:]]*[a-zA-Z_]+)(.*)$", $string, $regs)){
+		if (!preg_match("/^([^<]*<[[:blank:]]*[a-zA-Z_]+)(.*)$/", $string, $regs)){
 			/* ereg doesn't match, return unchanged */
 			return $string;
 		}

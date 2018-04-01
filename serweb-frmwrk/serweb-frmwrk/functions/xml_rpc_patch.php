@@ -460,7 +460,7 @@ class XML_RPC_Message_patched extends XML_RPC_Message{
 					}
 					
 					// parse header content-length
-					if (eregi('^Content-Length:(.*)$', $v, $regs)){
+					if (preg_match('/^Content-Length:(.*)$/i', $v, $regs)){
 						$regs[1] = trim($regs[1]);
 						if (!is_numeric($regs[1])) continue;
 						

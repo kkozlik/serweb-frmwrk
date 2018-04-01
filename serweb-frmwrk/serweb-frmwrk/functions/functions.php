@@ -269,7 +269,7 @@ class Creg{
 	 * @return string port
 	 */
 	function get_port($sip){
-		ereg($this->sip_s_address, $sip, $regs);
+		preg_match(pregize($this->sip_s_address), $sip, $regs);
 		
 		if (!empty($regs[38])){
 			//remove the ':' at the begining
@@ -336,7 +336,7 @@ class Creg{
 	 *	@return	bool
 	 */
 	function is_ipv4address($adr){
-		if (ereg("^".$this->ipv4address."$", $adr)) return true;
+		if (preg_match("/^".$this->ipv4address."$/", $adr)) return true;
 		else return false;
 	}
 	
@@ -648,7 +648,7 @@ class Creg{
      */
     function check_sip_address($sip_addr){
 
-        if (!ereg("^".$this->sip_s_address."$", $sip_addr)){
+        if (!preg_match("/^".$this->sip_s_address."$/", $sip_addr)){
             return false;
         }
         else{
@@ -676,7 +676,7 @@ class Creg{
      */
     function check_ipv4_address($ip_addr){
 
-        if (!ereg("^".$this->ipv4address."$", $ip_addr)){
+        if (!preg_match("/^".$this->ipv4address."$/", $ip_addr)){
             return false;
         }
         else{
@@ -704,7 +704,7 @@ class Creg{
         $value_a = explode("/", $ip_addr, 2);
         
         if (!isset($value_a[1])) $value_a[1] = "";
-        if (!ereg("^".$this->ipv4address."$", $value_a[0])){
+        if (!preg_match("/^".$this->ipv4address."$/", $value_a[0])){
             return false;
         }
         else{
@@ -796,7 +796,7 @@ class Creg{
      */
     function check_ipv4_addr_port($value){
 
-        if (!ereg("^".$this->ipv4address.":".$this->port."$", $value)){
+        if (!preg_match("/^".$this->ipv4address.":".$this->port."$/", $value)){
             return false;
         }
         else{
@@ -823,7 +823,7 @@ class Creg{
      */
     function check_hostname($value){
 
-        if (!ereg("^".$this->host."$", $value)){
+        if (!preg_match("/^".$this->host."$/", $value)){
             return false;
         }
         else{
@@ -841,7 +841,7 @@ class Creg{
      *  string representation). Natural number is non-negative integer.    
      */
     function is_natural_num($val){
-        if (ereg("^".$this->natural_num."$", $val)) return true;
+        if (preg_match("/^".$this->natural_num."$/", $val)) return true;
         return false;
     }
 }
@@ -907,7 +907,7 @@ function send_mail($to, $text, $headers = array()){
 	/* get charset */
 	$charset = null;
 	if (isset($headers['content-type']) and 
-	    eregi("charset=([-a-z0-9]+)", $headers['content-type'], $regs)){
+	    preg_match("/charset=([-a-z0-9]+)/i", $headers['content-type'], $regs)){
 		
 		$charset = $regs[1];
 	}
@@ -1155,7 +1155,7 @@ function read_txt_file($filename, $replacements){
 	/* get charset */
 	$file_charset = null;
 	if (isset($headers['content-type']) and 
-	    eregi("charset=([-a-z0-9]+)", $headers['content-type'], $regs)){
+	    preg_match("/charset=([-a-z0-9]+)/i", $headers['content-type'], $regs)){
 		
 		$file_charset = $regs[1];
 	}
