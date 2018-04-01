@@ -234,7 +234,7 @@ class Creg{
 	 * @return string domain name
 	 */
 	function get_domainname($sip){
-		return ereg_replace($this->sip_s_address,"\\5", $sip);
+		return preg_replace(pregize($this->sip_s_address), "\\5", $sip);
 	}
 
 
@@ -256,7 +256,7 @@ class Creg{
 	 */
 	function get_username($sip){
 
-		$uname=ereg_replace($this->sip_s_address,"\\1", $sip);
+		$uname=preg_replace(pregize($this->sip_s_address), "\\1", $sip);
 
 		//remove the '@' at the end
 		return substr($uname,0,-1);
@@ -1306,7 +1306,7 @@ function log_errors($err_object, &$errors){
 		$log_message= "file: ".$last_frame['file'].":".$last_frame['line'].": ".$err_object->getMessage()." - ".$err_object->getUserInfo();
 		//remove endlines from the log message
 		$log_message=str_replace(array("\n", "\r"), "", $log_message);
-		$log_message=ereg_replace("[[:space:]]{2,}", " ", $log_message);
+		$log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
 		$serwebLog->log($log_message, PEAR_LOG_ERR);
 		
 	}

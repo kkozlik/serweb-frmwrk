@@ -36,7 +36,7 @@ class of_select extends of_element {
         }
     
         /* id is same as name without [] on the end */
-        $id = ereg_replace("(^[^][]+)(.*)", "\\1", $n);
+        $id = preg_replace("/(^[^][]+)(.*)/", "\\1", $n);
         
         $str .= "<$t name='$n' id='$id'";
         if ($this->size)      $str .= " size='$this->size'";

@@ -1366,7 +1366,7 @@ class page_conroler{
         		$log_message= "file: ".$e->getFile().":".$e->getLine().": ".$e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
         		//remove endlines from the log message
         		$log_message=str_replace(array("\n", "\r"), "", $log_message);
-        		$log_message=ereg_replace("[[:space:]]{2,}", " ", $log_message);
+        		$log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
         		$serwebLog->log($log_message, PEAR_LOG_ALERT);
         	}
 

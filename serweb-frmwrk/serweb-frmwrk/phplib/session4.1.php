@@ -396,10 +396,13 @@ class Session {
       return $url;
     
     // Remove existing session info from url
-    $url = ereg_replace(
-      "([&?])".quotemeta(urlencode($this->name))."=(.)*(&|$)","\\1", $url); # we clean any(also bogus) sess in url
+    $url = preg_replace(
+              "/([&?])".quotemeta(urlencode($this->name))."=(.)*(&|$)/",
+              "\\1", 
+              $url
+           ); # we clean any(also bogus) sess in url
     // Remove trailing ?/& if needed
-    $url = ereg_replace("[&?]+$", "", $url);
+    $url = preg_replace("/[&?]+$/", "", $url);
 
     switch ($this->mode) {
       case "get":
@@ -534,7 +537,7 @@ class Session {
         $str .= "\$$var = array(); ";
         while ( "array" == $l ) {
           ## Structural recursion
-          $this->serialize($var."['".ereg_replace("([\\'])", "\\\\1", $k)."']", $str);
+          $this->serialize($var."['".preg_replace("/([\\'])/", "\\\\1", $k)."']", $str);
           eval("\$l = gettype(list(\$k)=each(\$$var));");
         }
 
@@ -573,7 +576,7 @@ class Session {
       default:
         ## $$var is an atom. Extract it to $l, then generate code.
         eval("\$l = \$$var;");
-        $str.="\$$var = '".ereg_replace("([\\'])", "\\\\1", $l)."'; ";
+        $str.="\$$var = '".preg_replace("/([\\'])/", "\\\\1", $l)."'; ";
       break;
     }
   } // end func serialze
