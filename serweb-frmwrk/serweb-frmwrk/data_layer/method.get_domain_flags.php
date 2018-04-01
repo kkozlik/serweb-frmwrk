@@ -11,8 +11,8 @@
  *	@package    serweb
  */ 
 class CData_Layer_get_domain_flags {
-	var $required_methods = array();
-	
+	public $dl; //reference to data layer object
+
 	/**
 	 *  return flags of domain with given domain ID as associative array
 	 *
@@ -30,8 +30,10 @@ class CData_Layer_get_domain_flags {
 	function get_domain_flags($did, $opt){
 		global $config;
 
+		$dl = $this->dl;
+
 		$errors = array();
-		if (!$this->connect_to_db($errors)) {
+		if (!$dl->connect_to_db($errors)) {
 			ErrorHandler::add_error($errors);
 			return false;
 		}
@@ -46,10 +48,10 @@ class CData_Layer_get_domain_flags {
 
 		$q="select ".$cd->flags."
 		    from ".$td_name."
-			where ".$cd->did."=".$this->sql_format($did, "s"); 
+			where ".$cd->did."=".$dl->sql_format($did, "s"); 
 
-		$res=$this->db->query($q);
-		if ($this->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
+		$res=$dl->db->query($q);
+		if ($dl->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
 		
 		$disabled = true;
 		$deleted = true;

@@ -11,20 +11,24 @@
  *	@package    serweb
  */ 
 class CData_Layer_set_db_charset {
-	var $required_methods = array();
-	
+	public $dl; //reference to data layer object
+
+	public static function _get_required_methods(){
+		return array();
+	}
+
 	/**
 	 *	set charset for comunication with DB
 	 */
-
-	function set_db_charset($charset, $opt){
+	public function set_db_charset($charset, $opt){
 	 	global $config;
 
-		$this->db_charset = $charset;
+		$dl = $this->dl;
+		$dl->db_charset = $charset;
 	 	
 		/* if connection to db is estabilished run sql query setting the charset */		
-		if ($this->db){
-			if ($this->db_host['parsed']['phptype'] == 'mysql'){
+		if ($dl->db){
+			if ($dl->db_host['parsed']['phptype'] == 'mysql'){
 			 	$charset_mapping = array ('utf-8' => 'utf8',
 		                                 'iso-8859-1' => 'latin1',
 		                                 'iso-8859-2' => 'latin2',
@@ -60,15 +64,15 @@ class CData_Layer_set_db_charset {
 				$q="set NAMES DEFAULT";
 			}
 			else{
-				$ch = isset($charset_mapping[$this->db_charset]) ?
-				            $charset_mapping[$this->db_charset] :
-				            $this->db_charset;
+				$ch = isset($charset_mapping[$dl->db_charset]) ?
+				            $charset_mapping[$dl->db_charset] :
+				            $dl->db_charset;
 
 				$q="set NAMES '".$ch."'";
 			}
 		
-			$res=$this->db->query($q);
-			if ($this->dbIsError($res)) throw new DBException($res);
+			$res=$dl->db->query($q);
+			if ($dl->dbIsError($res)) throw new DBException($res);
 		}
 		
 		/* otherwise do nothing, charset will be set after connect to DB */

@@ -11,8 +11,8 @@
  *  @package    serweb
  */ 
 class CData_Layer_get_DB_time {
-    var $required_methods = array();
-    
+    public $dl; //reference to data layer object
+
     /**
      *  Get current timestamp on DB machine
      *
@@ -29,13 +29,14 @@ class CData_Layer_get_DB_time {
     function get_DB_time($opt){
         global $config;
 
-        $this->connect_to_db();
+        $dl = $this->dl;
+        $dl->connect_to_db();
 
         $fetchmode = defined('MDB2_FETCHMODE_ASSOC') ? MDB2_FETCHMODE_ASSOC : DB_FETCHMODE_ASSOC;
         
         $q="select unix_timestamp(now())";
-        $res=$this->db->query($q);
-        if ($this->dbIsError($res)) throw new DBException($res);
+        $res=$dl->db->query($q);
+        if ($dl->dbIsError($res)) throw new DBException($res);
         $row=$res->fetchRow($fetchmode);
         $res->free();
     

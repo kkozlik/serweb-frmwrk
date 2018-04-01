@@ -11,8 +11,8 @@
  *	@package    serweb
  */ 
 class CData_Layer_get_did_by_realm {
-	var $required_methods = array();
-	
+	public $dl; //reference to data layer object
+
 	/**
 	 *  Look for domain with same realm (or domainname) as given parameter
 	 *
@@ -29,11 +29,13 @@ class CData_Layer_get_did_by_realm {
 	function get_did_by_realm($realm, $opt){
 		global $config;
 
+		$dl = $this->dl;
+
 		if (!$config->multidomain) {
 			return ($realm == $config->domain) ? $config->default_did : null;
 		}
 		
-		if (!$this->connect_to_db($errors)) return false;
+		if (!$dl->connect_to_db($errors)) return false;
 
 		/* table's name */
 		$t_d  = &$config->data_sql->domain->table_name;
@@ -69,8 +71,8 @@ class CData_Layer_get_did_by_realm {
 				   ".$c_da->flags." & ".$flags_set." = ".$flags_set." and
 				   ".$c_da->flags." & ".$flags_clear." = 0 ";
 		
-		$res=$this->db->query($q);
-		if ($this->dbIsError($res)) {
+		$res=$dl->db->query($q);
+		if ($dl->dbIsError($res)) {
 			log_errors($res, $errors); 
 			ErrorHandler::add_error($errors);
 			return false;
@@ -96,12 +98,12 @@ class CData_Layer_get_did_by_realm {
 		
 		$q="select ".$c_d->did."
 		    from ".$t_d."
-			where ".$c_d->name." = ".$this->sql_format($realm, "s")." and 
+			where ".$c_d->name." = ".$dl->sql_format($realm, "s")." and 
 			      ".$c_d->flags." & ".$flags_set." = ".$flags_set." and
 				  ".$c_d->flags." & ".$flags_clear." = 0 ";
 
-		$res=$this->db->query($q);
-		if ($this->dbIsError($res)) {
+		$res=$dl->db->query($q);
+		if ($dl->dbIsError($res)) {
 			log_errors($res, $errors); 
 			ErrorHandler::add_error($errors);
 			return false;

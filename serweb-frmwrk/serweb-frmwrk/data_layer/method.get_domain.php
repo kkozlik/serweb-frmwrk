@@ -11,8 +11,8 @@
  *	@package    serweb
  */ 
 class CData_Layer_get_domain {
-	var $required_methods = array();
-	
+	public $dl; //reference to data layer object
+
 	/**
 	 *  return array of associtive arrays containig domain names
 	 *
@@ -35,8 +35,10 @@ class CData_Layer_get_domain {
 	function get_domain($opt){
 		global $config;
 
+		$dl = $this->dl;
+
 		$errors = array();
-		if (!$this->connect_to_db($errors)) {
+		if (!$dl->connect_to_db($errors)) {
 			ErrorHandler::add_error($errors);
 			return false;
 		}
@@ -53,9 +55,9 @@ class CData_Layer_get_domain {
 	    $o_order_desc = (isset($opt['order_desc'])) ? "desc" : "";
 	    $o_check_deleted =  (isset($opt['check_deleted_flag'])) ? $opt['check_deleted_flag'] : true;
 
-		$qw = $this->sql_format(true, "b");
+		$qw = $dl->sql_format(true, "b");
 		foreach($o_filter as $k=>$v){
-			$qw .= " and ".$cd->$k." = ".$this->sql_format($v, "s");
+			$qw .= " and ".$cd->$k." = ".$dl->sql_format($v, "s");
 		}
 
 		$q_deleted = "";
@@ -76,8 +78,8 @@ class CData_Layer_get_domain {
 			else $q .= " order by ".$o_order_by." ".$o_order_desc;
 		}
 		
-		$res=$this->db->query($q);
-		if ($this->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
+		$res=$dl->db->query($q);
+		if ($dl->dbIsError($res)) {ErrorHandler::log_errors($res); return false;}
 		
 		$out=array();
 		for ($i=0; $row=$res->fetchRow(DB_FETCHMODE_ASSOC); $i++){

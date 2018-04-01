@@ -63,23 +63,9 @@ class CData_Layer{
 
         $class = self::$method_class_map[$method];
 
-        // It seems the only way how to execute method from another class and
-        // preserve $this variable still point to this object is to use 
-        // double column operator. But because the number arguments is different
-        // for each function, we have to combine this approach with eval() function. 
-         
-        // Prepare string containing all arguments that has been passed to function
-        $call_args = "";
-        foreach($args as $k => $v){
-            if ($call_args) $call_args .= ', ';
-            $call_args .= '$args['.$k.']';
-        }
-        
-        // Prepare the string for eval()
-        $call_method = "return $class::$method(".$call_args.");";
-        
-        // Call the function
-        return eval($call_method);
+        $obj = new $class;
+        $obj->dl = $this; // inject data_layer object into the $obj
+        return call_user_func_array([$obj, $method], $args);
     }
 
     
@@ -104,7 +90,7 @@ class CData_Layer{
     function &create(){
         global $config;
 
-        $obj = &new CData_Layer();
+        $obj = new CData_Layer();
 
         $obj->require_and_agregate_methods();
         return $obj;
