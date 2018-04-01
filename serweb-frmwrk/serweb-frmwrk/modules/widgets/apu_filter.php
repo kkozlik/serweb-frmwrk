@@ -150,11 +150,10 @@ class apu_filter extends apu_base_class{
     /**
      *  Method perform action update
      *
-     *  @param array $errors    array with error messages
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
-    function action_update(&$errors){
+    function action_update(){
         foreach ($this->form_elements as $k=>$v){
             if ($v['type'] == "checkbox"){
                 $this->session['f_values'][$v['name']] = !empty($_POST[$v['name']."_hidden"]);
@@ -202,11 +201,10 @@ class apu_filter extends apu_base_class{
     /**
      *  create html form 
      *
-     *  @param array $errors    array with error messages
      *  @return null            FALSE on failure
      */
-    function create_html_form(&$errors){
-        parent::create_html_form($errors);
+    function create_html_form(){
+        parent::create_html_form();
         
         $this->get_form_elements();
 

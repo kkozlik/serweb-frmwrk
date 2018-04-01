@@ -324,11 +324,11 @@ class Auth {
 	}
 
 	function get_did(){
-		return $this->auth['did'];
+		return isset($this->auth['did']) ? $this->auth['did'] : null;
 	}
 
 	function get_uid(){
-		return $this->auth['uid'];
+		return isset($this->auth['uid']) ? $this->auth['uid'] : null;
 	}
 
 	########################################################################
