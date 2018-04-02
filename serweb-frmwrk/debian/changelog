@@ -1,3 +1,14 @@
+serweb-frmwrk (2.0.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Changes to make this working under PHP7 - broken backward compatibility of
+    data layer methods
+  * Adding ability to write logs to the console
+  * Support for event listeners and event triggering in the page controller
+  * Fixing HTMLSpecialChars JS function
+
+ --  <kk@kk-iquest.kufr.cz>  Mon, 02 Apr 2018 21:10:16 +0200
+
 serweb-frmwrk (1.0.10) stable; urgency=medium
 
   * Get rid of short open tags

@@ -1,11 +1,11 @@
 Summary:      Serweb Framework
 Name:	      serweb-frmwrk
-Version:      1.0.10
+Version:      2.0.0
 Release:      0
 License:      GPL
 Group:        System Environment/Daemons
 Source:       %{name}-%{version}-%{release}.tar.gz
-URL:          http://iptel.org/
+URL:          https://github.com/kkozlik/serweb-frmwrk
 BuildArch:    noarch
 BuildRoot:    /var/tmp/%{name}-%{version}-root
 Requires:     php >= 5.0 
