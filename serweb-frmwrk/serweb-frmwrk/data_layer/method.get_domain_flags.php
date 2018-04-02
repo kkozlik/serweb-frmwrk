@@ -10,8 +10,7 @@
  * 
  *	@package    serweb
  */ 
-class CData_Layer_get_domain_flags {
-	public $dl; //reference to data layer object
+class CData_Layer_get_domain_flags extends CData_Layer_Common{
 
 	/**
 	 *  return flags of domain with given domain ID as associative array

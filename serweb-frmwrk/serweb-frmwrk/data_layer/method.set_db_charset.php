@@ -10,12 +10,7 @@
  * 
  *	@package    serweb
  */ 
-class CData_Layer_set_db_charset {
-	public $dl; //reference to data layer object
-
-	public static function _get_required_methods(){
-		return array();
-	}
+class CData_Layer_set_db_charset extends CData_Layer_Common{
 
 	/**
 	 *	set charset for comunication with DB

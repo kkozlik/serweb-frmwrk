@@ -10,9 +10,7 @@
  * 
  *	@package    serweb
  */ 
-class CData_Layer_get_did_by_realm {
-	public $dl; //reference to data layer object
-
+class CData_Layer_get_did_by_realm extends CData_Layer_Common{
 	/**
 	 *  Look for domain with same realm (or domainname) as given parameter
 	 *

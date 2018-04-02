@@ -10,8 +10,7 @@
  * 
  *	@package    serweb
  */ 
-class CData_Layer_get_domain {
-	public $dl; //reference to data layer object
+class CData_Layer_get_domain extends CData_Layer_Common{
 
 	/**
 	 *  return array of associtive arrays containig domain names

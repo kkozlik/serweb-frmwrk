@@ -10,8 +10,7 @@
  * 
  *	@package    serweb
  */ 
-class CData_Layer_set_db_collation {
-	public $dl; //reference to data layer object
+class CData_Layer_set_db_collation extends CData_Layer_Common{
 
 	/**
 	 * set collation - for MySQL >= 4.1

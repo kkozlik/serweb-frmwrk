@@ -1010,4 +1010,13 @@ class CData_Layer{
 
 }
 
-?>
+/**
+ * Common ancestor class for the data layer methods
+ */
+class CData_Layer_Common{
+    public $dl; //reference to data layer object
+
+    public static function _get_required_methods(){
+        return array();
+    }
+}

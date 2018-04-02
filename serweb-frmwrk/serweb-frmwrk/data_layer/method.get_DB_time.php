@@ -10,8 +10,7 @@
  *
  *  @package    serweb
  */ 
-class CData_Layer_get_DB_time {
-    public $dl; //reference to data layer object
+class CData_Layer_get_DB_time extends CData_Layer_Common{
 
     /**
      *  Get current timestamp on DB machine
