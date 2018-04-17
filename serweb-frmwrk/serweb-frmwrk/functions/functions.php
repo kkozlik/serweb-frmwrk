@@ -1410,6 +1410,18 @@ function my_aggregate_methods(&$object, $class_name){
  */
 function rfc4122_uuid(){
    // version 4 UUID
+
+    if (is_callable('random_bytes')){
+        // works with PHP >= 7
+        return implode('-', [
+            bin2hex(random_bytes(4)),
+            bin2hex(random_bytes(2)),
+            bin2hex(chr((ord(random_bytes(1)) & 0x0F) | 0x40)) . bin2hex(random_bytes(1)),
+            bin2hex(chr((ord(random_bytes(1)) & 0x3F) | 0x80)) . bin2hex(random_bytes(1)),
+            bin2hex(random_bytes(6))
+        ]);
+    }
+
    return sprintf(
        '%08x-%04x-%04x-%02x%02x-%012x',
        mt_rand(),

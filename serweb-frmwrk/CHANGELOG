@@ -1,3 +1,5 @@
+* Use better functions for getting random numbers for UUIDs (with PHP7)
+
 Version 2.0.0
 ==============
 * Changes to make this working under PHP7 - broken backward compatibility of data layer methods
