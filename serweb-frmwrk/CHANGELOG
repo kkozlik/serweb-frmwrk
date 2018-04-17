@@ -1,4 +1,5 @@
 * Use better functions for getting random numbers for UUIDs (with PHP7)
+* Fix problem of loading data-layer methods with multiple instances of CData_Layer class
 
 Version 2.0.0
 ==============

@@ -233,13 +233,17 @@ class CData_Layer{
                 foreach($class_methods as $method){
                     // skip special method: '_get_required_methods'
                     if ($method == '_get_required_methods') continue;
-                    
+
+                    $class_name = "CData_Layer_".$item;
+
                     // check for duplicities
                     if (isset(self::$method_class_map[$method])){
+                        if (self::$method_class_map[$method] == $class_name) continue;
+
                         throw new Exception("Cannot redefine data layer function 'CData_Layer_$item:$method' already defined in class: ".self::$method_class_map[$method]);
                     }
                     
-                    self::$method_class_map[$method] = "CData_Layer_".$item;
+                    self::$method_class_map[$method] = $class_name;
                 }
 
             }
