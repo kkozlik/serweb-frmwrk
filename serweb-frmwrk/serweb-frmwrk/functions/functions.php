@@ -1231,7 +1231,7 @@ function action_log($screen_name, $action, $msg=null, $success = true, $opt = ar
     }
     else{
         if (is_null($msg)) $msg = "action performed";
-        sw_log($screen_name." - ".$action['action']." ".$msg." ".($success ? "[successfull]" : "[failed]"), PEAR_LOG_INFO);
+        sw_log($screen_name." - ".$opt['action_str']." ".$msg." ".($success ? "[successfull]" : "[failed]"), PEAR_LOG_INFO);
     }
 }
 /**
