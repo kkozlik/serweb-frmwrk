@@ -66,7 +66,12 @@ class page_conroler{
     var $domain_id = null;      
 
     /** associative array of controller options */
-    var $opt=array();
+    protected $opt=array(
+        'print_html_head'           => true,
+        'print_html_body_begin'     => true,
+        'print_html_body_end'       => true,
+        'print_html_document_end'   => true,
+    );
     /** array of html forms */
     var $f = array();           
     /** flags which says if header 'location' will be send and if html form should be validated */
@@ -1176,7 +1181,7 @@ class page_conroler{
     function check_perms_to_domain(){
         return true;
     }
-    
+
     /*****************  start processing of page *******************/
     function start(){
         global $smarty, $lang_str, $lang_set, $page_attributes, $config;
@@ -1328,14 +1333,18 @@ class page_conroler{
             $smarty->assign('come_from_admin_interface', $this->come_from_admin_interface);
         
             /* ----------------------- HTML begin ---------------------- */
-        
-            print_html_head($page_attributes);
-            
-            print_html_body_begin($page_attributes);
-                    
+
+            if ($this->opt['print_html_head'])              print_html_head($page_attributes);
+            $this->trigger_event("print_html_head");
+
+            if ($this->opt['print_html_body_begin'])        print_html_body_begin($page_attributes);
+            $this->trigger_event("print_html_body_begin");
+
+
             $smarty->display($this->template_name);
-        
-            print_html_body_end($page_attributes);
+
+            if ($this->opt['print_html_body_end'])          print_html_body_end($page_attributes);
+            $this->trigger_event("print_html_body_end");
             
             
             if (count($this->js_after_document)){
@@ -1346,7 +1355,7 @@ class page_conroler{
                 echo "\n// -->\n</script>\n";
             }
             
-            echo "</html>\n";
+            if ($this->opt['print_html_document_end'])      echo "</html>\n";
 
             $this->trigger_event("post_html_output");
 
