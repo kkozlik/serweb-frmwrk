@@ -640,6 +640,39 @@ class page_conroler{
     }
 
     /**
+     * Format javascript URL "module:MODULENAME:FILE" into URL using get_js.php script
+     *
+     * @param string $url
+     * @return string
+     */
+    public function get_js_module_url($url){
+        if (preg_match("/^module:(?P<module>[-_0-9a-z]+):(?P<file>.+)$/i",
+                        $url, $matches)){
+
+            $url = $this->js_from_mod_getter($matches['module'], $matches['file']);
+        }
+        return $url;
+    }
+
+    /**
+     * Postprocess list of required javascript:
+     *  - format the module related URLS
+     *  - make it unique
+     *
+     * @param array $js_files
+     * @return array
+     */
+    public function postprocess_js_url_list($js_files){
+        global $config;
+
+        foreach($js_files as &$file){
+            $file = $this->get_js_module_url($file);
+            $file = $config->js_src_path.$file;
+        }
+        return array_unique($js_files);
+    }
+
+    /**
      *  Return URL that access given javascript file to given module.
      *  Module directories are not usualy accessible via html directory tree.
      *  So there is getter script inside the javascript directory that access the
@@ -1316,15 +1349,7 @@ class page_conroler{
             }
             $js_files = array_merge($js_files, $this->required_javascript);
 
-            foreach($js_files as $k=>$file){
-                if (preg_match("/^module:(?P<module>[-_0-9a-z]+):(?P<file>.+)$/i",
-                               $file, $matches)){
-                
-                    $js_files[$k] = $this->js_from_mod_getter($matches['module'], $matches['file']);
-                }
-            }
-
-            $page_attributes['required_javascript'] = array_unique($js_files);
+            $page_attributes['required_javascript'] = $this->postprocess_js_url_list($js_files);
         
             
             $smarty->assign('parameters', $page_attributes);

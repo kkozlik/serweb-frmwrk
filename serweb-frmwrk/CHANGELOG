@@ -1,6 +1,7 @@
 * Use better functions for getting random numbers for UUIDs (with PHP7)
 * Fix problem of loading data-layer methods with multiple instances of CData_Layer class
 * Allow to disable default functions for print html head/end
+* Moving code for get list of required javascript into spearate functions
 
 Version 2.0.0
 ==============
