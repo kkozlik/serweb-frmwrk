@@ -1,38 +1,38 @@
 <?php
 /**
- * Application unit filter 
- * 
+ * Application unit filter
+ *
  * @author    Karel Kozlik
  * @version   $Id: apu_filter.php,v 1.6 2008/01/09 15:25:58 kozlik Exp $
  * @package   serweb
  * @subpackage framework
- */ 
+ */
 
 /**
- *  Application unit filter 
+ *  Application unit filter
  *
  *  This application unit is used for display filter form
- *     
+ *
  *  <pre>
  *  Configuration:
  *  --------------
- *  
+ *
  *  'form_name'                 (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']          (form)          
+ *  opt['smarty_form']          (form)
  *   phplib html form
- *   
+ *
  *  </pre>
- *  
+ *
  *  @package   serweb
  *  @subpackage framework
  */
@@ -42,10 +42,10 @@ class apu_filter extends apu_base_class{
     var $labels = array();
     var $get_params = array();
     var $filter_applied = false;
-    
 
-    /** 
-     *  return required data layer methods - static class 
+
+    /**
+     *  return required data layer methods - static class
      *
      *  @return array   array of required data layer methods
      */
@@ -54,31 +54,31 @@ class apu_filter extends apu_base_class{
     }
 
     /**
-     *  return array of strings - required javascript files 
+     *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
         return array("module:widgets:filter.js");
     }
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function apu_filter(){
         global $lang_str;
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
         $this->opt['filter_name'] =         '';
 
         $this->opt['on_change_callback'] =          '';
 
         /* match any value containing the filter value */
         $this->opt['partial_match'] =           true;
-        
+
         /*** names of variables assigned to smarty ***/
         /* form */
         $this->opt['smarty_form'] =         'filter_form';
@@ -92,11 +92,11 @@ class apu_filter extends apu_base_class{
 
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['b_search']);
-        
+
         $this->opt['form_clear']=array('type' => 'button',
                                         'text' => $lang_str['b_clear_filter']);
-        
-        
+
+
     }
 
     function set_base_apu(&$apu){
@@ -114,7 +114,7 @@ class apu_filter extends apu_base_class{
         parent::init();
 
         /* set form name if it is not set */
-        if (!$this->opt['form_name']) 
+        if (!$this->opt['form_name'])
             $this->opt['form_name'] = "form_".$this->opt['instance_id'];
 
         $session_name = empty($this->opt['filter_name'])?
@@ -124,7 +124,7 @@ class apu_filter extends apu_base_class{
         if (!isset($_SESSION['apu_filter'][$session_name])){
             $_SESSION['apu_filter'][$session_name] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_filter'][$session_name];
 
         if (!isset($this->session['f_values'])){
@@ -134,7 +134,7 @@ class apu_filter extends apu_base_class{
         if (!isset($this->session['act_row'])){
             $this->session['act_row'] = 0;
         }
-        
+
         if (isset($_GET['act_row'])){
             $this->session['act_row'] = $_GET['act_row'];
         }
@@ -146,7 +146,7 @@ class apu_filter extends apu_base_class{
             $this->form_elements = $this->base_apu->get_filter_form();
         }
     }
-    
+
     /**
      *  Method perform action update
      *
@@ -156,14 +156,14 @@ class apu_filter extends apu_base_class{
     function action_update(){
         foreach ($this->form_elements as $k=>$v){
             if ($v['type'] == "checkbox"){
-                $this->session['f_values'][$v['name']] = !empty($_POST[$v['name']."_hidden"]);
+                $this->set_filter_value($v['name'], !empty($_POST[$v['name']."_hidden"]));
                 if (!empty($v['3state'])){
                     $this->session['f_spec'][$v['name']]['enabled'] = !empty($_POST[$v['name']."_en"]);
                 }
             }
             else{
                 if (isset($_POST[$v['name']])){
-                    $this->session['f_values'][$v['name']] = $_POST[$v['name']];
+                    $this->set_filter_value($v['name'], $_POST[$v['name']]);
                 }
                 if (!empty($v['multiple']) and !isset($_POST[$v['name']])){
                     $this->session['f_values'][$v['name']] = array();
@@ -183,9 +183,9 @@ class apu_filter extends apu_base_class{
 
         return $this->get_params;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
@@ -222,7 +222,7 @@ class apu_filter extends apu_base_class{
                 $v['checked'] = $this->session['f_values'][$v['name']];
                 if (empty($v['value'])) $v['value'] = 1;    //if value is not set
             }
-            else{           
+            else{
                 $v['value'] = $this->session['f_values'][$v['name']];
             }
 
@@ -239,7 +239,7 @@ class apu_filter extends apu_base_class{
                 if ($v['value']) $this->filter_applied = true;
                 break;
             case "checkbox":
-                /* add the hidden element in order to it not depend 
+                /* add the hidden element in order to it not depend
                    if checkbox is displayed by the template or not */
                 $this->f->add_element(array(
                         "name" => $v['name']."_hidden",
@@ -248,12 +248,12 @@ class apu_filter extends apu_base_class{
                     ));
 
                 $onclick = "if (this.checked) this.form.".$v['name']."_hidden".".value=1; else this.form.".$v['name']."_hidden".".value=0;";
-                
+
                 if (!empty($v['3state'])){
                     $js_el["three_state"] = true;
 
                     $v['disabled'] = empty($this->session['f_spec'][$v['name']]['enabled']);
-                
+
                     /* add the chcekbox element enabling or disabling the first one */
                     $this->f->add_element(array(
                             "name" => $v['name']."_en",
@@ -273,7 +273,7 @@ class apu_filter extends apu_base_class{
 
                 if (empty($v['extrahtml'])) $v['extrahtml'] = "";
                 $v['extrahtml'] .= " onclick='".$onclick."'";
-                
+
                 break;
             }
 
@@ -282,10 +282,10 @@ class apu_filter extends apu_base_class{
             $this->form_elements[$k] = $v;
 
             if (isset($v['label'])) $this->labels[$v['name']] = $v['label'];
-            
+
             $js_elements[] = $js_el;
         }
-        
+
         $this->opt['form_clear']['extra_html'] = "onclick='filter_form_ctl.filter_clear();'";
         $this->f->add_extra_submit("f_clear", $this->opt['form_clear']);
 
@@ -295,9 +295,9 @@ class apu_filter extends apu_base_class{
         $this->controler->set_onload_js($onload_js);
     }
 
-        
+
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -306,9 +306,9 @@ class apu_filter extends apu_base_class{
         $smarty->assign($this->opt['smarty_filter_applied'], $this->filter_applied);
         $smarty->assign($this->opt['smarty_filter_values'], $this->session['f_values']);
     }
-    
+
     /**
-     *  return info need to assign html form to smarty 
+     *  return info need to assign html form to smarty
      */
     function pass_form_to_html(){
         return array('smarty_name' => $this->opt['smarty_form'],
@@ -317,20 +317,24 @@ class apu_filter extends apu_base_class{
                      'before'      => '',
                      'get_param'   => $this->get_params);
     }
-    
+
     function get_act_row(){
         return $this->session['act_row'];
     }
-    
+
     function set_act_row($v){
         $this->session['act_row'] = $v;
     }
-    
+
     /**
      *  @deprec
      */
     function get_filter_values(){
         return $this->session['f_values'];
+    }
+
+    function set_filter_value($fname, $fvalue){
+        $this->session['f_values'][$fname] = $fvalue;
     }
 
     function get_filter(){
@@ -374,7 +378,7 @@ class apu_filter extends apu_base_class{
     function is_form_submited(){
         return ($this->action['action'] == "update");
     }
-    
+
 }
 
 
