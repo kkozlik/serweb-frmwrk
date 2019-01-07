@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *	OOHForms: checkbox
  *
  *	@author   Copyright (c) 1998 by Jay Bloodworth
@@ -23,7 +23,7 @@ class of_checkbox extends of_element {
 
   function self_get($val, $which, &$count) {
     $str = "";
-    
+
     if ($this->multiple) {
       $n = $this->name . "[]";
       $str .= "<input type='checkbox' name='$n' value=\"".htmlspecialchars($val, ENT_QUOTES)."\" id='$this->name'";
@@ -31,18 +31,18 @@ class of_checkbox extends of_element {
         reset($this->value);
         while (list($k,$v) = each($this->value)) {
           if ($v==$val) {
-            $str .= " checked"; 
-            break; 
+            $str .= " checked";
+            break;
           }
         }
       }
     } else {
       $str .= "<input type='checkbox' name='$this->name' id='$this->name'";
       $str .= " value=\"".htmlspecialchars($this->value, ENT_QUOTES)."\"";
-      if ($this->checked) 
+      if ($this->checked)
         $str .= " checked";
     }
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
       $str .= " $this->extrahtml";
     $str .= " class=\"inpCheckbox";
     if (!empty($this->class)){
@@ -59,14 +59,14 @@ class of_checkbox extends of_element {
     }
 
     $str .= " />";
-    
+
     $count = 1;
     return $str;
   }
 
   function self_get_frozen($val, $which, &$count) {
     $str = "";
-    
+
     $x = 0;
     $t="";
     if ($this->multiple) {
@@ -95,14 +95,16 @@ class of_checkbox extends of_element {
     $count = $x;
     return $str;
   }
-  
+
   function self_load_defaults($val) {
     if ($this->multiple)
       $this->value = $val;
-    elseif (isset($val) && (!$this->value || $val==$this->value)) 
+    elseif (isset($val) && (!$this->value || $val==$this->value))
       $this->checked=1;
-    else 
+    else
       $this->checked=0;
+
+    if (!is_null($val)) $this->value = $val;
   }
 
 } // end CHECKBOX
