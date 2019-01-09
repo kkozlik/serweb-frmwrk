@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *  OOHForms: select
  *
  *  @author   Copyright (c) 1998 by Jay Bloodworth
@@ -23,10 +23,10 @@ class of_select extends of_element {
         $this->setup_element($a);
         if ($a["type"]=="select multiple") $this->multiple=1;
     }
-  
+
     function self_get($val,$which, &$count) {
         $str = "";
-        
+
         if ($this->multiple) {
             $n = $this->name . "[]";
             $t = "select multiple";
@@ -53,6 +53,9 @@ class of_select extends of_element {
         if (!empty($this->title)){
             $str .= " title='".htmlspecialchars($this->title, ENT_QUOTES)."'";
         }
+
+        $str .= " data-oohf-raw-value='".htmlspecialchars($this->value, ENT_QUOTES)."'";
+
         $str .= ">";
 
         if (!empty($this->optgroup)){
@@ -66,7 +69,7 @@ class of_select extends of_element {
             }
         }
         $str .= "</select>";
-        
+
         $count = 1;
         return $str;
     }
@@ -100,10 +103,10 @@ class of_select extends of_element {
         $str .= "</optgroup>\n";
         return $str;
     }
-    
+
     function get_option($o){
         $str = "";
-    
+
         if (is_array($o)) {
             // cast value of option to string for purpose of comparing
             $o["value"] = (string)$o["value"];
@@ -117,7 +120,7 @@ class of_select extends of_element {
             if (!empty($o['class'])) {
                 $str .= " class=\"".implode(" ", (array)$o['class'])."\"";
             }
-    
+
             if (!empty($o['id'])) {
                 $str .= " id=\"".htmlspecialchars($o['id'], ENT_QUOTES)."\"";
             }
@@ -125,14 +128,14 @@ class of_select extends of_element {
             if (!empty($o['title'])) {
                 $str .= " title=\"".htmlspecialchars($o['title'], ENT_QUOTES)."\"";
             }
-    
+
             if (!empty($o['extrahtml'])) $str .= " ".$o['extrahtml'];
 
             if (!$this->multiple && ((string)$this->value==$o["value"]))
                 $str .= " selected";
             elseif ($this->multiple && is_array($this->value)) {
                 if (in_array($o["value"], $this->value)){
-                    $str .= " selected"; 
+                    $str .= " selected";
                 }
             }
 
@@ -148,19 +151,19 @@ class of_select extends of_element {
                 $str .= " selected";
             elseif ($this->multiple && is_array($this->value)) {
                 if (in_array($o, $this->value)){
-                    $str .= " selected"; 
+                    $str .= " selected";
                 }
             }
 
             $str .= ">" . htmlspecialchars($o, ENT_QUOTES) . "</option>\n";
         }
-        
+
         return $str;
     }
 
     function self_get_frozen($val,$which, &$count) {
         $str = "";
-        
+
         $x = 0;
         $n = $this->name . ($this->multiple ? "[]" : "");
         $v_array = (is_array($this->value) ? $this->value : array($this->value));
@@ -169,10 +172,10 @@ class of_select extends of_element {
         while (list($tk,$tv) = each($v_array)) {
             reset($this->options);
             while (list($k,$v) = each($this->options)) {
-                if ((is_array($v) && 
+                if ((is_array($v) &&
                         (($tmp=$v["value"])==$tv || $v["label"]==$tv))
                      || ($tmp=$v)==$tv) {
-                    
+
                     $x++;
                     $str .= "<input type='hidden' name='$n' value=\"".htmlspecialchars($tmp, ENT_QUOTES)."\" />\n";
                     $str .= "<tr><td>" . (is_array($v) ? $v["label"] : $v) . "</td></tr>\n";
@@ -180,14 +183,14 @@ class of_select extends of_element {
             }
         }
         $str .= "</table>\n";
-    
+
         $count = $x;
         return $str;
     }
 
     function self_get_js($ndx_array) {
         $str = "";
-    
+
         if (!$this->multiple && $this->valid_e) {
             $str .= "if (f.$this->name.selectedIndex == 0) {\n";
             $str .= "  alert(\"".str_replace("\n", '\n', addslashes($this->valid_e))."\");\n";
@@ -195,7 +198,7 @@ class of_select extends of_element {
             $str .= "  return(false);\n";
             $str .= "}\n";
         }
-    
+
         return $str;
     }
 
