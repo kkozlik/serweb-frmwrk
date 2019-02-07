@@ -1,12 +1,12 @@
 <?php
 /**
- *	Load all files needed by phplib 
- * 
+ *	Load all files needed by phplib
+ *
  *	@author     Karel Kozlik
  *	@version    $Id: load_phplib.php,v 1.12 2007/02/14 16:36:39 kozlik Exp $
  *	@package    serweb
  *	@subpackage framework
- */ 
+ */
 
 global $_SERWEB;
 
@@ -31,5 +31,3 @@ function phplib_load($features = null){
 	}
 
 }
-
-?>
