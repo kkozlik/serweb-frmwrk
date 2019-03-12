@@ -1,38 +1,38 @@
 <?php
 /**
- * Application unit sorter 
- * 
+ * Application unit sorter
+ *
  * @author    Karel Kozlik
  * @version   $Id: apu_sorter.php,v 1.6 2008/01/09 15:25:59 kozlik Exp $
  * @package   serweb
  * @subpackage framework
- */ 
+ */
 
 /**
- *  Application unit sorter 
+ *  Application unit sorter
  *
  *  This application unit is used for display filter form
- *     
+ *
  *  <pre>
  *  Configuration:
  *  --------------
- *  
+ *
  *  'default_sort_col'          (string) default: none
  *   Name of column, the result is initialy sorted by. If is not specified,
  *   the first column from column list is used.
- *  
+ *
  *  'desc_order_by_default'     (bool) default: false
  *   If true, the result is initialy sorted in descending order
- *  
- *  
+ *
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_vars']          (url_sort)          
- *  opt['smarty_order']         (sorter_order_by)           
- *  opt['smarty_dir']           (sorter_dir)            
- *   
+ *  opt['smarty_vars']          (url_sort)
+ *  opt['smarty_order']         (sorter_order_by)
+ *  opt['smarty_dir']           (sorter_dir)
+ *
  *  </pre>
- *  
+ *
  *  @package   serweb
  *  @subpackage framework
  */
@@ -41,10 +41,10 @@ class apu_sorter extends apu_base_class{
     var $form_elements;
     var $col_to_sort = null;
     var $get_params = array();
-    
 
-    /** 
-     *  return required data layer methods - static class 
+
+    /**
+     *  return required data layer methods - static class
      *
      *  @return array   array of required data layer methods
      */
@@ -53,23 +53,23 @@ class apu_sorter extends apu_base_class{
     }
 
     /**
-     *  return array of strings - required javascript files 
+     *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
         return array();
     }
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function apu_sorter(){
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
         $this->opt['sorter_name'] =         '';
 
         $this->opt['default_sort_col'] =    '';
@@ -77,13 +77,13 @@ class apu_sorter extends apu_base_class{
 
         $this->opt['on_change_callback'] =          '';
 
-        
+
         /*** names of variables assigned to smarty ***/
         $this->opt['smarty_vars'] =         'url_sort';
         $this->opt['smarty_order'] =        'sorter_order_by';
         $this->opt['smarty_dir'] =          'sorter_dir';
 
-        
+
     }
 
     function set_base_apu(&$apu){
@@ -107,14 +107,24 @@ class apu_sorter extends apu_base_class{
         if (!isset($_SESSION['apu_sorter'][$session_name])){
             $_SESSION['apu_sorter'][$session_name] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_sorter'][$session_name];
 
         if (!isset($this->session['reverse_order'])){
             $this->session['reverse_order'] = $this->opt['desc_order_by_default'];
         }
     }
-    
+
+    private function init_session_sort_col(){
+        if ($this->opt['default_sort_col']){
+            $this->session['sort_col'] = $this->opt['default_sort_col'];
+        }
+        else{
+            $this->sort_columns = $this->base_apu->get_sorter_columns();
+            $this->session['sort_col'] = reset($this->sort_columns);
+        }
+    }
+
     /**
      *  Method perform action update
      *
@@ -151,19 +161,14 @@ class apu_sorter extends apu_base_class{
         $get = array_merge($get, $this->get_params);
         return $get;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
 
         $this->sort_columns = $this->base_apu->get_sorter_columns();
-        if (!isset($this->session['sort_col'])){
-            if ($this->opt['default_sort_col'])
-                $this->session['sort_col'] = $this->opt['default_sort_col'];
-            else
-                $this->session['sort_col'] = reset($this->sort_columns);
-        }
+        if (!isset($this->session['sort_col'])) $this->init_session_sort_col();
 
         foreach($this->sort_columns as $v){
             if (isset($_GET['u_sort_'.$v])){
@@ -179,10 +184,10 @@ class apu_sorter extends apu_base_class{
                             'validate_form'=>false,
                             'reload'=>false);
     }
-    
+
 
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -205,16 +210,17 @@ class apu_sorter extends apu_base_class{
    	function pass_form_to_html(){
         return false;
     }
-    
-    
+
+
     function get_sort_col(){
+        if (!isset($this->session['sort_col'])) $this->init_session_sort_col();
         return $this->session['sort_col'];
     }
 
     function set_sort_col($col){
         $this->session['sort_col'] = $col;
     }
-    
+
     /**
      * return true for descending
      *        false for ascending sorting
@@ -235,8 +241,5 @@ class apu_sorter extends apu_base_class{
     function is_form_submited(){
         return ($this->action['action'] == "update");
     }
-*/  
+*/
 }
-
-
-?>
