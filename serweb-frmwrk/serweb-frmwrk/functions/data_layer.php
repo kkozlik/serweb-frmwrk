@@ -260,25 +260,51 @@ class CData_Layer{
 
 
     /**
-     *  Set object variable (@see db_host) by given dsn (Data Source Name)
+     *  Set object variable (@see db_host) by given config values
      *
-     *  @param string $dsn      Data Source Name
-     *  @access private
+     *  @param string $db_type  Type of Data Source
+     *  @param string $cfg      $config->data_sql->host
      */
-    function set_this_db_host($dsn){
+    private function set_this_db_host($db_type, $cfg){
         global $config;
 
-        $this->db_host['dsn'] = $dsn;
-        if ($config->data_sql->abstraction_layer=="MDB2")
-            $this->db_host['parsed'] = MDB2::parseDSN($dsn);
-        else
-            $this->db_host['parsed'] = DB::parseDSN($dsn);
+        $this->db_host['dsn'] =  $db_type."://".
+                                 $cfg['user'].":".
+                                 $cfg['pass']."@".
+                                 $cfg['host'].
+                                     (empty($cfg['port'])?
+                                         "":
+                                         ":".$cfg['port'])."/".
+                                 $cfg['name'];
+
+        if ($config->data_sql->abstraction_layer=="MDB2"){
+            $this->db_host['parsed'] = MDB2::parseDSN($this->db_host['dsn']);
+        }
+        elseif($config->data_sql->abstraction_layer=="DB"){
+            $this->db_host['parsed'] = DB::parseDSN($this->db_host['dsn']);
+        }
+        else{
+            if ($cfg['dsn']) $this->db_host['pdo_dsn'] = $cfg['dsn'];
+            else{
+                $this->db_host['pdo_dsn'] = $db_type.
+                                ':dbname='.$cfg['name'].
+                                ';host='.$cfg['host'].
+                                    (empty($cfg['port'])?
+                                        "":
+                                        ";port=".$cfg['port']);
+            }
+
+            $this->db_host['parsed']['phptype'] = $db_type;
+            $this->db_host['parsed']['username'] = $cfg['user'];
+            $this->db_host['parsed']['password'] = $cfg['pass'];
+            $this->db_host['parsed']['database'] = $cfg['name'];
+        }
     }
+
 
     /**
      *  connect to sql database
      */
-
     function connect_to_db(){
         global $config;
 
@@ -295,31 +321,34 @@ class CData_Layer{
         $tries=0;
         do{
             $cont=0;
-            $dsn =  $cfg->type."://".
-                    $cfg->host[$serv]['user'].":".
-                    $cfg->host[$serv]['pass']."@".
-                    $cfg->host[$serv]['host'].
-                        (empty($cfg->host[$serv]['port'])?
-                            "":
-                            ":".$cfg->host[$serv]['port'])."/".
-                    $cfg->host[$serv]['name'];
+            $this->set_this_db_host($cfg->type, $cfg->host[$serv]);
 
-            $this->set_this_db_host($dsn);
-
+            $codeFailed = null;
+            $isError = false;
             if ($config->data_sql->abstraction_layer=="MDB2"){
                 $db = MDB2::connect($this->db_host['parsed'], true);
                 $isError = MDB2::isError($db);
                 $codeFailed = MDB2_ERROR_CONNECT_FAILED;
             }
-            else{
+            elseif ($config->data_sql->abstraction_layer=="MDB2"){
                 $db = DB::connect($this->db_host['parsed'], true);
                 $isError = DB::isError($db);
                 $codeFailed = DB_ERROR_CONNECT_FAILED;
             }
+            else{
+                try {
+                    $db = new PDO($this->db_host['pdo_dsn'],
+                                  $this->db_host['parsed']['username'],
+                                  $this->db_host['parsed']['password']);
+                } catch (PDOException $e) {
+                    $isError = true;
+                    $db = $e;
+                }
+            }
 
             if ($isError) {
                 //if connect failed and multiple servers is defined
-                if (($db->getCode() == $codeFailed) and ($num>1)){
+                if ($num > 1 and ($codeFailed ? $db->getCode() == $codeFailed : true)){
                     //try another server
                     $tries++;
                     $serv++; $serv %= $num;
@@ -328,14 +357,18 @@ class CData_Layer{
                     }
                 }
                 throw new DBException($db);
-//                  log_errors($db, $errors); return false;
             }
         }while($cont);
 
         $this->db=$db;
+        if ($config->data_sql->abstraction_layer=="PDO"){
+            $this->db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        }
 
-        if ($this->db_charset) $this->set_db_charset($this->db_charset, null);
-        if ($this->db_collation) $this->set_db_collation($this->db_collation, null);
+        if ($this->db_host['parsed']['phptype'] !== 'sqlite') { // charset is per-db in sqlite
+            if ($this->db_charset) $this->set_db_charset($this->db_charset, null);
+            if ($this->db_collation) $this->set_db_collation($this->db_collation, null);
+        }
 
         return $db;
     }
@@ -418,8 +451,11 @@ class CData_Layer{
         if ($config->data_sql->abstraction_layer=="MDB2"){
             return MDB2::isError($res);
         }
-        else{
+        elseif ($config->data_sql->abstraction_layer=="DB"){
             return DB::isError($res);
+        }
+        else{   // PDO
+            return $res===false ? true : false;
         }
     }
 
@@ -686,7 +722,7 @@ class CData_Layer{
                 return "'".pg_escape_bytea($val)."'::bytea";
             }
             else {
-                return "'".$this->db->escapeSimple($val)."'";
+                return "'".str_replace("'", "''", $val)."'";
             }
 
         default:

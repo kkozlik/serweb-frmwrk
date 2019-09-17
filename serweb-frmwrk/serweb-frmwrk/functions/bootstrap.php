@@ -54,7 +54,7 @@ if ($_SERWEB["configdir"] != $_SERWEB["coreconfigdir"]){
 
 /** require database abstraction layer */
 if ($config->data_sql->abstraction_layer=="MDB2")   require_once 'MDB2.php';
-else                                                require_once 'DB.php';
+elseif ($config->data_sql->abstraction_layer=="DB") require_once 'DB.php';
 
 /** create log instance */
 if ($config->enable_logging){

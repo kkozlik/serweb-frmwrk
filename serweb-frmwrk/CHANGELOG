@@ -1,3 +1,4 @@
+* Adding ability to use PDO as DB abstraction layer
 * Use better functions for getting random numbers for UUIDs (with PHP7)
 * Fix problem of loading data-layer methods with multiple instances of CData_Layer class
 * Allow to disable default functions for print html head/end
@@ -13,7 +14,7 @@ Version 2.0.0
 Version 1.0.10
 ==============
 * Get rid of short open tags
-* Fixing set timezone per user by page controler 
+* Fixing set timezone per user by page controler
 * filter widget allow multiple selects
 
 Version 1.0.9
@@ -25,7 +26,7 @@ Version 1.0.9
 Version 1.0.8
 =============
 * adding possibility to set default timezone in config file
-* automaticaly save info/error messages to session variable when page_cotroler::reload() is executed 
+* automaticaly save info/error messages to session variable when page_cotroler::reload() is executed
   and retrieve them when page is reloaded
 * it's not needed to pass errors to function action_log() anymore
 * bug fix: CData_Layer::sql_format() allow float values
@@ -37,9 +38,9 @@ Version 1.0.7
 
 version 1.0.6
 =============
-* workaround for enable/disable options of selects is active for only for IE7 
+* workaround for enable/disable options of selects is active for only for IE7
   and older. It is not needed since IE8
-  
+
 version 1.0.5
 =============
 * function check_ip_addr_netmask(): fixing check of IPv6 addresses to not allow

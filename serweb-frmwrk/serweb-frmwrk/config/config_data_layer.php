@@ -15,6 +15,7 @@ global $config;
         $config->data_sql->abstraction_layer="DB";          //database abstraction layer. Use:
                                                             // * "DB" for pear-db (default)
                                                             // * "MDB2" for pear-mdb2
+                                                            // * "PDO" for PHP Data Objects (built in)
 
 
         $config->data_sql->type="mysql";            //type of db host, enter "mysql" for MySQL or "pgsql" for PostgreSQL
@@ -25,6 +26,9 @@ global $config;
         $config->data_sql->host[$i]['name']= "serweb";      //database name
         $config->data_sql->host[$i]['user']= "user";        //database conection user
         $config->data_sql->host[$i]['pass']= "pass";        //database conection password
+        $config->data_sql->host[$i]['dsn']=  "";            //for PDO abstraction layer this coult be used to specify data source name
+                                                            //If used, it has higher precedence than the settings above.
+                                                            //See PHP documentation for the syntax: https://www.php.net/manual/en/pdo.construct.php
 
         // If you want to configure additional backup SQL servers, do so below.
         /*
