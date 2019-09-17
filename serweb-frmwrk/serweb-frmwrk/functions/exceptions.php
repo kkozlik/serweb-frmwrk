@@ -6,17 +6,13 @@ Class PearErrorException extends RuntimeException {
 
     public function __construct($err_obj){
         parent::__construct($err_obj->getMessage());
-        
+
         $this->pear_err = $err_obj;
     }
 }
 
 
 Class DBException extends PearErrorException {
-
-}
-
-Class XMLRPCException extends PearErrorException {
 
 }
 
@@ -28,7 +24,3 @@ Class ApuConfigErrorException extends RuntimeException {
         $this->apu = $apu;
     }
 }
-
-
-
-?>

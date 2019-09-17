@@ -56,12 +56,6 @@ if ($_SERWEB["configdir"] != $_SERWEB["coreconfigdir"]){
 if ($config->data_sql->abstraction_layer=="MDB2")   require_once 'MDB2.php';
 else                                                require_once 'DB.php';
 
-if ($config->use_rpc){
-    /** require PEAR XML_RPC class */
-    require_once 'XML/RPC.php';
-    require_once ($_SERWEB["corefunctionsdir"] . "xml_rpc_patch.php");
-}
-
 /** create log instance */
 if ($config->enable_logging){
     require_once 'Log.php';
