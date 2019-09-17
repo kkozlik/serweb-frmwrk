@@ -10,10 +10,13 @@ SOURCES="serweb-frmwrk.spec TODO.txt INSTALL.txt COPYING CHANGELOG serweb-frmwrk
 
 # get version and release from spec file
 VERSION=`cat serweb-frmwrk.spec |grep -e "^Version:"|awk '{print $2}'`
-RELEASE=`cat serweb-frmwrk.spec |grep -e "^Release:"|awk '{print $2}'`
-# and increment release in spec file
-let RELEASE=RELEASE+1
-sed -i "s/^Release:.*$/Release:      $RELEASE/" serweb-frmwrk.spec 
+# if RELEASE is set use it, otherwise increment the one from specfile
+if test "$RELEASE" = "" ; then
+  RELEASE=`cat serweb-frmwrk.spec |grep -e "^Release:"|awk '{print $2}'`
+  # and increment release in spec file
+  let RELEASE=RELEASE+1
+fi
+sed -i "s/^Release:.*$/Release:      $RELEASE/" serweb-frmwrk.spec
 
 echo "Building serweb-frmwrk rpm"
 echo "Version: $VERSION"

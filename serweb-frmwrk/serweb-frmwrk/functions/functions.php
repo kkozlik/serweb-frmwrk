@@ -1,15 +1,15 @@
 <?php
 /**
  * Miscellaneous functions and variable definitions
- * 
+ *
  * @author    Karel Kozlik
- * @version   $Id: functions.php,v 1.101 2010/01/22 16:55:08 kozlik Exp $ 
+ * @version   $Id: functions.php,v 1.101 2010/01/22 16:55:08 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 
 /* Hack making serweb to work in PHP4
-   for details see: http://acko.net/blog/php-clone 
+   for details see: http://acko.net/blog/php-clone
  */
 if (version_compare(phpversion(), '5.0') < 0) {
     eval('function clone($object) { return $object; }');
@@ -18,9 +18,9 @@ if (version_compare(phpversion(), '5.0') < 0) {
 
 /**
  *	Defining regular expressions
- * 
+ *
  *	@package    serweb
- */ 
+ */
 class Creg{
 
 	var $alphanum;
@@ -57,7 +57,7 @@ class Creg{
 
 	function Creg(){
 		global $config, $reg_validate_email;
-		
+
 		$this->SP=" ";
 		$this->HTAB="\t";
 		$this->alphanum="[a-zA-Z0-9]";
@@ -66,7 +66,7 @@ class Creg{
 		$this->unreserved="(".$this->alphanum."|".$this->mark.")";
 		$this->escaped="(%[0-9a-fA-F][0-9a-fA-F])";
 		$this->user_unreserved="[&=+$,;?/]";
-        $this->uric="(".$this->reserved."|".$this->unreserved."|".$this->escaped.")"; 
+        $this->uric="(".$this->reserved."|".$this->unreserved."|".$this->escaped.")";
 		$this->user="(".$this->unreserved."|".$this->escaped."|".$this->user_unreserved.")+";
 
 		$this->port="[0-9]+";
@@ -115,7 +115,7 @@ class Creg{
         $this->method_param="(method=".$this->method.")";
         $this->ttl_param="(ttl=[0-9]{1,3})";
         $this->maddr_param="(maddr=".$this->host.")";
-        $this->lr_param="(lr)"; 
+        $this->lr_param="(lr)";
         $this->other_param="(".$this->pname."(=".$this->pvalue.")?)";
 
         $this->uri_parameter="(".$this->transport_param."|".$this->user_param."|".
@@ -138,7 +138,7 @@ class Creg{
         $this->phonedigit = "[0-9]|".$this->visual_separator;
         $this->phonedigit_hex = "[0-9a-fA-F*#]|".$this->visual_separator;
 
-        $this->local_number_digits = "((".$this->phonedigit_hex.")*[0-9a-fA-F*#])(".$this->phonedigit_hex.")*)"; 
+        $this->local_number_digits = "((".$this->phonedigit_hex.")*[0-9a-fA-F*#])(".$this->phonedigit_hex.")*)";
         $this->global_number_digits = "(\\+(".$this->phonedigit.")*[0-9](".$this->phonedigit.")*)";
 
         $this->phone_context = $this->hostname."|".$this->global_number_digits;
@@ -150,7 +150,7 @@ class Creg{
 
         $this->local_number = "(".$this->local_number_digits."(".$this->par.")*".$this->context_param."(".$this->par.")*)";
         $this->global_number = "(".$this->global_number_digits."(".$this->par.")*)";
-        
+
         $this->telephone_subscriber = "(".$this->global_number."|".$this->local_number.")";
 
         /** tel URI according to RFC3966 */
@@ -162,22 +162,22 @@ class Creg{
 		/** reg.exp. validating value of sip header */
 		$this->sip_header_value = "(\\[|]|\\\\|[-\"'!@#$%^&*()?*+,./;<>=_{}|~A-Za-z0-9:])+";
 
-		/** reg.exp. validating sip header name 
+		/** reg.exp. validating sip header name
 		 *  @deprec  this is some old not correct defintion replaced by $this->sip_header_name
          */
 		$this->sip_header="([^][ ()<>@,;:\\\\=\"/?{}]+)";
-		/** same regex, but for use in javascript 
+		/** same regex, but for use in javascript
 		 *  @deprec  this is some old not correct defintion replaced by $this->sip_header_name
          */
 		$this->sip_header_js="([^\\]\\[ ()<>@,;:\\\\=\"/?{}]+)";
 
-		
-		/** regex for phonenumber which could contain some characters as: - / <space> this characters should be removed */		
+
+		/** regex for phonenumber which could contain some characters as: - / <space> this characters should be removed */
 		$this->phonenumber = $config->phonenumber_regex;		// "\\+?[-/ 1-9]+"
 
 		/** strict phonenumber - only numbers and optional initial + */
 		$this->phonenumber_strict = $config->strict_phonenumber_regex;		// "\\+?[1-9]+"
-		
+
 		$this->email = $reg_validate_email;
 
 		/** regex matching reason phrase from status line */
@@ -189,7 +189,7 @@ class Creg{
 		$this->reason_phrase_ascii = "(".$this->reserved."|".$this->unreserved."|".
                             $this->escaped."|".$this->SP."|".$this->HTAB.")*";
 
-		/** Regex matching reason phrase from status line.  
+		/** Regex matching reason phrase from status line.
 		 *  This is javascript version of the above. This uses interval
 		 *  of unicode character codes instead of utf8_nonascii regexp.
 		 */
@@ -217,13 +217,13 @@ class Creg{
      *
      *	@return object Creg		instance of Creg class
      *	@static
-     *	@access public 
+     *	@access public
      */
 	function &singleton(){
 		static $instance;
-		
+
 		if(! isset($instance)) $instance = new Creg();
-		
+
 		return $instance;
 	}
 
@@ -238,10 +238,10 @@ class Creg{
 	}
 
 
-	/** return javascript which do the same as method {@link get_domainname} 
+	/** return javascript which do the same as method {@link get_domainname}
 	 *
-	 *	@param string $in_var 	name of js variable with string containing sip uri 
-	 *	@param string $out_var	name of js variable to which hostpart will be stored 
+	 *	@param string $in_var 	name of js variable with string containing sip uri
+	 *	@param string $out_var	name of js variable to which hostpart will be stored
 	 *	@return string 			line of javascript code
 	 */
 	function get_domainname_js($in_var, $out_var){
@@ -261,7 +261,7 @@ class Creg{
 		//remove the '@' at the end
 		return substr($uname,0,-1);
 	}
-	
+
 	/**
 	 * parse port number from sip address
 	 *
@@ -270,24 +270,24 @@ class Creg{
 	 */
 	function get_port($sip){
 		preg_match(pregize($this->sip_s_address), $sip, $regs);
-		
+
 		if (!empty($regs[38])){
 			//remove the ':' at the begining
 			return substr($regs[38], 1);
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * return regular expression for validate hostname
 	 *
-	 * @return string 
+	 * @return string
 	 */
 	function get_hostname_regex(){
 		return $this->host;
 	}
-	
+
 	/**
 	 *	Parse parameters from sip uri
 	 *
@@ -298,7 +298,7 @@ class Creg{
 		$params = explode(';', $sip);
 		//first element is containing part of sip uri before parameters
 		unset($params[0]);
-		
+
 		$out = array();
 		if (is_array($params)){
 			foreach($params as $param){
@@ -306,11 +306,11 @@ class Creg{
 				$out[$p[0]] = $p[1];
 			}
 		}
-		
+
 		return $out;
 	}
-	
-	/** converts string which can be accepted by regex $this->phonenumber to string which can be accepted by regex $this->phonenumber_strict 
+
+	/** converts string which can be accepted by regex $this->phonenumber to string which can be accepted by regex $this->phonenumber_strict
 	 *
 	 *	@param string $phonenumber
 	 *	@return string
@@ -318,20 +318,20 @@ class Creg{
 	function convert_phonenumber_to_strict($phonenumber){
 		return str_replace(array('-', '/', ' ', '(', ')'), "", $phonenumber);
 	}
-	
-	/** return javascript which do the same as method {@link convert_phonenumber_to_strict} 
+
+	/** return javascript which do the same as method {@link convert_phonenumber_to_strict}
 	 *
-	 *	@param string $in_var 	name of js variable with string for conversion 
-	 *	@param string $out_var	name of js variable to which converted string will be stored 
+	 *	@param string $in_var 	name of js variable with string for conversion
+	 *	@param string $out_var	name of js variable to which converted string will be stored
 	 *	@return string 			line of javascript code
 	 */
 	function convert_phonenumber_to_strict_js($in_var, $out_var){
 		return $out_var." = ".$in_var.".replace(/[-\\/ ()]/g, '')";
 	}
-	
+
 	/**
 	 *	check if given string is in format of IPv4 address
-	 *	
+	 *
 	 *	@param	string	$adr	IPv4 address
 	 *	@return	bool
 	 */
@@ -339,33 +339,33 @@ class Creg{
 		if (preg_match("/^".$this->ipv4address."$/", $adr)) return true;
 		else return false;
 	}
-	
+
 	/**
 	 *	check if all parts of given IPv4 address are in range 0-255
-	 *	
+	 *
 	 *	@param	string	$adr	IPv4 address
 	 *	@return	bool
 	 */
 	function ipv4address_check_part_range($adr){
 		// check if given string is IPv4 address
 		if (!$this->is_ipv4address($adr)) return false;
-		
+
 		$parts = explode(".", $adr);
-		
+
 		foreach ($parts as $v){
 			if (!is_numeric($v)) return false;		// part is not numeric
-		
+
 			$v = (int)$v;
 			if ($v<0 or $v>255) return false;		// wrong range
 		}
-		
+
 		return true;
 	}
 
 
 	/**
 	 *	Return javascript function checking range of parts of IPV4 address in SIP URI
-	 *	
+	 *
 	 *	@param	string	$name	name of javascript function which will be generated
 	 *	@return	string
 	 */
@@ -373,23 +373,23 @@ class Creg{
 		$js = "
 			function ".$name."(adr){
 
-				// parse host part from SIP uri			
+				// parse host part from SIP uri
 				var re = /".str_replace('/','\/',$this->sip_s_address)."/;
 				var hostname = adr.replace(re, '\$5');
 
-				//check if host part is in format of IPv4 address				
+				//check if host part is in format of IPv4 address
 				var re = /".str_replace('/','\/',"^".$this->ipv4address."$")."/;
 				if (re.test(hostname)){
-				
+
 					// split address to parts
 					var ipv4_parts = hostname.split('.');
-					
+
 					for (var i=0; i < ipv4_parts.length; i++){
 						var int_part = Number(ipv4_parts[i]);
 						if (int_part == Number.NaN){
 							return false;			// part is not numeric
 						}
-					
+
 						if (int_part < 0 || int_part > 255){
 							return false;			// wrong range
 						}
@@ -403,22 +403,22 @@ class Creg{
 
 	/**
 	 *	Check range of TCP/UDP port
-	 *	
+	 *
 	 *	@param	string	$port
 	 *	@return	bool
 	 */
 	function port_check_range($port){
 		if (!is_numeric($port)) return false;
-		
+
 		$port = (int)$port;
 		if ($port < 1 or $port > 65535) return false;
-		
+
 		return true;
 	}
 
 	/**
 	 *	Return javascript function checking range of TCP/UDP port inside SIP uri
-	 *	
+	 *
 	 *	@param	string	$name	name of javascript function which will be generated
 	 *	@return	string
 	 */
@@ -431,12 +431,12 @@ class Creg{
 				if      (adr.substr(0,4).toLowerCase() == 'sip:')  adr = adr.substr(4); //strip initial 'sip:'
 				else if (adr.substr(0,5).toLowerCase() == 'sips:') adr = adr.substr(5); //strip initial 'sips:'
 				else    return false; //not valid uri
-				
+
 
 				var ipv6 = 0;
 				var portpos = null;
 				var ch;
-			
+
 				for (var i=0; (i < adr.length) && (portpos == null); i++){
 					ch = adr.substr(i, 1);
 
@@ -447,7 +447,7 @@ class Creg{
 					           if (!ipv6){ //semicolon is not part of ipv6 address
 									portpos = i;  //position of port inside address string
 									break;
-							   } 
+							   }
 					}
 				}
 
@@ -467,11 +467,11 @@ class Creg{
 
 				var port = Number(adr.substr(portpos, portlen));
 				if (port == Number.NaN)		return false; //should never happen, but to be sure...
-					
+
 				if (port < 1 || port > 65535){
 							return false;	//invalid port range
 				}
-				
+
 				return true;
 			}
 		";
@@ -480,22 +480,22 @@ class Creg{
 
     /**
      *  Check given netmask and return format it is written in.
-     *  
+     *
      *  @return string  "bitcount", "decimal", "hexadecimal" or FALSE if netmask match no format
-     */         
+     */
     function get_netmask_format($netmask){
         if (is_numeric($netmask)) return "bitcount";
         if ($this->is_ipv4address($netmask)) return "decimal";
-    
-        // I am not sure about this regexp, can't find correct RFC now.    
+
+        // I am not sure about this regexp, can't find correct RFC now.
         if (preg_match("/0x[0-9a-fA-F]{8}/")) return "hexadecimal";
-    
+
         return false;
     }
 
     /**
      *  check if given IPv4 address is valid netmask
-     *  
+     *
      *  @param  string  $adr    IPv4 address
      *  @param  array   $format allowed formats of netmask. It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
@@ -503,23 +503,23 @@ class Creg{
      *  @return bool
      */
     function check_netmask($adr, $format = array("bitcount", "decimal", "hexadecimal")){
-    
+
         if (in_array("bitcount", $format)){
             if (is_numeric($adr) and (int)$adr >=0 and (int)$adr <= 32) return true;
         }
-    
+
         // if decimal format allowed and the given string looks like IPv4 address
         if (in_array("decimal", $format) and $this->is_ipv4address($adr)){
-            
+
             $parts = explode(".", $adr);
-            
+
             $starting = true;
             foreach ($parts as $v){
                 if (!is_numeric($v)) return false;      // part is not numeric
-            
+
                 $v = (int)$v;
                 if ($starting){
-                    /* allow ones at the begining */ 
+                    /* allow ones at the begining */
                     if ($v == 255) continue;
                     if (!in_array($v, array(254, 252, 248, 240, 224, 192, 128, 0))){
                         return false;
@@ -529,7 +529,7 @@ class Creg{
                 /* allow only zeros at the end */
                 elseif ($v != 0) return false;
             }
-            
+
             return true;
         }
 
@@ -539,7 +539,7 @@ class Creg{
 
     /**
      *  check if given IPv4 address is network address of network with given netmask
-     *  
+     *
      *  @param  string  $ip         network address (IPv4)
      *  @param  string  $netmask    netmask
      *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
@@ -551,20 +551,20 @@ class Creg{
         // check if given string is IPv4 address
         if (!$this->is_ipv4address($ip)) return false;
         if (!$this->check_netmask($netmask, $mask_format)) return false;
-        
+
         $mask_format = $this->get_netmask_format($netmask);
         if (!$mask_format) return false;
 
         if ($mask_format == "decimal"){
             $parts_ip = explode(".", $ip);
             $parts_mask = explode(".", $netmask);
-            
+
             for ($i=0; $i<4; $i++){
                 $ip = (int)$parts_ip[$i];
                 $mask = (int)$parts_mask[$i];
                 if ($ip != ($ip & $mask)) return false;
             }
-        }        
+        }
 
         if ($mask_format == "bitcount"){
             $parts_ip = explode(".", $ip);
@@ -575,7 +575,7 @@ class Creg{
                 $part_mask = (int)$netmask;
                 if ($part_mask > 8) $part_mask = 8;
                 $netmask = $netmask - $part_mask;
-                
+
                 // convert bitcount to the mask
                 $part_mask = $mask_table[$part_mask];
                 if ($ip != ($ip & $part_mask)) return false;
@@ -584,15 +584,15 @@ class Creg{
 
         return true;
     }
-    
+
     /**
      *  validate regular expression
      *
-     *  Validate syntax of regular expression (uses PCRE - Perl Compatible  
+     *  Validate syntax of regular expression (uses PCRE - Perl Compatible
      *  Regular Expressions)
      *
      *  @param  string  $pattern    RegEx String pattern to validate
-     *  @param  string  $format     pcre/posix     
+     *  @param  string  $format     pcre/posix
      *  @return bool                true if valid regex, false if not
      *
      */
@@ -610,9 +610,9 @@ class Creg{
             	return false;
             }
 
-            /* 
+            /*
                external validator is not set
-               some php validation should be implemented there 
+               some php validation should be implemented there
              */
 
             break;
@@ -620,29 +620,29 @@ class Creg{
         case "posix":
             if ($config->external_regexp_validator_posix){
             	exec($config->external_regexp_validator_posix." ".escapeshellarg($pattern), $output);
-            
+
             	if (isset($output[0]) and $output[0]=="1"){
             		return true;
             	}
             	return false;
             }
 
-            /* 
+            /*
                external validator is not set
-               some php validation should be implemented there 
+               some php validation should be implemented there
              */
 
             break;
         default:
             die(__FILE__.":".__LINE__." check_regexp: unknown value of format attribute: '".$format."'");
-        }        
-                
+        }
+
         return true;
     }
-    
+
     /**
      *  check if given SIP address is valid
-     *  
+     *
      *  @param  string  $sip_addr
      *  @return bool
      */
@@ -655,22 +655,22 @@ class Creg{
             $uri_domain = $this->get_domainname($sip_addr);
             $uri_port = $this->get_port($sip_addr);
 
-            if ( ($this->is_ipv4address($uri_domain) and 
+            if ( ($this->is_ipv4address($uri_domain) and
                   !$this->ipv4address_check_part_range($uri_domain)) or
 
-                 (false !== $uri_port and 
+                 (false !== $uri_port and
                   !$this->port_check_range($uri_port))){
 
                 return false;
             }
         }
-        
+
         return true;
     }
 
     /**
      *  check if given IPv4 address is valid
-     *  
+     *
      *  @param  string  $ip_addr
      *  @return bool
      */
@@ -680,7 +680,7 @@ class Creg{
             return false;
         }
         else{
-            if ( $this->is_ipv4address($ip_addr) and 
+            if ( $this->is_ipv4address($ip_addr) and
                 !$this->ipv4address_check_part_range($ip_addr)){
 
                 return false;
@@ -692,7 +692,7 @@ class Creg{
 
     /**
      *  check if given IPv4 address and netmask is valid
-     *  
+     *
      *  @param  string  $ip_addr
      *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
@@ -702,13 +702,13 @@ class Creg{
     function check_ipv4_addr_netmask($ip_addr, $mask_format = array("bitcount", "decimal", "hexadecimal")){
 
         $value_a = explode("/", $ip_addr, 2);
-        
+
         if (!isset($value_a[1])) $value_a[1] = "";
         if (!preg_match("/^".$this->ipv4address."$/", $value_a[0])){
             return false;
         }
         else{
-            if ( $this->is_ipv4address($value_a[0]) and 
+            if ( $this->is_ipv4address($value_a[0]) and
                 !$this->ipv4address_check_part_range($value_a[0])){
                 return false;
             }
@@ -722,52 +722,52 @@ class Creg{
 
 
     /**
-     *  check if given IPv6 address is valid 
-     *  
+     *  check if given IPv6 address is valid
+     *
      *  Check if it is in form 1, 2 or 3 accroding RFC4291 section 2.2
-     *  This function is slightly modified function from: 
-     *  http://crisp.tweakblogs.net/blog/3049/ipv6-validation-more-caveats.html     
-     *  
+     *  This function is slightly modified function from:
+     *  http://crisp.tweakblogs.net/blog/3049/ipv6-validation-more-caveats.html
+     *
      *  @param  string  $ip_addr
      *  @return bool
      */
     function check_ipv6_address($ip_addr){
 
-        // fast exit for localhost 
+        // fast exit for localhost
         if (strlen($ip_addr) < 3) return $ip_addr == '::';
-    
-        // Check if part is in IPv4 format 
+
+        // Check if part is in IPv4 format
         if (strpos($ip_addr, '.')){
             $lastcolon = strrpos($ip_addr, ':');
             if (!($lastcolon && $this->check_ipv4_address(substr($ip_addr, $lastcolon + 1))))
                 return false;
 
-            // replace IPv4 part with dummy 
+            // replace IPv4 part with dummy
             $ip_addr = substr($ip_addr, 0, $lastcolon) . ':0:0';
         }
-    
-        // check uncompressed 
+
+        // check uncompressed
         if (strpos($ip_addr, '::') === false){
             return preg_match('/\A(?:'.$this->hex4.':){7}'.$this->hex4.'\z/i', $ip_addr);
         }
 
-        // check colon-count for compressed format     
+        // check colon-count for compressed format
         $colonCount = substr_count($ip_addr, ':');
         if ($colonCount < 8){
             return preg_match('/\A(?::|(?:'.$this->hex4.':)+):(?:(?:'.$this->hex4.':)*'.$this->hex4.')?\z/i', $ip_addr);
         }
-    
+
         // special case with ending or starting double colon
         if ($colonCount == 8){
             return preg_match('/\A(?:::)?(?:'.$this->hex4.':){6}'.$this->hex4.'(?:::)?\z/i', $ip_addr);
         }
-    
-        return false; 
+
+        return false;
     }
 
     /**
      *  check if given IP (v4 or v6) address and netmask is valid
-     *  
+     *
      *  @param  string  $ip_addr
      *  @param  array   $mask_format allowed formats of netmask (for v4 only). It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
@@ -783,14 +783,14 @@ class Creg{
         if ($this->check_ipv6_address($value_a[0])){
             if (is_numeric($value_a[1]) and (int)$value_a[1] >=0 and (int)$value_a[1] <= 128) return true;
             else return false;
-        } 
-        // in other case check if it is a  valid IPv4 addr+netmask 
+        }
+        // in other case check if it is a  valid IPv4 addr+netmask
         else return $this->check_ipv4_addr_netmask($ip_addr, $mask_format);
     }
 
     /**
      *  check if given IPv4 address and port is valid
-     *  
+     *
      *  @param  string  $value
      *  @return bool
      */
@@ -802,10 +802,10 @@ class Creg{
         else{
             $uri_domain = $this->get_domainname("sip:".$value);
             $uri_port = $this->get_port("sip:".$value);
-            if ( ($this->is_ipv4address($uri_domain) and 
+            if ( ($this->is_ipv4address($uri_domain) and
                   !$this->ipv4address_check_part_range($uri_domain)) or
-                  
-                 (false !== $uri_port and 
+
+                 (false !== $uri_port and
                   !$this->port_check_range($uri_port))){
 
                 return false;
@@ -817,7 +817,7 @@ class Creg{
 
     /**
      *  check if given hostname
-     *  
+     *
      *  @param  string  $value
      *  @return bool
      */
@@ -827,7 +827,7 @@ class Creg{
             return false;
         }
         else{
-            if ( $this->is_ipv4address($value) and 
+            if ( $this->is_ipv4address($value) and
                 !$this->ipv4address_check_part_range($value)){
                 return false;
             }
@@ -837,8 +837,8 @@ class Creg{
     }
 
     /**
-     *  Check whether the argument is natural number (as integer or it's 
-     *  string representation). Natural number is non-negative integer.    
+     *  Check whether the argument is natural number (as integer or it's
+     *  string representation). Natural number is non-negative integer.
      */
     function is_natural_num($val){
         if (preg_match("/^".$this->natural_num."$/", $val)) return true;
@@ -848,26 +848,26 @@ class Creg{
 
 /**
  *  Quote delimiter characters in pcre regular expression
- *  
+ *
  *  Takes str and puts a backslash in front of every character that is used as
- *  delimiter of the pcre regular expression. This is useful if you have 
- *  a regular expression that you need to use in preg* function and it contain 
- *  delimiter characters inside.   
- *  
+ *  delimiter of the pcre regular expression. This is useful if you have
+ *  a regular expression that you need to use in preg* function and it contain
+ *  delimiter characters inside.
+ *
  *  @param  string  $str
  *  @param  string  $delim  The delimiter used by in pcre reg.expIt is "/" by default
- *  @return string   
- */ 
+ *  @return string
+ */
 function preg_quote_delim($str, $delim="/"){
     return str_replace($delim, "\\".$delim, $str);
 }
 
 /**
  *  Add delimiters to regular expression so it can be used in preg* functions
- *   
- *  @param  string  $regexp 
- *  @return string 
- */ 
+ *
+ *  @param  string  $regexp
+ *  @return string
+ */
 function pregize($regexp){
     return "/".preg_quote_delim($regexp)."/";
 }
@@ -876,7 +876,7 @@ function pregize($regexp){
 /**
  * send email
  *
- * same as PHP function mail(), but additionaly is set header "From" by 
+ * same as PHP function mail(), but additionaly is set header "From" by
  * config option {@link $config->mail_header_from}
  *
  * @param string $to address of recipient
@@ -886,7 +886,7 @@ function pregize($regexp){
  *
  * @todo add error logging/reporting
  */
- 
+
 function send_mail($to, $text, $headers = array()){
 	global $config;
 
@@ -906,9 +906,9 @@ function send_mail($to, $text, $headers = array()){
 
 	/* get charset */
 	$charset = null;
-	if (isset($headers['content-type']) and 
+	if (isset($headers['content-type']) and
 	    preg_match("/charset=([-a-z0-9]+)/i", $headers['content-type'], $regs)){
-		
+
 		$charset = $regs[1];
 	}
 
@@ -938,14 +938,14 @@ function send_mail($to, $text, $headers = array()){
 /**
  *	Return path to file for specified language mutation
  *
- *	Path in this case mean filesystem path. This function searching in some 
+ *	Path in this case mean filesystem path. This function searching in some
  *  directories and if corresponfing file is found, return path to it. Directories
  *	are scanned in this order:
  *		- dir for specified language
  *		- dir for default language
  *	If file isn't found, function return false
  *
- *	This function only prefix $filename by language (in which file exists) in 
+ *	This function only prefix $filename by language (in which file exists) in
  *	order to it can be also used as path in html tree
  *
  *	@param string $filename		name of file is searching for
@@ -955,14 +955,14 @@ function send_mail($to, $text, $headers = array()){
  */
 function get_file_by_lang($filename, $ddir, $lang){
 	global $config, $reference_language, $available_languages;
-	
+
 	$dir=dirname(__FILE__); //html dir
 	$ln = $available_languages[$lang][2];
 	$ref_ln = $available_languages[$reference_language][2];
 
 	if (!empty($ddir) and substr($ddir, -1) != "/") $ddir.="/";
 
-	if (file_exists($dir."/".$ddir.$ln."/".$filename)) 
+	if (file_exists($dir."/".$ddir.$ln."/".$filename))
 		return $ln."/".$filename;
 
 	else if (file_exists($dir."/".$ddir.$ref_ln."/".$filename)){
@@ -971,7 +971,7 @@ function get_file_by_lang($filename, $ddir, $lang){
 	}
 
 	else {
-		sw_log("File not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_WARNING);	
+		sw_log("File not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_WARNING);
 		return false;
 	}
 }
@@ -991,7 +991,7 @@ function get_path_to_buttons($button, $lang){
 /**
  *	Return path to text file for specified language mutation and concrete domain
  *
- *	Path in this case mean filesystem path. This function searching in some 
+ *	Path in this case mean filesystem path. This function searching in some
  *  directories and if corresponfing file is found, return path to it. Directories
  *	are scanned in this order:
  *		- dir for specified domain and specified language
@@ -1008,7 +1008,7 @@ function get_path_to_buttons($button, $lang){
  */
 function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
 	global $config, $reference_language, $available_languages;
-	
+
 	$dir=dirname(__FILE__)."/domains/";
 	$ln = $available_languages[$lang][2];
 	$ref_ln = $available_languages[$reference_language][2];
@@ -1018,19 +1018,19 @@ function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
 		if (is_null($did) or false === $did){
 			sw_log("Useing file from default domain. Domain: ".$config->domain." not found", PEAR_LOG_WARNING);
 			$did = "_default";
-		} 
+		}
 	}
 
 	if (!empty($ddir) and substr($ddir, -1) != "/") $ddir.="/";
 
-	if (file_exists($dir.$did."/".$ddir.$ln."/".$filename)) 
+	if (file_exists($dir.$did."/".$ddir.$ln."/".$filename))
 		return $dir.$did."/".$ddir.$ln."/".$filename;
-	
+
 	else if (file_exists($dir.$did."/".$ddir.$ref_ln."/".$filename)){
 		sw_log("Useing file in default language (requested lang: ".$ln.") for filename: ".$filename, PEAR_LOG_DEBUG);
 		return $dir.$did."/".$ddir.$ref_ln."/".$filename;
 	}
-		
+
 	else if (file_exists($dir."_default/".$ddir.$ln."/".$filename)){
 		sw_log("Useing file from default domain for filename: ".$filename, PEAR_LOG_DEBUG);
 		return $dir."_default/".$ddir.$ln."/".$filename;
@@ -1042,7 +1042,7 @@ function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
 	}
 
 	else {
-		sw_log("Text file not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_ERR);	
+		sw_log("Text file not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_ERR);
 		return false;
 	}
 }
@@ -1051,10 +1051,10 @@ function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
  * 	Read txt file in specified language mutation, parse and saparate to headers and body and do replacements.
  *
  *	For more info about choice txt file read {@link multidomain_get_lang_file}
- *	Txt files in serweb (as emails, terms and conditions etc.) are stored in 
- *	special format. At the beginning (but only at beginning) of these files may 
+ *	Txt files in serweb (as emails, terms and conditions etc.) are stored in
+ *	special format. At the beginning (but only at beginning) of these files may
  *	be comments. Lines with comments begins by "#". Rest of file is separated
- *	into two parts separated by empty line: headers and body. 
+ *	into two parts separated by empty line: headers and body.
  *
  *	Each header contain header name and header value. Each header must be on
  *	own line. Header name and header value is separated by ":".
@@ -1068,7 +1068,7 @@ function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
  *
  *	Function's finding replacements in body and in header values.
  *
- *	Function return array with two keys: "headers" and "body". Body is only 
+ *	Function return array with two keys: "headers" and "body". Body is only
  *	string. Headers contain associative array with header names as keys.
  *
  *	@param string $filename		name of file is searching for
@@ -1083,17 +1083,17 @@ function read_lang_txt_file($filename, $ddir, $lang, $replacements){
 		sw_log("Can't find txt file ".$filename.", subdir:".$ddir.", lang:".$lang, PEAR_LOG_ERR);
 		return false;
 	}
-	
+
 	return read_txt_file($f, $replacements);
 }
 
 /**
  * 	Read txt file, parse and saparate to headers and body and do replacements.
  *
- *	Txt files in serweb (as emails, terms and conditions etc.) are stored in 
- *	special format. At the beginning (but only at beginning) of these files may 
+ *	Txt files in serweb (as emails, terms and conditions etc.) are stored in
+ *	special format. At the beginning (but only at beginning) of these files may
  *	be comments. Lines with comments begins by "#". Rest of file is separated
- *	into two parts separated by empty line: headers and body. 
+ *	into two parts separated by empty line: headers and body.
  *
  *	Each header contain header name and header value. Each header must be on
  *	own line. Header name and header value is separated by ":".
@@ -1107,7 +1107,7 @@ function read_lang_txt_file($filename, $ddir, $lang, $replacements){
  *
  *	Function's finding replacements in body and in header values.
  *
- *	Function return array with two keys: "headers" and "body". Body is only 
+ *	Function return array with two keys: "headers" and "body". Body is only
  *	string. Headers contain associative array with header names as keys.
  *
  *	@param string $filename		name of file is searching for
@@ -1116,7 +1116,7 @@ function read_lang_txt_file($filename, $ddir, $lang, $replacements){
  */
 function read_txt_file($filename, $replacements){
 	global $lang_set;
-	
+
 	$fp = fopen($filename, "r");
 	if (!$fp){
 		sw_log("Can't open txt file ".$filename, PEAR_LOG_ERR);
@@ -1132,16 +1132,16 @@ function read_txt_file($filename, $replacements){
 	while (!feof($fp)){
 		$line = fgets($fp);
 		if ((substr($line, 0, 1) == "#") and $accept_comments) continue;
-		
+
 		/* accept comments only on begin of file */
 		$accept_comments = false;
-		
+
 		/* after empty line begins body */
 		if (trim($line) == "") $reading_headers = false;
-		
+
 		if ($reading_headers){
 			$h = split(':', $line, 2);
-			$headers[strtolower(trim($h[0]))] = trim($h[1]);  
+			$headers[strtolower(trim($h[0]))] = trim($h[1]);
 		}
 		else{
 			/* trim ends of lines of non empty lines */
@@ -1154,9 +1154,9 @@ function read_txt_file($filename, $replacements){
 
 	/* get charset */
 	$file_charset = null;
-	if (isset($headers['content-type']) and 
+	if (isset($headers['content-type']) and
 	    preg_match("/charset=([-a-z0-9]+)/i", $headers['content-type'], $regs)){
-		
+
 		$file_charset = $regs[1];
 	}
 
@@ -1165,7 +1165,7 @@ function read_txt_file($filename, $replacements){
 		if (!empty($file_charset) and !empty($lang_set['charset'])){
 			$row[1] = iconv($lang_set['charset'], $file_charset."//TRANSLIT", $row[1]);
 		}
-		
+
 		//do replace in body
 		$body=str_replace("#@#".$row[0]."#@#", $row[1], $body);
 
@@ -1174,7 +1174,7 @@ function read_txt_file($filename, $replacements){
 			$headers[$k] = str_replace("#@#".$row[0]."#@#", $row[1], $headers[$k]);
 		}
 	}
-	
+
 	return array('headers' => $headers,
 				 'body' => $body);
 }
@@ -1186,7 +1186,7 @@ function read_txt_file($filename, $replacements){
  *	@param mixed $priority  	The priority of the message. Valid values are: PEAR_LOG_EMERG, PEAR_LOG_ALERT, PEAR_LOG_CRIT, PEAR_LOG_ERR, PEAR_LOG_WARNING, PEAR_LOG_NOTICE, PEAR_LOG_INFO, and PEAR_LOG_DEBUG.
  *	@return boolean 			True on success or false on failure
  */
- 
+
 function sw_log($message, $priority = null){
 	global $serwebLog, $config;
 
@@ -1194,10 +1194,10 @@ function sw_log($message, $priority = null){
 	if (!empty($config->custom_log_function)){
 		$db = debug_backtrace();
 
-		return call_user_func($config->custom_log_function, $priority, $message, $db[0]['file'], $db[0]['line']);	
+		return call_user_func($config->custom_log_function, $priority, $message, $db[0]['file'], $db[0]['line']);
 	}
 
-	if ($serwebLog){ 
+	if ($serwebLog){
 		return $serwebLog->log($message, $priority);
 	}
 
@@ -1219,15 +1219,15 @@ function sw_log($message, $priority = null){
  *  @param array $opt           Optional parrameters - reserved for future use
  *  @return none
  */
- 
+
 function action_log($screen_name, $action, $msg=null, $success = true, $opt = array()){
     global $config;
 
     $opt['action_str'] = is_array($action) ? $action['action'] : $action;
-    $opt['errors'] = ErrorHandler::get_errors_array(); 
+    $opt['errors'] = ErrorHandler::get_errors_array();
 
     if (!empty($config->custom_act_log_function)){
-        call_user_func($config->custom_act_log_function, $screen_name, $action, $msg, $success, $opt);  
+        call_user_func($config->custom_act_log_function, $screen_name, $action, $msg, $success, $opt);
     }
     else{
         if (is_null($msg)) $msg = "action performed";
@@ -1250,7 +1250,7 @@ function log_errors($err_object, &$errors){
 		if (isset($backtrace[1]['class']) and	//if this function is called from errorhandler class
 			$backtrace[1]['function'] == 'log_errors' and
 			$backtrace[1]['class'] == 'errorhandler'){
-			
+
 			if (isset($backtrace[2]['function'])) {
 				$funct=$backtrace[2]['function'];
 			}
@@ -1266,7 +1266,7 @@ function log_errors($err_object, &$errors){
 	//get backtrace frame from err_object which correspond to function from which log_errors is called
 	$backtrace=$err_object->getBacktrace();
 	$last_frame=end($backtrace);
-	
+
 	if ($funct and $funct!=__FUNCTION__){
 		do{
 			if ($last_frame['function']==$funct){
@@ -1275,17 +1275,17 @@ function log_errors($err_object, &$errors){
 			}
 		}while($last_frame=prev($backtrace));
 
-		//if matchng frame is not found, use last_frame	
-		if (!$last_frame) { 
+		//if matchng frame is not found, use last_frame
+		if (!$last_frame) {
 			//if logging is enabled
-			if ($serwebLog){ 
+			if ($serwebLog){
 				$serwebLog->log("function: LOG ERRORS - bad parametr ".$funct, PEAR_LOG_ERR);
 			}
 
 			$last_frame=end($backtrace);
 		}
 	}
-	
+
 	$err_message = $err_object->getMessage();
 	if ($config->log_error_return_location_of_error_to_html){
 		$err_message .= ", file: ".$last_frame['file'].":".$last_frame['line'];
@@ -1297,18 +1297,18 @@ function log_errors($err_object, &$errors){
 	if (!empty($config->custom_log_function)){
 		$log_message= $err_object->getMessage()." - ".$err_object->getUserInfo();
 
-		call_user_func($config->custom_log_function, PEAR_LOG_ERR, $log_message, $last_frame['file'], $last_frame['line']);	
+		call_user_func($config->custom_log_function, PEAR_LOG_ERR, $log_message, $last_frame['file'], $last_frame['line']);
 	}
 
 	//otherwise if logging is enabled, use default log function
-	elseif ($serwebLog){ 
-	
+	elseif ($serwebLog){
+
 		$log_message= "file: ".$last_frame['file'].":".$last_frame['line'].": ".$err_object->getMessage()." - ".$err_object->getUserInfo();
 		//remove endlines from the log message
 		$log_message=str_replace(array("\n", "\r"), "", $log_message);
 		$log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
 		$serwebLog->log($log_message, PEAR_LOG_ERR);
-		
+
 	}
 
 }
@@ -1319,9 +1319,9 @@ function log_errors($err_object, &$errors){
  *
  *	@param string $str string to convert
  *	@param string $delim delimiter
- *	@return string 
+ *	@return string
  */
- 
+
 function toCSV($str, $delim=','){
 	$str = str_replace('"', '""', $str);	//double alll quotes
 	$pos1 = strpos($str, '"');				// if $str contains quote or delim, quote it
@@ -1338,7 +1338,7 @@ function toCSV($str, $delim=','){
  */
 function isModuleLoaded($mod_name){
 	global $config;
-	
+
 	if (isset($config->modules[$mod_name]) and $config->modules[$mod_name])
 		return true;
 	else
@@ -1352,7 +1352,7 @@ function isModuleLoaded($mod_name){
  */
 function getLoadedModules(){
 	global $config;
-	
+
 	if (isset($config->modules))
 		return array_keys($config->modules, true);
 	else
@@ -1364,9 +1364,20 @@ function getLoadedModules(){
  *	This function is used for method aggregation will work in PHP4 and PHP5
  *
  *	@param object object
- *	@param string class_name 
+ *	@param string class_name
  */
 function my_aggregate_methods(&$object, $class_name){
+
+    if (defined('PHP_MAJOR_VERSION') and defined('PHP_MINOR_VERSION') and
+        (PHP_MAJOR_VERSION > 5 or (PHP_MAJOR_VERSION == 5 and PHP_MINOR_VERSION >= 3))){
+
+        // If the PHP version is 5.3 and higher we could rely on __call() function
+        // of CData_Layer class.
+        //
+        // So do nothing
+
+        return true;
+    }
 
 	if (function_exists('aggregate_methods')){
 		return aggregate_methods($object, $class_name);
@@ -1380,17 +1391,6 @@ function my_aggregate_methods(&$object, $class_name){
 		return @classkit_aggregate_methods(get_class($object), $class_name);
 	}
 
-    if (defined('PHP_MAJOR_VERSION') and defined('PHP_MINOR_VERSION') and
-        (PHP_MAJOR_VERSION > 5 or (PHP_MAJOR_VERSION == 5 and PHP_MINOR_VERSION >= 3))){
-
-        // If the PHP version is 5.3 and higher we could rely on __call() function
-        // of CData_Layer class.
-        //
-        // So do nothing
-
-        return true;
-    }
-
 	die("Function aggregate_methods() doesn't exists. This is probably because ".
 		"PHP 5 or later is running on this server. Try install Runkit or ".
 		"Classkit extension from PECL repository (http://pecl.php.net). ".
@@ -1403,9 +1403,9 @@ function my_aggregate_methods(&$object, $class_name){
 }
 
 /**
- *	This function return version 4 UUID by RFC4122, which is generating UUIDs 
+ *	This function return version 4 UUID by RFC4122, which is generating UUIDs
  *	from truly-random numbers.
- *	
+ *
  *	@return string
  */
 function rfc4122_uuid(){
@@ -1449,7 +1449,7 @@ function RecursiveMkdir($path, $mode=0777){
 		// The directory doesn't exist.  Recurse, passing in the parent
 		// directory so that it gets created.
 		RecursiveMkdir(dirname($path));
-		
+
 		mkdir($path, $mode);
 	}
 }
@@ -1469,12 +1469,12 @@ function copyr($source, $dest)
     if (is_file($source)) {
         return copy($source, $dest);
     }
- 
+
     // Make destination directory
     if (!is_dir($dest)) {
         mkdir($dest);
     }
- 
+
     // Loop through the folder
     $dir = dir($source);
     while (false !== $entry = $dir->read()) {
@@ -1482,13 +1482,13 @@ function copyr($source, $dest)
         if ($entry == '.' || $entry == '..') {
             continue;
         }
- 
+
         // Deep copy directories
         if ($dest !== "$source/$entry") {
             copyr("$source/$entry", "$dest/$entry");
         }
     }
- 
+
     // Clean up
     $dir->close();
     return true;
@@ -1496,7 +1496,7 @@ function copyr($source, $dest)
 
 /**
  * rm() -- Vigorously erase files and directories.
- * 
+ *
  * @param $fileglob mixed If string, must be a file name (foo.txt), glob pattern (*.txt), or directory name.
  *                        If array, must be an array of file names, glob patterns, or directories.
  */
@@ -1517,12 +1517,12 @@ function rm($fileglob)
 //               trigger_error(sprintf('No files match supplied glob %s', $fileglob), E_USER_WARNING);
 //               return false;
 				return true; //nothing to delete
-           }       
+           }
            $rcs = array_map('rm', $matching);
            if (in_array(false, $rcs)) {
                return false;
            }
-       }       
+       }
    } else if (is_array($fileglob)) {
        $rcs = array_map('rm', $fileglob);
        if (in_array(false, $rcs)) {
@@ -1638,11 +1638,11 @@ function sw_JSON_encode($var){
 			}
 
             return '{' . implode(',', $properties) . '}';
-        
+
         default:
         	return false;
     }
-} 
+}
 
 /**
  *	Redirect client to secure connection and stop executing of the script
@@ -1651,7 +1651,7 @@ function redirect_to_HTTPS(){
 	/* if useing secure connection return true */
 	if (!empty($_SERVER['HTTPS']) and $_SERVER['HTTPS']!='off') return true;
 
-	/* there is something wrong, we already tryed do redirect but it seems 
+	/* there is something wrong, we already tryed do redirect but it seems
 	   non secure connection is still used */
 	if (isset($_GET['redirected_to_https'])) return false;
 
@@ -1682,7 +1682,7 @@ function redirect_to_HTTP(){
 	/* if useing unsecure connection return true */
 	if (empty($_SERVER['HTTPS']) or $_SERVER['HTTPS']=='off') return true;
 
-	/* there is something wrong, we already tryed do redirect but it seems 
+	/* there is something wrong, we already tryed do redirect but it seems
 	   secure connection is still used */
 	if (isset($_GET['redirected_to_http'])) return false;
 
@@ -1707,7 +1707,7 @@ function redirect_to_HTTP(){
 }
 /**
  *	Add escape characters into string to it could be directly used in javascript
- *	
+ *
  *	@param	string	$str
  *	@return	string
  */
@@ -1717,10 +1717,10 @@ function js_escape($str){
 
 /**
  *	Add GET parameter(s) to URL
- *	
- *  Join URL with parameter useing '?' or '&' depending on whether URL already 
- *  contain some parameters	
- *	
+ *
+ *  Join URL with parameter useing '?' or '&' depending on whether URL already
+ *  contain some parameters
+ *
  *	@param	string	$url
  *	@param	string	$param
  *	@return	string
@@ -1733,10 +1733,10 @@ function add_param_to_url($url, $param){
 
 /**
  *	Clone array of objects
- *	
- *  Create new array that contains new copies of object, not references 
- *  to same objects 
- *	
+ *
+ *  Create new array that contains new copies of object, not references
+ *  to same objects
+ *
  *	@param	array	$array
  *	@return	array
  */
@@ -1749,7 +1749,7 @@ function clone_array($array){
         if (is_object($v))  $clone[$k] = clone($v);
         else                $clone[$k] = $v;
     }
-    
+
     return $clone;
 }
 

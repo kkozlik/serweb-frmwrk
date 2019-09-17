@@ -34,10 +34,10 @@ class of_select extends of_element {
             $n = $this->name;
             $t = "select";
         }
-    
+
         /* id is same as name without [] on the end */
         $id = preg_replace("/(^[^][]+)(.*)/", "\\1", $n);
-        
+
         $str .= "<$t name='$n' id='$id'";
         if ($this->size)      $str .= " size='$this->size'";
         if ($this->extrahtml) $str .= " $this->extrahtml";
@@ -54,7 +54,10 @@ class of_select extends of_element {
             $str .= " title='".htmlspecialchars($this->title, ENT_QUOTES)."'";
         }
 
-        $str .= " data-oohf-raw-value='".htmlspecialchars($this->value, ENT_QUOTES)."'";
+        if (is_array($this->value))
+            $str .= " data-oohf-raw-value='".htmlspecialchars(json_encode($this->value), ENT_QUOTES)."'";
+        else
+            $str .= " data-oohf-raw-value='".htmlspecialchars($this->value, ENT_QUOTES)."'";
 
         $str .= ">";
 

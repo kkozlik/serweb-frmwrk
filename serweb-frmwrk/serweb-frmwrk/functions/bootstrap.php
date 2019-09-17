@@ -1,12 +1,12 @@
 <?php
 /**
  *  File loading configs, functions, class definitions etc.
- * 
+ *
  *  @author     Karel Kozlik
  *  @version    $Id: main_prepend.php,v 1.16 2007/10/04 21:34:16 kozlik Exp $
  *  @package    serweb
  *  @subpackage framework
- */ 
+ */
 
 global $config;
 global $serwebLog;
@@ -39,13 +39,13 @@ if (file_exists($_SERWEB["coreconfigdir"] . "config.developer.php")){
 }
 
 /** if application specific config directory is different than core config
- *  directory, try to load application specific config 
+ *  directory, try to load application specific config
  */
 if ($_SERWEB["configdir"] != $_SERWEB["coreconfigdir"]){
     if (file_exists($_SERWEB["configdir"] . "config.php")){
         require_once ($_SERWEB["configdir"] . "config.php");
     }
-    
+
     /** if config.developer is present, replace default config by developer config */
     if (file_exists($_SERWEB["configdir"] . "config.developer.php")){
         require_once ($_SERWEB["configdir"] . "config.developer.php");
@@ -86,17 +86,18 @@ if ($config->enable_logging){
         if (substr($config->log_file, 0 , 6) == 'syslog'){
             $handler = "syslog";
             $name = LOG_LOCAL0; // facility
-            if (strlen($config->log_file) > 7){ 
+            if (strlen($config->log_file) > 7){
                 // if the $config->log_file contain also facility, read it
                 $name = substr($config->log_file, 7);
                 $name = constant($name); // convert the constant name to its value
             }
+            $conf['reopen'] = true;
         }
         elseif (substr($config->log_file, 0 , 7) == 'console'){
             // log to console
             $handler = "console";
             $name = "";
-            if (strlen($config->log_file) > 8){ 
+            if (strlen($config->log_file) > 8){
                 // if the $config->log_file contain also stream, read it
                 $conf = array('stream' => constant(substr($config->log_file, 8)));
             }
@@ -104,7 +105,7 @@ if ($config->enable_logging){
         elseif (substr($config->log_file, 0 , 9) == 'error_log'){
             $handler = "error_log";
             $name = PEAR_LOG_TYPE_SYSTEM;
-            if (strlen($config->log_file) > 10){ 
+            if (strlen($config->log_file) > 10){
                 // if the $config->log_file contain also log type, read it
                 $name = substr($config->log_file, 10);
                 $name = constant($name); // convert the constant name to its value
@@ -119,13 +120,13 @@ if ($config->enable_logging){
 else{
     $serwebLog  = NULL;
 
-    /* 
+    /*
      * define constants used by logging to avoid errors reported by php
      */
-     
+
     /** System is unusable */
     define('PEAR_LOG_EMERG',    0);
-    /** Immediate action required */     
+    /** Immediate action required */
     define('PEAR_LOG_ALERT',    1);
     /** Critical conditions */
     define('PEAR_LOG_CRIT',     2);
@@ -157,9 +158,9 @@ require_once ($_SERWEB["corefunctionsdir"] . "data_layer.php");
 require_once ($_SERWEB["corefunctionsdir"] . "load_modules.php");
 
 
-/* 
- *  create instance of data_layer binded to proxy where is stored account  
- *  of currently authenticated user 
+/*
+ *  create instance of data_layer binded to proxy where is stored account
+ *  of currently authenticated user
  */
 $GLOBALS['data_auth'] = CData_Layer::singleton("auth_user");
 /*  reference $data to $data_auth */
