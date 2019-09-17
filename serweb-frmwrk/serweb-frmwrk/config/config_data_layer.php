@@ -13,8 +13,8 @@ global $config;
         /**
          *  Use XML RPC instead of FIFO for manage SER.
          *
-         *  If this and get_db_uri_from_ser is set to true the database 
-         *  setting is irelevant. In this case, this is obtained from 
+         *  If this and get_db_uri_from_ser is set to true the database
+         *  setting is irelevant. In this case, this is obtained from
          *  SER automaticaly.
          */
         $config->use_rpc = true;
@@ -156,8 +156,8 @@ global $config;
          *  see mysql manual for more info
          *
          *  $config->data_sql->collation = "utf8_general_ci";
-         *  
-         *  Note: When $config->data_sql->set_charset is set to true, the mysql 
+         *
+         *  Note: When $config->data_sql->set_charset is set to true, the mysql
          *  should implicitly set collation to defautl collation for the charset.
          */
 
@@ -226,40 +226,5 @@ global $config;
         $config->auth['use_did'] = true;
 
 
-        /* these are setting required by ldap, you need to change it only if you are using ldap to
-           store some data. If you are using ldap, you need to instal PEAR package db_ldap2 by command:
-
-           pear install -f db_ldap2
-        */
-
-        $config->data_ldap=new stdClass();
-
-        $config->data_ldap->version=3;                          //version of LDAP protocol, can be 2 or 3
-        $config->data_ldap->base_dn="dc=mydomain,dc=org";       // The base DN of your LDAP server
-
-        $i=0;
-        $config->data_ldap->host[$i]['host']="localhost";       //ldap host
-        $config->data_ldap->host[$i]['port']="";                //ldap port - leave empty for default
-                                                                //ldap conection user
-        $config->data_ldap->host[$i]['login_dn']="cn=admin,dc=mydomain,dc=org";
-        $config->data_ldap->host[$i]['login_pass']="heslo";     //ldap conection password
-
-        // If you want to configure additional backup LDAP servers, do so below.
-        /*
-        $i++;
-        $config->data_ldap->host[$i]['host']="localhost";       //ldap host
-        $config->data_ldap->host[$i]['port']="";                //ldap port - leave empty for default
-                                                                //ldap conection user
-        $config->data_ldap->host[$i]['login_dn']="cn=admin,dc=mydomain,dc=org";
-        $config->data_ldap->host[$i]['login_pass']="heslo";     //ldap conection password
-        */
-        // If you want to configure more LDAP backup servers, copy and paste the above (including the "$i++;")
-
-
-
-
         $config->data_layer_always_required_functions=array('set_db_charset',
                                                             'set_db_collation');
-
-
-?>
