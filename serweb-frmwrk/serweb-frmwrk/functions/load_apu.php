@@ -75,7 +75,7 @@ global $_SERWEB;
 
 require_once ($_SERWEB["corefunctionsdir"] . "oohform_ext.php");
 require_once ($_SERWEB["appdir"] . "apu_base_class.php");
-require_once ($_SERWEB["appdir"] . "page_controler.php");
+require_once ($_SERWEB["appdir"] . "page_controller.php");
 
 if (!empty($_SERWEB['_page_controller_filename'])){
     require_once ($_SERWEB['_page_controller_filename']);
