@@ -1,25 +1,25 @@
 <?php
 /**
  * Page controler
- * 
+ *
  * @author     Karel Kozlik
  * @package    serweb
  * @subpackage framework
- */ 
+ */
 
 /**
  *  Page controler
- *  
+ *
  *  Page controler process input data, execute all registeret APU objects for
  *  an page a create the HTML output.
- *  
+ *
  *  <b>Configuration:</b>
- *  
+ *
  *  This class currently not do not use any options
- *  
- *  
+ *
+ *
  *  <b>Exported smarty variables:</b>
- *  
+ *
  *  - <i>parameters</i>
  *    assigned to global variable $page_attributes
  *  - <i>lang_str</i>
@@ -28,26 +28,26 @@
  *    assigned to global variable $lang_set
  *  - <i>come_from_admin_interface</i>
  *    assigned to {@link $come_from_admin_interface}
- *  - <i>cfg</i>        
+ *  - <i>cfg</i>
  *    assigned to variable $config holding configuration.
- *    Contain only following properties: img_src_path, js_src_path, 
+ *    Contain only following properties: img_src_path, js_src_path,
  *    style_src_path, user_pages_path, admin_pages_path, domains_path
  *  - <i>user_auth</i>
  *    assigned to variable {@link $user_id}
  *    which is associative array containing username, domain and uid
  *    of user loged in or of user which datails admin is examining
- *  - <i>form</i> 
- *    contain elements of HTML form. Name of this variable could be changed. 
- *    There also could be more variables containing HTML forms. Form more 
- *    details see: {@link assign_form_name()} 
+ *  - <i>form</i>
+ *    contain elements of HTML form. Name of this variable could be changed.
+ *    There also could be more variables containing HTML forms. Form more
+ *    details see: {@link assign_form_name()}
  *    and {@link set_name_of_smarty_var_for_form()}
- *  
- *  
+ *
+ *
  * @package    serweb
  * @subpackage framework
  */
- 
-class page_conroler{
+
+class page_controller{
     /** array of application units */
     var $apu_objects=array();
     /** file with smarty template */
@@ -55,15 +55,15 @@ class page_conroler{
     /** flag which indicated that user come from admin interface */
     var $come_from_admin_interface=false;
 
-    /** auth info of user with which setting we are working. 
-     *  Usualy is same as $_SESSION['auth']->get_logged_user(), only admin can change it 
+    /** auth info of user with which setting we are working.
+     *  Usualy is same as $_SESSION['auth']->get_logged_user(), only admin can change it
      */
-    var $user_id = null;        
+    var $user_id = null;
 
-    /** id of domain with which setting we are working. 
-     *  Only admin can change it 
+    /** id of domain with which setting we are working.
+     *  Only admin can change it
      */
-    var $domain_id = null;      
+    var $domain_id = null;
 
     /** associative array of controller options */
     protected $opt=array(
@@ -73,7 +73,7 @@ class page_conroler{
         'print_html_document_end'   => true,
     );
     /** array of html forms */
-    var $f = array();           
+    var $f = array();
     /** flags which says if header 'location' will be send and if html form should be validated */
     var $send_header_location = false;
     /** flag if should be some html form validated */
@@ -90,10 +90,10 @@ class page_conroler{
     var $url_for_reload = null;
     /** array of GET parameters added to each URL created by page controler */
     var $global_get_params = array();
-    /** flag determining if standard html output will be generated. 
-     *  Sometimes an APU need generate other output than HTML. In this case it 
-     *  should call method disable_html_output() and the smarty template will 
-     *  not be generated. 
+    /** flag determining if standard html output will be generated.
+     *  Sometimes an APU need generate other output than HTML. In this case it
+     *  should call method disable_html_output() and the smarty template will
+     *  not be generated.
      *  It is recomended use this only if 'alone' flag of executed action is set.
      */
     var $standard_html_output = true;
@@ -101,7 +101,7 @@ class page_conroler{
     /** for backward compatibility - Hack protect will be removed - by setting this var to true may be enabled for single page*/
     var $perform_hack_protect = false;
 
-    /** instance of Creg class 
+    /** instance of Creg class
      *  for backward compatibility, shouldn't be used
      *  instead of this use your own variable and Creg::singleton method
      *  @deprec
@@ -123,11 +123,11 @@ class page_conroler{
     /** post init function */
     var $post_init = null;
 
-    /** listeners of events and their priorities */    
+    /** listeners of events and their priorities */
     private $listeners = array();
 
     /* constructor */
-    function page_conroler(){
+    function __construct(){
 
         $this->reg = Creg::singleton();             // create regular expressions class
 
@@ -147,7 +147,7 @@ class page_conroler{
     /**
      * Attach an event listener.
      * As of now following events are supported:
-     *  
+     *
      *  - pre_init                  - before init() methods of APUs are executed
      *  - post_init                 - after init() methods of APUs are executed
      *  - post_determine_actions
@@ -159,7 +159,7 @@ class page_conroler{
      *  - post_invalid              - after form_invalid methods of APU are executed (only if validation failed)
      *  - pre_html_output
      *  - post_html_output
-     * 
+     *
      * The callback function shall accept one parameter of the page_conroller_event object
      *
      * @param string   $event_name
@@ -174,7 +174,7 @@ class page_conroler{
     }
 
     /**
-     * Trigger event of given name. 
+     * Trigger event of given name.
      * This function execute all listeners of given event in their priority order.
      *
      * @param string $event_name
@@ -203,8 +203,8 @@ class page_conroler{
 
     /**
      *  This function is obsoleted. All errors from ErrorHandler are transfered
-     *  via session and GET params when $this->reload() function is executed     
-     *  
+     *  via session and GET params when $this->reload() function is executed
+     *
      *  @obsoleted since 2014-04-28
      */
     function errors_to_get_array(){
@@ -216,13 +216,13 @@ class page_conroler{
      *  "pctl_msg_id" and put them into $this->messages array and into error_handler
      */
     private function messages_from_get_param(){
-    
+
         if (isset($_GET['pctl_msg_id'])){
             $msg_id = $_GET['pctl_msg_id'];
 
             if (isset($this->session['messages'][$msg_id])){
                 if (!empty($this->session['messages'][$msg_id]['info'])){
-                    $this->messages = array_merge($this->messages, 
+                    $this->messages = array_merge($this->messages,
                                                   $this->session['messages'][$msg_id]['info']);
                 }
 
@@ -236,7 +236,7 @@ class page_conroler{
                 unset($this->session['messages_time'][$msg_id]);
             }
         }
-        
+
         if (isset($this->session['messages_time'])){
             $time = time() - 300; //delete session messages older then 5 min
             foreach($this->session['messages_time'] as $msg_id => $msg_time){
@@ -250,8 +250,8 @@ class page_conroler{
 
     /**
      *  This function is obsoleted. All messages in $this->message array are transfered
-     *  via session and GET params when $this->reload() function is executed     
-     *  
+     *  via session and GET params when $this->reload() function is executed
+     *
      *  @obsoleted since 2014-04-28
      */
     function message_to_get_param($msg){
@@ -260,10 +260,10 @@ class page_conroler{
     }
 
     function session_init(){
-    
+
         /* create container in session variable if does not exists */
         if (!isset($_SESSION['page_ctl'])) $_SESSION['page_ctl'] = array();
-        
+
         $this->session = &$_SESSION['page_ctl'];
     }
 
@@ -292,11 +292,11 @@ class page_conroler{
     function init_this_uid(){
 
         //first try get user_id from session variable
-        if (isset($_SESSION['page_controler_user_id'])){
-            $this->user_id = $_SESSION['page_controler_user_id'];
+        if (isset($_SESSION['page_controller_user_id'])){
+            $this->user_id = $_SESSION['page_controller_user_id'];
             $this->come_from_admin_interface=true;
         }
-    
+
         //second if userauth param is given, get user_id from it
         if (!empty($_GET[$this->ch_user_param_name()])) {
             $serwebUserClass = "SerwebUser";
@@ -305,18 +305,18 @@ class page_conroler{
             if (isset($_SESSION['auth']) and is_a($_SESSION['auth'], "Auth")) {
                 $serwebUserClass = $_SESSION['auth']::$user_class;
             }
-            
+
             $uid = &call_user_func(array($serwebUserClass, 'recreate_from_get_param'),
                                    $_GET[$this->ch_user_param_name()]);
-            
+
             if (is_a($uid, 'SerwebUser')){
                 $this->check_perms_to_user = true;
 
-                $this->user_id = $_SESSION['page_controler_user_id'] = $uid;
+                $this->user_id = $_SESSION['page_controller_user_id'] = $uid;
                 $this->come_from_admin_interface=true;
             }
         }
-        
+
         //if still user_id is null, get it from $_SESSION['auth'] object
         if (is_null($this->user_id) and isset($_SESSION['auth']) and is_a($_SESSION['auth'], "Auth"))
             $this->user_id=$_SESSION['auth']->get_logged_user();
@@ -329,8 +329,8 @@ class page_conroler{
 
         /* get id of administrated domain */
         //first try get domain id from session variable
-        if (isset($_SESSION['page_controler_domain_id'])){
-            $this->domain_id = $_SESSION['page_controler_domain_id'];
+        if (isset($_SESSION['page_controller_domain_id'])){
+            $this->domain_id = $_SESSION['page_controller_domain_id'];
         }
 
         //second if domain_id param is given, get domain id from it
@@ -344,7 +344,7 @@ class page_conroler{
 
     /**
      *  Return name of get param used to change user
-     *  
+     *
      *  @return string
      */
     function ch_user_param_name(){
@@ -360,23 +360,23 @@ class page_conroler{
     function domain_to_get_param($domain_id){
         return "pc_domain_id=".RawURLEncode($domain_id);
     }
-    
+
     /**
      *  set $this->domain_id and session variable to given value
      *
      *  @param  string $domain_id       id of domain
      */
     function set_domain_id($domain_id){
-        $this->domain_id = $_SESSION['page_controler_domain_id'] = $domain_id;
+        $this->domain_id = $_SESSION['page_controller_domain_id'] = $domain_id;
     }
 
     /**
      *  set $this->user_id and session variable to given value
      *
-     *  @param  SerwebUser $user_id     
+     *  @param  SerwebUser $user_id
      */
     function set_user_id($user_id){
-        $this->user_id = $_SESSION['page_controler_user_id'] = $user_id;
+        $this->user_id = $_SESSION['page_controller_user_id'] = $user_id;
     }
 
     /**
@@ -403,7 +403,7 @@ class page_conroler{
     function set_interapu_var($name, $value){
         $this->session['interapu'][$name] = $value;
     }
-    
+
     /**
      * set interapu variables by GET params
      * @access private
@@ -413,9 +413,9 @@ class page_conroler{
             if (isset($_GET['pctlia_'.$v])) $this->session['interapu'][$v] = $_GET['pctlia_'.$v];
         }
     }
-    
+
     /**
-     * return required data layer methods - static class 
+     * return required data layer methods - static class
      * @static
      */
     function get_required_data_layer_methods(){
@@ -424,17 +424,17 @@ class page_conroler{
 
     /* add application unit to $apu_objects array*/
     function add_apu(&$class){
-        if (!is_a($class, "apu_base_class")) 
+        if (!is_a($class, "apu_base_class"))
             die(__FILE__.":".__LINE__." - given class is not instance of apu_base_class");
 
         $this->apu_objects[] = &$class;
     }
-    
+
     /* remove application unit from $apu_objects array*/
     function del_apu(&$class){
-        if (!is_a($class, "apu_base_class")) 
+        if (!is_a($class, "apu_base_class"))
             die(__FILE__.":".__LINE__." - given class is not instance of apu_base_class");
-        
+
         foreach($this->apu_objects as $k=>$v){
             if ($this->apu_objects[$k]->get_instance_id() == $class->get_instance_id()) {
                 unset($this->apu_objects[$k]);
@@ -442,12 +442,12 @@ class page_conroler{
             }
         }
     }
-    
+
     /* set nam1e of template */
     function set_template_name($template){
         $this->template_name = $template;
     }
-    
+
     /* set option $opt_name to value $val */
     function set_opt($opt_name, $val){
         $this->opt[$opt_name]=$val;
@@ -459,7 +459,7 @@ class page_conroler{
     }
 
     /**
-     *  add massage which will be displayed on page 
+     *  add massage which will be displayed on page
      *
      *  @param array $msg   message - associative array with keys 'short' and 'long'
      */
@@ -468,7 +468,7 @@ class page_conroler{
     }
 
     /**
-     *  set timezone which is used by date/time formating function to timezone 
+     *  set timezone which is used by date/time formating function to timezone
      *  of user
      *
      *  @param string $uid  user to which timezone should be set - if not given $this->user_id is used
@@ -479,14 +479,14 @@ class page_conroler{
         // if $uid is not provided and a user is logged, set the $uid by the user
         if (is_null($uid) and $this->user_id) $uid = $this->user_id->get_uid();
 
-        if (is_null($uid)){ 
+        if (is_null($uid)){
             if ($config->timezone){
-                // if we still do not have $uid and default timezone is set in the config use it. 
+                // if we still do not have $uid and default timezone is set in the config use it.
                 date_default_timezone_set($config->timezone);
                 return true;
             }
             else{
-                // We do not have $uid and no timezone is not set in config file. 
+                // We do not have $uid and no timezone is not set in config file.
                 return false;
             }
         }
@@ -499,14 +499,14 @@ class page_conroler{
 
             if ($config->get_user_timezone_fn){
                 $tz = call_user_func($config->get_user_timezone_fn, $uid);
-            
+
                 if ($tz){
                     date_default_timezone_set($tz);
                     $this->is_set_timezone = $uid;
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -528,7 +528,7 @@ class page_conroler{
      *  Important: this method should be called _ONLY_ from methods action_*()
      *  of APU
      *
-     *  @param string $url 
+     *  @param string $url
      */
     function change_url_for_reload($url){
         $this->url_for_reload = $url;
@@ -536,41 +536,41 @@ class page_conroler{
 
     /**
      *  Add GET parameter to each URL created by page controller
-     *     
-     *  @param string $name     name of GET parameter  
-     *  @param string $value    value of GET parameter  
-     */         
+     *
+     *  @param string $name     name of GET parameter
+     *  @param string $value    value of GET parameter
+     */
     function add_get_param($name, $value){
         $this->global_get_params[$name] = $value;
     }
 
     /**
      *  Set GET parameter to add to each URL created by page controller.
-     *  If GET parameter with given name exists, it is added to all URLs.          
-     *     
-     *  @param string $name     name of GET parameter  
-     */         
+     *  If GET parameter with given name exists, it is added to all URLs.
+     *
+     *  @param string $name     name of GET parameter
+     */
     function set_get_param($name){
         if (isset($_GET[$name])){
             $this->global_get_params[$name] = $_GET[$name];
         }
     }
-    
+
     /**
      *  Unset GET parameter to be added to each URL created by page controller.
-     *     
-     *  @param string $name     name of GET parameter  
-     */         
+     *
+     *  @param string $name     name of GET parameter
+     */
     function unset_get_param($name){
         unset($this->global_get_params[$name]);
     }
-    
+
     /**
      *  Return $this->global_get_params as array of strings. The array fields
-     *  are in form "foo=bar"     
+     *  are in form "foo=bar"
      *
-     *  @return array          
-     */         
+     *  @return array
+     */
     function global_get_params_to_str_array(){
         $str = array();
         foreach($this->global_get_params as $k=>$v){
@@ -582,11 +582,11 @@ class page_conroler{
     /**
      *  Format URL - enhance it of global GET params, session ID if needed and
      *  unique identifier.
-     *  
+     *
      *  @param  string  $url
      *  @param  bool    $unique     Make the URL unique - add some random param
-     *  @return string                    
-     */         
+     *  @return string
+     */
     function url($url, $unique = true){
         global $sess;
 
@@ -602,26 +602,26 @@ class page_conroler{
         else{
             $url .= ($get_param ? $param_separator.$get_param : '');
         }
-        
+
         if ($sess instanceof Session) return $sess->url($url);
         else return $url;
     }
-    
-    /** 
+
+    /**
      *  Disabling generation of HTML output
      *
-     *  Sometimes an APU need generate other output than HTML. In this case it 
+     *  Sometimes an APU need generate other output than HTML. In this case it
      *  should call this method and the smarty template will not be generated.
-     *   
+     *
      *  It is recomended use this only if 'alone' flag of executed action is set.
      */
     function disable_html_output(){
         $this->standard_html_output = false;
     }
-        
+
     /**
      *  Add file to set of required javascript files
-     *  
+     *
      *  @param string $file name of javascript file
      */
     function add_required_javascript($file){
@@ -632,9 +632,9 @@ class page_conroler{
      *  Same as add_required_javascript() function. This function was here
      *  for a long time with typo in its name. So leaving it here for backward
      *  compatibility, but obsoleted now.
-     *  
+     *
      *  @obsoleted by add_required_javascript()
-     */         
+     */
     function add_reqired_javascript($file){
         $this->add_required_javascript($file);
     }
@@ -677,31 +677,31 @@ class page_conroler{
      *  Module directories are not usualy accessible via html directory tree.
      *  So there is getter script inside the javascript directory that access the
      *  javascript file and return its content to HTML browser.
-     * 
-     *  In rare cases this might not work. I.e. webserwer from webmin execute 
-     *  only files with .cgi extension. To solve it this method could be 
-     *  overriden with another one that will return URL to customized getter 
+     *
+     *  In rare cases this might not work. I.e. webserwer from webmin execute
+     *  only files with .cgi extension. To solve it this method could be
+     *  overriden with another one that will return URL to customized getter
      *  script.
-     *  
-     *  @param  string  $module     The module from which we require a javascript file                            
-     *  @param  string  $file       The filename of the required file                            
+     *
+     *  @param  string  $module     The module from which we require a javascript file
+     *  @param  string  $file       The filename of the required file
      */
     function js_from_mod_getter($module, $file){
         return "core/get_js.php?mod=".RawURLEncode($module).
                                "&js=".RawURLEncode($file);
     }
-    
+
     /**
      *  Return URL that access given css file from templates directory.
      *  Templates directory is not usualy accessible via html directory tree.
      *  So there is getter script inside the styles directory that access the
      *  css file and return its content to HTML browser.
-     * 
+     *
      *  In rare cases this might not work. I.e. webserwer from webmin execute
      *  only files with .cgi extension. To solve it this method could be
      *  overriden with another one that will return URL to customized getter
      *  script.
-     *  
+     *
      *  @param  string  $file       The filename of the required file with path
      *                              relatively to templates directory
      */
@@ -716,11 +716,11 @@ class page_conroler{
      *
      *  @param string $form_name    name of html form
      *  @param object $apu          instance of APU
-     */ 
+     */
     function assign_form_name($form_name, &$apu){
         global $lang_str, $config;
         /* we are useing shared html forms */
-        $this->shared_html_form = true; 
+        $this->shared_html_form = true;
         /* if form of this name still not exists, create initial values */
         if (!isset($this->f[$form_name])){
             $this->f[$form_name]['validate'] = false;                   // should be this form validated?
@@ -738,20 +738,20 @@ class page_conroler{
         $this->f[$form_name]['apu'][] = &$apu;
         $apu->form_name = $form_name;
     }
-    
+
     /**
      *  Change name of smarty variable used for html form
      *
      *  @param string $form_name    name of existing html form
      *  @param string $smarty_var   name of smarty variable - default value is form_&lt;$form_name&gt;
      *  @return bool                FALSE if form with given name still not exists, TRUE otherwise
-     */ 
+     */
     function set_name_of_smarty_var_for_form($form_name, $smarty_var){
         if (!isset($this->f[$form_name])){
-            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG); 
+            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG);
             return false;
         }
-        
+
         $this->f[$form_name]['smarty_name'] = $smarty_var;
         return true;
     }
@@ -769,30 +769,30 @@ class page_conroler{
      *  @param string $form_name    name of existing html form
      *  @param array  $submit       assotiative array describe submit element of shared form. For details see description of method add_submit in class form_ext
      *  @return bool                FALSE if form with given name still not exists, TRUE otherwise
-     */ 
+     */
     function set_submit_for_form($form_name, $submit){
         if (!isset($this->f[$form_name])){
-            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG); 
+            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG);
             return false;
         }
-        
+
         $this->f[$form_name]['submit'] = $submit;
         return true;
     }
 
     /**
-     *  Select APUs from which will be displayed messages 
+     *  Select APUs from which will be displayed messages
      *
      *  @param string $form_name    name of existing html form
      *  @param array $apu_id        array of instance_ids of APUs from which may be displayed messages
      *  @return bool                FALSE if form with given name still not exists, TRUE otherwise
-     */ 
+     */
     function set_apu_for_msgs($form_name, $apu_id){
         if (!isset($this->f[$form_name])){
-            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG); 
+            sw_log("Form with name '".$form_name."' is not set. Use method assign_form_name() first.", PEAR_LOG_DEBUG);
             return false;
         }
-        
+
         $this->f[$form_name]['msg_apu'] = $apu_id;
         return true;
     }
@@ -800,9 +800,9 @@ class page_conroler{
 
     /**
      *  Do a reload of current page
-     *  
+     *
      *  This function send header "Location" and finish execution of script
-     *  
+     *
      *  @param  array   $get_param      array of GET parameters send in the URL
      *  @return none                    this function finish execution of script
      */
@@ -817,16 +817,16 @@ class page_conroler{
             $this->session['messages'][$msg_id]['err'] = $errors;
             $this->session['messages_time'][$msg_id] = time();
             $get_param[] = "pctl_msg_id=".RawURLEncode($msg_id);
-        } 
-                
+        }
+
         /* collect all get params to one string */
         $get_param = implode('&', array_merge($this->global_get_params_to_str_array(), $get_param));
-        
+
         /* send header */
         if (!$this->url_for_reload) $this->url_for_reload = $_SERVER['PHP_SELF'];
 
         $param_separator = strpos($this->url_for_reload, "?") !== false ?  "&" : "?";
-        
+
         $url = $this->url_for_reload.$param_separator."kvrk=".uniqID("").
                             ($get_param ? '&'.$get_param : '');
 
@@ -841,20 +841,20 @@ class page_conroler{
 
     /**
      *  Redirect browser to new URL and exit the script execution
-     *  
-     *  @param  string  $url            URL for redirect          
+     *
+     *  @param  string  $url            URL for redirect
      *  @param  array   $get_param      array of GET parameters send in the URL
      *  @return none                    this function finish execution of script
-     */         
+     */
     function redirect($url, $get_params = array()){
         $this->url_for_reload = $url;
         $this->reload($get_params);
     }
 
     /**
-     *  determine actions of all application units 
+     *  determine actions of all application units
      *  and check if some APU needs validate form or send header 'location'
-     *  
+     *
      *  @access private
      */
     function _determine_actions(){
@@ -891,18 +891,18 @@ class page_conroler{
 
                 /* save this APU */
                 $temp = &$this->apu_objects[$key];
-                /* unset all other APUs */              
+                /* unset all other APUs */
                 $this->apu_objects = array();
                 $this->add_apu($temp);
-                
+
                 break;
             }
         }
     }
-    
+
     /**
      *  call post_determine_action method for each APU
-     *  
+     *
      *  @access private
      */
     function _post_determine_actions(){
@@ -910,10 +910,10 @@ class page_conroler{
             $this->apu_objects[$key]->post_determine_action();
         }
     }
-    
+
     /**
-     *  create html form by all application units 
-     *  
+     *  create html form by all application units
+     *
      *  @access private
      */
     function _create_html_form(){
@@ -932,10 +932,10 @@ class page_conroler{
             }
         }
     }
-    
-    /** 
+
+    /**
      *  validate html form
-     *  
+     *
      *  @access private
      */
     function _validate_html_form(){
@@ -953,7 +953,7 @@ class page_conroler{
                     }
                 }
             }
-            
+
             /* validate html form by all application units */
             foreach($this->apu_objects as $key=>$val){
                 if (isset($this->apu_objects[$key]->action['validate_form']) and $this->apu_objects[$key]->action['validate_form']){
@@ -963,13 +963,13 @@ class page_conroler{
                 }
             }
         }
-        
+
         return true;
     }
 
     /**
      *  call form_invalid method of each apu
-     *  
+     *
      *  @access private
      */
     function _form_invalid(){
@@ -978,18 +978,18 @@ class page_conroler{
         }
     }
 
-    /** 
+    /**
      *  load default values to form
-     *  
+     *
      *  @access private
      */
     function _form_load_defaults(){
         /* if is used shared html form, load defaults to forms which were submited */
         if ($this->shared_html_form) {
             foreach($this->f as $key=>$val){
-                if (isset($_POST['apu_name']) and 
+                if (isset($_POST['apu_name']) and
                     count(array_intersect($_POST['apu_name'], $this->f[$key]['apu_names']))){
-                
+
                     $this->f[$key]['form']->load_defaults();
                 }
             }
@@ -1000,35 +1000,35 @@ class page_conroler{
                 if ($val->was_form_submited()) $this->apu_objects[$key]->f->load_defaults();
             }
         }
-        
+
     }
-    
-    /** 
+
+    /**
      *  execute actions of all application units
-     *  
+     *
      *  @access private
      */
     function _execute_actions(){
 
         $this->trigger_event("pre_execute");
-    
+
         $send_get_param = array();
         foreach($this->apu_objects as $key=>$val){
-            /* if location header will be send, skip APUs which action['reload'] 
+            /* if location header will be send, skip APUs which action['reload']
                is not set - this APUs doesn't made any DB update */
-            if ($this->send_header_location and 
+            if ($this->send_header_location and
                  !(isset($this->apu_objects[$key]->action['reload']) and $this->apu_objects[$key]->action['reload']))
                continue;
-               
+
             /* call the action method */
             $_apu = &$this->apu_objects[$key];
             $_method = "action_".$this->apu_objects[$key]->action['action'];
             $err_ref = ErrorHandler::get_errors_array();
             $_retval = call_user_func_array(array(&$_apu, $_method), array(&$err_ref));
 
-            /* check for the error */               
+            /* check for the error */
             if (false === $_retval) return false;
-            
+
             /* join GET parameters that will be send */
             if (is_array($_retval)) $send_get_param = array_merge($send_get_param, $_retval);
         }
@@ -1049,10 +1049,10 @@ class page_conroler{
             page_close();
             exit;
         }
-        
+
         return true;
     }
-    
+
     /**
      *  Return URL used in html form 'action' param
      *
@@ -1064,28 +1064,28 @@ class page_conroler{
     function get_form_action($get_param){
 
         $url = $_SERVER['PHP_SELF'];
-        
+
         $get_param = array_merge($this->global_get_params_to_str_array(), $get_param);
-        
+
         if ($get_param){
             /* collect all get params to one string */
             $get_param = implode('&', $get_param);
-            
+
             $param_separator = strpos($url, "?") !== false ?  "&" : "?";
             $url .= $param_separator.$get_param;
         }
-        
+
         return $url;
     }
-    
+
     /**
      *  assign values and form(s) to smarty
-     *  
+     *
      *  @access private
      */
     function _smarty_assign(){
         global $smarty;
-        
+
         /** assign values to smarty **/
         foreach($this->apu_objects as $key=>$val){
             $this->apu_objects[$key]->pass_values_to_html();
@@ -1099,45 +1099,45 @@ class page_conroler{
 
             /* if this APU didn't use html form, skip it */
             if ($form_array === false) continue;
-            
+
             if (!isset($form_array['smarty_name'])) $form_array['smarty_name'] = '';
             if (!isset($form_array['form_name']))   $form_array['form_name'] = '';
             if (!isset($form_array['before']))      $form_array['before'] = '';
             if (!isset($form_array['after']))       $form_array['after'] = '';
             if (!isset($form_array['get_param']))   $form_array['get_param'] = array();
-            
+
             /* if html form is shared, collect after and before javascript from all APUs */
             if ($this->shared_html_form){
                 $this->f[$val->form_name]['js_before'] .= $form_array['before'];
                 $this->f[$val->form_name]['js_after'] .= $form_array['after'];
-                $this->f[$val->form_name]['get_param'] = 
-                            array_merge($this->f[$val->form_name]['get_param'], 
+                $this->f[$val->form_name]['get_param'] =
+                            array_merge($this->f[$val->form_name]['get_param'],
                                         $form_array['get_param']);
             }
             /* otherwise create forms for all APUs */
             else {
-                $smarty->assign_phplib_form($form_array['smarty_name'], 
-                                            $this->apu_objects[$key]->f, 
+                $smarty->assign_phplib_form($form_array['smarty_name'],
+                                            $this->apu_objects[$key]->f,
                                             array('jvs_name'  => 'form_'.$this->apu_objects[$key]->opt['instance_id'],
                                                   'form_name' => $form_array['form_name'],
-                                                  'action'    => $this->get_form_action($form_array['get_param'])), 
+                                                  'action'    => $this->get_form_action($form_array['get_param'])),
                                             array('before'    => $form_array['before'],
                                                   'after'     => $form_array['after']));
             }
         }
-        
+
         /* if html form is shared, create it */
         if ($this->shared_html_form){
             foreach($this->f as $key=>$val){
-                $smarty->assign_phplib_form($val['smarty_name'], 
-                                            $this->f[$key]['form'], 
+                $smarty->assign_phplib_form($val['smarty_name'],
+                                            $this->f[$key]['form'],
                                             array('jvs_name'  => 'form_'.$key,
                                                   'form_name' => $key,
-                                                  'action'    => $this->get_form_action($this->f[$key]['get_param'])), 
+                                                  'action'    => $this->get_form_action($this->f[$key]['get_param'])),
                                             array('before'    => $this->f[$key]['js_before'],
                                                   'after'     => $this->f[$key]['js_after']));
             }
-        
+
         }
     }
 
@@ -1157,10 +1157,10 @@ class page_conroler{
             $tmp_arr = array();
             // get messages from each APU
             $this->apu_objects[$key]->return_messages($tmp_arr);
-            
-            // assign message to output only if shared html form isn't used 
+
+            // assign message to output only if shared html form isn't used
             // or if APU is among ones in $apu_for_display_mesgs
-            if(!$this->shared_html_form or 
+            if(!$this->shared_html_form or
                 in_array($val->opt['instance_id'], $apu_for_display_mesgs)){
                 $this->messages = array_merge($this->messages, $tmp_arr);
             }
@@ -1196,19 +1196,19 @@ class page_conroler{
     /**
      *  Check if admin has permissions to manage the user
      *
-     *  This method should be redefined in a child if needed     
-     *  
+     *  This method should be redefined in a child if needed
+     *
      *  @return bool
      */
     function check_perms_to_user(){
         return true;
     }
-    
+
     /**
      *  Check if admin has permissions to manage the domain
      *
-     *  This method should be redefined in a child if needed     
-     *  
+     *  This method should be redefined in a child if needed
+     *
      *  @return bool
      */
     function check_perms_to_domain(){
@@ -1223,45 +1223,45 @@ class page_conroler{
             /* check if admin have perms to manage user */
             if ($this->check_perms_to_user){
                 if (! $this->check_perms_to_user()){
-                    page_close();           
+                    page_close();
                     die("You haven't permissions to manage user '".$this->user_id->get_username()."@".$this->user_id->get_realm()."'");
                 }
             }
-        
+
             /* check if admin have perms to manage domain */
             if ($this->check_perms_to_domain){
                 if (! $this->check_perms_to_domain()){
-                    page_close();           
+                    page_close();
                     die("You haven't permissions to manage domain with id:'".$this->domain_id."'");
                 }
             }
-            
+
             /* do not allow change parameters of default domain */
             if ($this->domain_id == '0'){
-                $_SESSION['page_controler_domain_id'] = null;
-                page_close();           
+                $_SESSION['page_controller_domain_id'] = null;
+                page_close();
                 die("Change parameters of default domain is not possible");
             }
-        
+
             /* make code portable - if magic_quotes_gpc is set to on, strip slashes */
             if (get_magic_quotes_gpc()) {
                function stripslashes_deep($value){
                    $value = is_array($value) ?
                                array_map('stripslashes_deep', $value) :
                                stripslashes($value);
-            
+
                    return $value;
                }
-            
+
                $_POST = array_map('stripslashes_deep', $_POST);
                $_GET = array_map('stripslashes_deep', $_GET);
                $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
                $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
             }
-        
+
             /* translate chars '<', '>', etc. to &lt; &gt; etc.. */
             if ($this->perform_hack_protect) $this->hack_protection();
-        
+
             /* propagate user_id and reference to this to all application units */
             foreach($this->apu_objects as $key=>$val){
                 $this->apu_objects[$key]->user_id=$this->user_id;
@@ -1275,27 +1275,27 @@ class page_conroler{
             foreach($this->apu_objects as $key=>$val){
                 $this->apu_objects[$key]->init();
             }
-        
+
             if (!empty($this->post_init)) call_user_func_array($this->post_init, array(&$this));
             $this->trigger_event("post_init");
-        
-            /* determine actions of all application units 
+
+            /* determine actions of all application units
                and check if some APU needs validate form or send header 'location'
              */
             $this->_determine_actions();
-        
+
             /* call post_determine_action methods for each APU */
             $this->_post_determine_actions();
             $this->trigger_event("post_determine_actions");
-        
+
             /* create html form by all application units */
             $this->_create_html_form();
             $this->trigger_event("post_create_html_form");
-            
+
             /* validate html form */
             $form_valid = $this->_validate_html_form();
             $this->trigger_event("post_validate");
-            
+
             /* if form(s) valid, execute actions of all application units */
             if ($form_valid)
                 $this->_execute_actions();
@@ -1306,18 +1306,18 @@ class page_conroler{
                 $this->_form_load_defaults();
                 $this->trigger_event("post_invalid");
             }
-        
+
             /** get messages **/
             $this->_get_messages();
-        
+
             /** assign values and form(s) to smarty **/
             $this->_smarty_assign();
-        
+
             if (is_object($this->user_id)){
                 $smarty->assign('user_auth', $this->user_id->to_smarty());
             }
-        
-            
+
+
             $cfg=new stdclass();
             $cfg->img_src_path =        $config->img_src_path;
             $cfg->js_src_path =         $config->js_src_path;
@@ -1325,38 +1325,38 @@ class page_conroler{
             $cfg->user_pages_path =     $config->user_pages_path;
             $cfg->admin_pages_path =    $config->admin_pages_path;
             $cfg->domains_path =        $config->domains_path;
-            $smarty->assign("cfg", $cfg);        
-            
+            $smarty->assign("cfg", $cfg);
+
 
             $this->trigger_event("pre_html_output");
 
             //page atributes - get user real name
-            
+
             $errors = ErrorHandler::get_errors_array();
-            $page_attributes['errors']=&$errors;  
+            $page_attributes['errors']=&$errors;
             $page_attributes['message']=&$this->messages;
-            
+
             /* obtain list of required javascripts */
             foreach($this->apu_objects as $val){
                 $this->required_javascript = array_merge($this->required_javascript, $val->get_required_javascript());
             }
 
             $js_files = array();
-            if (isset($page_attributes['required_javascript']) and 
+            if (isset($page_attributes['required_javascript']) and
                 is_array($page_attributes['required_javascript'])){
-                
+
                 $js_files = $page_attributes['required_javascript'];
             }
             $js_files = array_merge($js_files, $this->required_javascript);
 
             $page_attributes['required_javascript'] = $this->postprocess_js_url_list($js_files);
-        
-            
+
+
             $smarty->assign('parameters', $page_attributes);
             $smarty->assign('lang_str', $lang_str);
             $smarty->assign('lang_set', $lang_set);
             $smarty->assign('come_from_admin_interface', $this->come_from_admin_interface);
-        
+
             /* ----------------------- HTML begin ---------------------- */
 
             if ($this->opt['print_html_head'])              print_html_head($page_attributes);
@@ -1370,8 +1370,8 @@ class page_conroler{
 
             if ($this->opt['print_html_body_end'])          print_html_body_end($page_attributes);
             $this->trigger_event("print_html_body_end");
-            
-            
+
+
             if (count($this->js_after_document)){
                 echo "\n<script type=\"text/javascript\">\n<!--\n";
                 foreach($this->js_after_document as $v){
@@ -1379,7 +1379,7 @@ class page_conroler{
                 }
                 echo "\n// -->\n</script>\n";
             }
-            
+
             if ($this->opt['print_html_document_end'])      echo "</html>\n";
 
             $this->trigger_event("post_html_output");
@@ -1392,11 +1392,11 @@ class page_conroler{
         	//if custom log function is defined, use it for log errors
         	if (!empty($config->custom_log_function)){
         		$log_message= $e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
-        		call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());	
+        		call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());
         	}
-        
+
         	//otherwise if logging is enabled, use default log function
-        	elseif ($serwebLog){ 
+        	elseif ($serwebLog){
         		$log_message= "file: ".$e->getFile().":".$e->getLine().": ".$e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
         		//remove endlines from the log message
         		$log_message=str_replace(array("\n", "\r"), "", $log_message);
@@ -1405,14 +1405,14 @@ class page_conroler{
         	}
 
             // @todo: display some pretty screen explaining there is
-            // unexpected error. 
-            // But for now just let the exception unhandled   
+            // unexpected error.
+            // But for now just let the exception unhandled
             throw $e;
         }
-        
+
         // All DB transactions should be commited now. If there is any
-        // transacton in progress - most probably because of an error that 
-        // throwed exception - rollback the transaction. 
+        // transacton in progress - most probably because of an error that
+        // throwed exception - rollback the transaction.
         if ($GLOBALS['data']->is_transaction_in_progress()){
             $GLOBALS['data']->transaction_rollback();
         }
@@ -1429,3 +1429,6 @@ class page_conroller_event{
         $this->stop_propagation = false;
     }
 }
+
+/** page_controller just for backward compatibility */
+class page_conroler extends page_controller {}

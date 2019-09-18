@@ -1,11 +1,11 @@
 <?php
 /**
  *  Definitions of common classes
- * 
+ *
  *  @author     Karel Kozlik
  *  @version    $Id: class_definitions.php,v 1.34 2009/12/17 12:11:55 kozlik Exp $
  *  @package    serweb
- */ 
+ */
 
 
 /**
@@ -15,7 +15,7 @@
  */
 class Ctab{
     var $name, $page, $enabled;
-    
+
     /**
      *  Constructor
      *
@@ -28,36 +28,36 @@ class Ctab{
         $this->page = $page;
         $this->enabled = $enabled;
     }
-    
+
     /**
      *  Return name of the tab
-     *  
+     *
      *  If the name starting by "@" translate it by $lang_str array - internationalization
-     *  
+     *
      *  @return string
      */
     function get_name(){
         return Lang::internationalize($this->name);
     }
-    
+
     /**
      *  Return script which generate content of this tab
      *
-     *  @return string  
+     *  @return string
      */
     function get_page(){
         return $this->page;
     }
-    
+
     /**
      *  Is tab enabled?
-     *  
+     *
      *  @return bool
      */
     function is_enabled(){
         return (bool)$this->enabled;
     }
-    
+
     /**
      *  Enable tab
      */
@@ -76,14 +76,14 @@ class Ctab{
 
 /**
  *  @package    serweb
- */ 
+ */
 class Cconfig{
-} 
- 
+}
+
 
 /**
  *  @package    serweb
- */ 
+ */
 class SerwebUser {
     var $classname = "SerwebUser";
     var $persistent_slots = array('uid', 'did', 'username', 'realm');
@@ -128,18 +128,18 @@ class SerwebUser {
 
         for ($i=0, $j=0; $i<strlen($val); $i++){
             if ($val[$i] != ":") continue;
-            
+
             //skip quoted ":"
-            if (isset($val[$i+1]) and $val[$i+1] == "'" and 
+            if (isset($val[$i+1]) and $val[$i+1] == "'" and
                 isset($val[$i-1]) and $val[$i-1] == "'"){
                 $i++;
                 continue;
             }
-            
+
             // at $i position is single ":"
             $parts[] = substr($val, $j, $i-$j);
             $j = $i+1;
-            
+
         }
 
         foreach ($parts as $k=>$v) $parts[$k] = str_replace("':'", ":", $v);
@@ -150,7 +150,7 @@ class SerwebUser {
         $obj = &static::instance($parts[0], $parts[2], $parts[1], $parts[3]);
         return $obj;
     }
-    
+
     function get_uid(){
         return $this->uid;
     }
@@ -177,7 +177,7 @@ class SerwebUser {
     }
 
     function get_uri(){
-    
+
         if (!is_null($this->uri)) return $this->uri->to_string();
 
         $uh = &URIs::singleton($this->uid);
@@ -190,11 +190,11 @@ class SerwebUser {
 
     function get_did(){
         global $data_auth;
-        
+
         if (!is_null($this->did)) return $this->did;
 
         $data_auth->add_method('get_did_by_realm');
-        
+
         $opt = array('check_disabled_flag' => false);
         if (false === $did = $data_auth->get_did_by_realm($this->realm, $opt)) return false;
 
@@ -204,10 +204,10 @@ class SerwebUser {
     }
 
     function to_get_param($param = null){
-    
+
         if (is_null($param)){
-            if (isset($GLOBALS['controler']) and 
-                is_a($GLOBALS['controler'], 'page_conroler')){
+            if (isset($GLOBALS['controler']) and
+                is_a($GLOBALS['controler'], 'page_controller')){
                 $param = $GLOBALS['controler']->ch_user_param_name();
             }
             else{
@@ -220,11 +220,11 @@ class SerwebUser {
         $did = str_replace(":", "':'", $this->did);
         $realm = str_replace(":", "':'", $this->realm);
         $username = str_replace(":", "':'", $this->username);
-    
+
         return $param."=".RawURLencode($uid.":".$did.":".$username.":".$realm);
     }
 
-    
+
     function to_smarty(){
         return array('uname' => $this->username,
                      'realm' => $this->realm,
@@ -234,21 +234,21 @@ class SerwebUser {
 
 /**
  *  @package    serweb
- */ 
+ */
 class ErrorHandler{
     var $errors = array();
 
     /**
-     * Return a reference to a ErrorHandler instance, only creating a new instance 
+     * Return a reference to a ErrorHandler instance, only creating a new instance
      * if no ErrorHandler instance currently exists.
      *
      * You should use this if there are multiple places you might create a
-     * ErrorHandler, you don't want to create multiple instances, and you don't 
-     * want to check for the existance of one each time. The singleton pattern 
+     * ErrorHandler, you don't want to create multiple instances, and you don't
+     * want to check for the existance of one each time. The singleton pattern
      * does all the checking work for you.
      *
-     * <b>You MUST call this method with the $var = &ErrorHandler::singleton() 
-     * syntax. Without the ampersand (&) in front of the method name, you will 
+     * <b>You MUST call this method with the $var = &ErrorHandler::singleton()
+     * syntax. Without the ampersand (&) in front of the method name, you will
      * not get a reference, you will get a copy.</b>
      *
      * @access public
@@ -272,9 +272,9 @@ class ErrorHandler{
      *  @param  mixed   $message    string or array of strings
      *  @return none
      */
-     
+
     function add_error($message){
-        
+
         if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
         else $in = &ErrorHandler::singleton();
 
@@ -296,7 +296,7 @@ class ErrorHandler{
      */
 
     function log_errors($err_object){
-        
+
         if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
         else $in = &ErrorHandler::singleton();
 
@@ -311,46 +311,46 @@ class ErrorHandler{
      *  @param  array   $errors
      *  @return none
      */
-     
+
     function set_errors_ref(&$errors){
         $this->errors = &$errors;
-    }   
+    }
 
     /**
      *  Return array of error messages (as reference))
      *
      *  @return array
      */
-     
+
     function &get_errors_array(){
         if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
         else $in = &ErrorHandler::singleton();
 
         return $in->errors;
-    }   
+    }
 }
 
 /**
  *  Class handling domains
  *
  *  @package    serweb
- */ 
+ */
 class Domains{
 
     var $domains = null;
     var $domain_names = null;
 
     /**
-     * Return a reference to a Domains instance, only creating a new instance 
+     * Return a reference to a Domains instance, only creating a new instance
      * if no Domains instance currently exists.
      *
      * You should use this if there are multiple places you might create a
-     * Domains, you don't want to create multiple instances, and you don't 
-     * want to check for the existance of one each time. The singleton pattern 
+     * Domains, you don't want to create multiple instances, and you don't
+     * want to check for the existance of one each time. The singleton pattern
      * does all the checking work for you.
      *
-     * <b>You MUST call this method with the $var = &Domains::singleton() 
-     * syntax. Without the ampersand (&) in front of the method name, you will 
+     * <b>You MUST call this method with the $var = &Domains::singleton()
+     * syntax. Without the ampersand (&) in front of the method name, you will
      * not get a reference, you will get a copy.</b>
      *
      * @access public
@@ -378,9 +378,9 @@ class Domains{
     }
 
     /**
-     *  Flush all cached domains. Next call of get_domains() method will reload 
-     *  them from DB.     
-     */         
+     *  Flush all cached domains. Next call of get_domains() method will reload
+     *  them from DB.
+     */
     function flush(){
         $this->domains = null;
         $this->domain_names = null;
@@ -391,7 +391,7 @@ class Domains{
      */
     function load_domains(){
         global $data, $config;
-        
+
         if (!$config->multidomain){
             $this->domains = array();
             $this->domain_names = array();
@@ -401,15 +401,15 @@ class Domains{
                                                     'disabled' => false,
                                                     'canon' => true);
             $this->domain_names[$config->default_did][] = $config->domain;
-            return true;        
+            return true;
         }
-        
+
         $o = array('order_by' => 'canon',   //canonical domain names will be first
                    'order_desc' => true);
 
         $data->add_method('get_domain');
         if (false === $domains = $data->get_domain($o)) return false;
-        
+
         $this->domains = array();
         $this->domain_names = array();
 
@@ -417,7 +417,7 @@ class Domains{
             $this->domains[$v['name']] = &$domains[$k];
             $this->domain_names[$v['did']][] = $v['name'];
         }
-    
+
         return true;
     }
 
@@ -428,9 +428,9 @@ class Domains{
      */
     function &get_domains(){
 
-        if (is_null($this->domains) and false === $this->load_domains()) 
+        if (is_null($this->domains) and false === $this->load_domains())
             return false;
-        
+
         return $this->domains;
     }
 
@@ -438,7 +438,7 @@ class Domains{
      *  Return name of domain with given did
      *
      *  If canonical name is set, is returned preferentially
-     *  On error this function return FALSE. If domain with given $did doesn't 
+     *  On error this function return FALSE. If domain with given $did doesn't
      *  exist, NULL is returned
      *
      *  @param  string  $did    domain id
@@ -446,18 +446,18 @@ class Domains{
      */
     function get_domain_name($did){
 
-        if (is_null($this->domain_names) and false === $this->load_domains()) 
+        if (is_null($this->domain_names) and false === $this->load_domains())
             return false;
-    
+
         if (!isset($this->domain_names[$did][0])) return null;
-    
+
         return $this->domain_names[$did][0];
     }
-    
+
     /**
      *  Return array of all names of domain with given did
      *
-     *  On error this function return FALSE. If domain with given $did doesn't 
+     *  On error this function return FALSE. If domain with given $did doesn't
      *  exist, NULL is returned
      *
      *  @param  string  $did    domain id
@@ -465,18 +465,18 @@ class Domains{
      */
     function get_domain_names($did){
 
-        if (is_null($this->domain_names) and false === $this->load_domains()) 
+        if (is_null($this->domain_names) and false === $this->load_domains())
             return false;
-    
+
         if (!isset($this->domain_names[$did])) return null;
-    
+
         return $this->domain_names[$did];
     }
-    
+
     /**
      *  Return ID of domain with given domain name
      *
-     *  On error this function return FALSE. If domain with given name doesn't 
+     *  On error this function return FALSE. If domain with given name doesn't
      *  exist, NULL is returned
      *
      *  @param  string  $domainname domain name
@@ -484,70 +484,70 @@ class Domains{
      */
     function get_did($domainname){
 
-        if (is_null($this->domain_names) and false === $this->load_domains()) 
+        if (is_null($this->domain_names) and false === $this->load_domains())
             return false;
 
         if (!isset($this->domains[$domainname]['did'])) return null;
-    
+
         return $this->domains[$domainname]['did'];
     }
 
     /**
-     *  Return array of all alocated domain IDs 
-     *  
+     *  Return array of all alocated domain IDs
+     *
      *  @return array   array of domain IDs or FALSE on error
      */
     function get_all_dids(){
 
-        if (is_null($this->domain_names) and false === $this->load_domains()) 
+        if (is_null($this->domain_names) and false === $this->load_domains())
             return false;
 
         return array_keys($this->domain_names);
     }
-    
+
 
     /**
      *  Return array of pairs (ID, name)
-     *  
+     *
      *  array is indexed by IDs
-     *  
+     *
      *  @return array   array or FALSE on error
      */
 
     function get_id_name_pairs(){
 
-        if (is_null($this->domain_names) and false === $this->load_domains()) 
+        if (is_null($this->domain_names) and false === $this->load_domains())
             return false;
 
         $out = array();
-    
+
         foreach($this->domain_names as $k => $v)
             $out[$k] = $v[0];
-            
+
         return $out;
     }
-    
-    
+
+
     /**
-     *  Sort array of domains by single levels of domain name. 
-     *  
-     *  Sort by top-level (e.g. .org) then by 2nd level (e.g. iptel in 
+     *  Sort array of domains by single levels of domain name.
+     *
+     *  Sort by top-level (e.g. .org) then by 2nd level (e.g. iptel in
      *  'iptel.org') etc.
-     *  
+     *
      *  Keys of array are preserved
-     *  
+     *
      *  @param  array
      *  @return none
      */
     function sort_domains(&$domains){
-    
+
         uasort($domains, array('Domains', 'sort_cmp_funct'));
     }
 
-    
+
     /**
      *  Comparsion function for sort_domains()
-     *  
+     *
      *  @access private
      */
     function sort_cmp_funct($a, $b){
@@ -571,8 +571,8 @@ class Domains{
         if ($a_tail < $b_tail) return -1;
         else return 1;
     }
-    
-    
+
+
     /**
      *  Generate DID for new domain
      *
@@ -600,15 +600,15 @@ class Domains{
                 return false;
             }
             break;
-            
+
         /* UUID by rfc4122 */
         case 2:
             $did = rfc4122_uuid();
 
             /* check if did doesn't exists */
             $dh = &Domains::singleton();
-            if (false === $dids = $dh->get_all_dids()) return false; 
-            
+            if (false === $dids = $dh->get_all_dids()) return false;
+
             while (in_array($did, $dids, true)){
                 $did = rfc4122_uuid();
             }
@@ -620,10 +620,10 @@ class Domains{
 
             if (!$domainname) $domainname = "default_domain";   // if domain name is not provided
             $did = $domainname;
-            
+
             /* check if did doesn't exists */
             $dh = &Domains::singleton();
-            if (false === $dids = $dh->get_all_dids()) return false; 
+            if (false === $dids = $dh->get_all_dids()) return false;
 
             $i = 0;
             while (in_array($did, $dids, true)){
@@ -647,14 +647,14 @@ class Shm_Semaphore{
     var $max_acquire;
     var $perm;
     var $sem_id;
-    
+
     /**
      *  Constructor
      *
-     *  @param  string  $path_name      
+     *  @param  string  $path_name
      *  @param  string  $proj           project identifier - one character
      *  @param  int     $max_acquire    The number of processes that can acquire the semaphore simultaneously
-     *  @param  int     $perm           permission bits 
+     *  @param  int     $perm           permission bits
      */
     function Shm_Semaphore($path_name, $proj, $max_acquire = 1, $perm=0666){
         $key = ftok($path_name, $proj);
@@ -692,14 +692,14 @@ class Shm_Semaphore{
 
 /**
  *  @package    serweb
- */ 
+ */
 class Filter {
     var $name;
     var $value="";
     /**
      *  supported operators: "=", "!=", ">", ">=", "<", "<=", "like", "is_null", "in"
-     *  Note: operator 'in' expects an array in $this->value     
-     */      
+     *  Note: operator 'in' expects an array in $this->value
+     */
     var $op="like";
     var $asterisks=true;
     var $case_sensitive = false;
@@ -711,7 +711,7 @@ class Filter {
         $this->asterisks = $asterisks;
         $this->case_sensitive = $case_sensitive;
     }
-    
+
     function to_sql($var=null, $int=false){
         global $data;
 
@@ -723,19 +723,19 @@ class Filter {
             /* escape '%' and '_' characters - these are not wildcards */
             $val = str_replace('%', '\%', $val);
             $val = str_replace('_', '\_', $val);
-            
+
             /* replace '*' and '?' with their wildcard equivalent  */
             $val = str_replace('*', '%', $val);
             $val = str_replace('?', '_', $val);
-            
+
             if ($this->asterisks) $val = "%".$val."%";
         }
-        
+
         if ($this->op == "in"){
             return $data->get_sql_in($var, $val, !$int);
         }
-        
-        
+
+
         if ($int)   return $var." ".$this->op." ".(int)$val;
         else {
             if ($this->case_sensitive){
@@ -743,9 +743,9 @@ class Filter {
             }
             else{
                 return "lower(".$var.") ".$this->op." lower('".addslashes($val)."')";
-            } 
+            }
         }
-    
+
     }
 
     function to_sql_bool($var=null){
@@ -772,14 +772,14 @@ class Filter {
             /* escape '%' and '_' characters - these are not wildcards */
             $val = str_replace('%', '\%', $val);
             $val = str_replace('_', '\_', $val);
-            
+
             /* replace '*' and '?' with their wildcard equivalent  */
             $val = str_replace('*', '%', $val);
             $val = str_replace('?', '_', $val);
-            
+
             if ($this->asterisks) $val = "%".$val."%";
         }
-        
+
         return $var." ".$this->op." ".(float)$val;
     }
 }
@@ -800,7 +800,7 @@ class StaticVarHandler{
     function &getvar($class, $key, $free){
         static $vars;
         $dummy = null;
-    
+
         if ($free) {
             if (isset($vars[$class][$key])) unset($vars[$class][$key]);
             return $dummy;
@@ -828,9 +828,9 @@ class ModuleCallback{
 class CallbackCaller{
 
     function call_array($callback_arr, $param, &$opt, $break_on_error = false){
-    
+
         $ok = true;
-        
+
         if (is_array($callback_arr)){
             foreach($callback_arr as $v){
                 $opt['all_calls_ok'] = $ok;
@@ -841,36 +841,36 @@ class CallbackCaller{
             }
         }
 
-        return $ok;    
+        return $ok;
     }
-    
-    
+
+
     function call($callback, $param, &$opt){
         include_module($callback->module);
 
         if (false === call_user_func_array($callback->fn, array($param, &$opt))) return false;
-    
+
         return true;
     }
 
 
     /**
      *  Call all calbacks given in $callback_arr and return array of returned
-     *  values.     
-     */    
+     *  values.
+     */
     function call_array_rv($callback_arr, $param, &$opt, $break_on_error = false){
         $ret_values = array();
-        
+
         if (is_array($callback_arr)){
             foreach($callback_arr as $k => $v){
                 $ret_values[$k] = $this->call_rv($v, $param, $opt);
             }
         }
 
-        return $ret_values;    
+        return $ret_values;
     }
-    
-    
+
+
     function call_rv($callback, $param, &$opt){
         include_module($callback->module);
         return call_user_func_array($callback->fn, array($param, &$opt));
@@ -880,28 +880,28 @@ class CallbackCaller{
 
 /**
  *  Various validators of values
- */ 
+ */
 class Validator{
 
     /**
      *  Validate that given integer is in given range
-     *  
+     *
      *  @param  int     $value      the value to validate
      *  @param  int     $min        min boundary
      *  @param  int     $max        max boundary
      *  @param  string  $err_msg    error message to display
      *  @param  string  $var_name   name of variable (to be used in the err_msg)
-     *  @return bool                 
-     */         
+     *  @return bool
+     */
     function validate_int_range($value, $min, $max, $err_msg, $var_name=null){
         $reg = &Creg::singleton();  // get instance of Creg class
         if (!$reg->is_natural_num($value)) return 1;
         $value = (int)$value;
-        
+
         if ($value < $min or $value > $max){
             ErrorHandler::add_error(
-                str_replace(array("#VALUE#", "<min>", "<max>", "<name>"), 
-                            array($value, $min, $max, $var_name), 
+                str_replace(array("#VALUE#", "<min>", "<max>", "<name>"),
+                            array($value, $min, $max, $var_name),
                             $err_msg));
             return false;
         }
@@ -910,40 +910,40 @@ class Validator{
 
     /**
      *  Validate given value to IPv4 address (only regular expression match)
-     *  
+     *
      *  @param  string  $value      the value to validate
      *  @param  string  $err_msg    error message to display
      *  @param  string  $var_name   name of variable (to be used in the err_msg)
-     *  @return bool                 
-     */         
+     *  @return bool
+     */
     function validate_IPv4_reg($value, $err_msg, $var_name=null){
         $reg = &Creg::singleton();  // get instance of Creg class
         if (!preg_match("/^".$reg->ipv4address."$/", $value)){
             ErrorHandler::add_error(
-                str_replace(array("#VALUE#", "<name>"), 
-                            array($value, $var_name), 
+                str_replace(array("#VALUE#", "<name>"),
+                            array($value, $var_name),
                             $err_msg));
             return false;
-        } 
+        }
         return true;
     }
 
     /**
      *  Validate if all parts of given IPv4 address are in range 0-255
-     *  
+     *
      *  @param  string  $value      the value to validate
      *  @param  string  $err_msg    error message to display
      *  @param  string  $var_name   name of variable (to be used in the err_msg)
-     *  @return bool                 
-     */         
+     *  @return bool
+     */
     function validate_IPv4_range($value, $err_msg, $var_name=null){
         $reg = &Creg::singleton();  // get instance of Creg class
         if (!$reg->is_ipv4address($value)) return 1;
 
         if (!$reg->ipv4address_check_part_range($value)){
             ErrorHandler::add_error(
-                str_replace(array("#VALUE#", "<name>"), 
-                            array($value, $var_name), 
+                str_replace(array("#VALUE#", "<name>"),
+                            array($value, $var_name),
                             $err_msg));
             return false;
         }
@@ -952,12 +952,12 @@ class Validator{
 
     /**
      *  Validate given value to IPv4 address
-     *  
+     *
      *  @param  string  $value      the value to validate
      *  @param  string  $err_msg    error message to display
      *  @param  string  $var_name   name of variable (to be used in the err_msg)
-     *  @return bool                 
-     */         
+     *  @return bool
+     */
     function validate_IPv4($value, $err_msg, $var_name=null){
         if (false === self::validate_IPv4_reg($value, $err_msg, $var_name)) return false;
         if (false === self::validate_IPv4_range($value, $err_msg, $var_name)) return false;
@@ -966,12 +966,12 @@ class Validator{
 
     /**
      *  Validate given value to IPv4 address and mask {IP}/{mask}
-     *  
+     *
      *  @param  string  $value      the value to validate
      *  @param  string  $err_msg    error message to display
      *  @param  string  $var_name   name of variable (to be used in the err_msg)
-     *  @return bool                 
-     */         
+     *  @return bool
+     */
     function validate_IPv4mask($value, $err_msg, $var_name=null){
         $reg = &Creg::singleton();  // get instance of Creg class
         if (empty($value)) return false;
@@ -983,8 +983,8 @@ class Validator{
 
         if (!$reg->check_netmask($value_a[1])){
             ErrorHandler::add_error(
-                str_replace(array("#VALUE#", "<name>"), 
-                            array($value, $var_name), 
+                str_replace(array("#VALUE#", "<name>"),
+                            array($value, $var_name),
                             $err_msg));
             return false;
         }
@@ -993,5 +993,3 @@ class Validator{
     }
 
 }
-
-?>

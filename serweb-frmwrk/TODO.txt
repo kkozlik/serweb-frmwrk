@@ -1,31 +1,31 @@
- * determine_lang() may fail with "Fatal error" in some cases. The reason 
-   is the framework do not contain classes for user/domain attributes 
-   (User_Attrs, Attributes). There should be some customizable hooks do get 
+ * determine_lang() may fail with "Fatal error" in some cases. The reason
+   is the framework do not contain classes for user/domain attributes
+   (User_Attrs, Attributes). There should be some customizable hooks do get
    user preffered language. Workaround is disable the language determination
    with $config->force_lang variable.
 
- 
+
  * check whether following data layer methods can be removed from the framework:
    - get_did_by_realm
    - get_domain_flags
    - get_domain
-   
- * simplify page_controler:
+
+ * simplify page_controller:
    - check whether dependency on SerwebUser class can be removed
    - make check_perms_to_user() check_perms_to_domains() methods empty
-   
+
  * class_definitions: could be following domains safely removed?
    - Domains
    - SerwebUser
    - Ctab
    - Validator
-     
- * phplib/local/local.inc should be customizable by apps     
-     
+
+ * phplib/local/local.inc should be customizable by apps
+
  * smarty plugins should be customizable by apps
- 
- * exceptions catching and logging 
+
+ * exceptions catching and logging
 
  * write some documentations
- 
-  
+
+

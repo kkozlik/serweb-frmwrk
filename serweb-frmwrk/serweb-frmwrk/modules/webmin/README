@@ -1,6 +1,6 @@
 
-This module provide customized page controler for webmin. To enable it in 
+This module provide customized page controler for webmin. To enable it in
 the application, put this into config/set_dirs.php file of the application:
 
-$_SERWEB['_page_controller_classname'] = "webmin_page_conroler";
+$_SERWEB['_page_controller_classname'] = "webmin_page_controller";
 $_SERWEB['_page_controller_filename']  = $_SERWEB["coremodulesdir"] . "webmin/page_controler.php";
