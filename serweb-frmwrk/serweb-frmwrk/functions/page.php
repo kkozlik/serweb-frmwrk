@@ -1,12 +1,12 @@
 <?php
 /**
  *  Functions for output basic page layout
- * 
+ *
  *  @author     Karel Kozlik
  *  @version    $Id: page.php,v 1.37 2008/01/09 15:25:59 kozlik Exp $
  *  @package    serweb
  *  @subpackage framework
- */ 
+ */
 
 /**
  *  Put HTTP headers
@@ -20,17 +20,17 @@ function put_headers(){
 
 /**
  *  Print begin of html document
- *  
+ *
  *  Started by <!DOCTYPE....>
  *  flowed <html><head>.....
  *  and ending </head>
- *  
+ *
  *  @param  array   $parameters associative array containing info about page
- */     
+ */
 
 function print_html_head($parameters=array()){
-    global $config, $lang_set, $controler;  
-    
+    global $config, $lang_set, $controler;
+
     if (empty($parameters['html_title'])) $title = $config->html_title;
     else                                  $title = $parameters['html_title'];
 
@@ -48,19 +48,23 @@ function print_html_head($parameters=array()){
 
     echo "<html>\n<head>\n";
 
-    if ($title) echo "    <title>".$title."</title>\n"; 
+    if ($title) echo "    <title>".$title."</title>\n";
 ?>
 
     <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lang_set['charset'];?>" />
 <?php
-    if (!empty($parameters['author_meta_tag'])) { 
+    if (!empty($parameters['author_meta_tag'])) {
     echo "    <meta name=\"Author\" content=\"".$parameters['author_meta_tag']."\" />\n";
     } ?>
-    <meta http-equiv="PRAGMA" content="no-cache" /> 
+    <meta http-equiv="PRAGMA" content="no-cache" />
     <meta http-equiv="Cache-control" content="no-cache" />
-    <meta http-equiv="Expires" content="<?php echo GMDate("D, d M Y H:i:s")." GMT";?>" /> 
+    <meta http-equiv="Expires" content="<?php echo GMDate("D, d M Y H:i:s")." GMT";?>" />
 
 <?php
+    if (isset($parameters['html_headers']) and is_array($parameters['html_headers'])){
+        foreach($parameters['html_headers'] as $v) echo $v."\n";
+    }
+
     if (!empty($parameters['css_file'])){
         if (is_array($parameters['css_file'])){
             foreach($parameters['css_file'] as $v)
@@ -78,15 +82,15 @@ function print_html_head($parameters=array()){
     }
 
     if (isset($parameters['required_javascript']) and is_array($parameters['required_javascript'])){
-        foreach($parameters['required_javascript'] as $v) { 
+        foreach($parameters['required_javascript'] as $v) {
             echo '    <script type="text/javascript" src="'.htmlspecialchars($v).'"></script>'."\n";
         }
-    } 
+    }
 
     if (isset($config->html_headers) and is_array($config->html_headers)){
-        foreach($config->html_headers as $v) echo $v."\n"; 
-    } 
-    
+        foreach($config->html_headers as $v) echo $v."\n";
+    }
+
     echo "</head>\n";
 
 } //end function print_html_head()
@@ -95,12 +99,12 @@ function print_html_head($parameters=array()){
 
 /**
  *  Print begin of html body
- * 
+ *
  *  This function should be replaced by smarty template
- *  
+ *
  *  @param array $parameters associative array containing info about page
  *  @deprecated
- */     
+ */
 
 function print_html_body_begin(&$parameters){
     global $config, $auth, $errors, $message;
@@ -112,7 +116,7 @@ function print_html_body_begin(&$parameters){
     // call user defined function at html body begin
     if (isset($parameters['run_at_html_body_begin']) and function_exists($parameters['run_at_html_body_begin']))
         $parameters['run_at_html_body_begin']($parameters);
-    
+
     if (isset($parameters['prolog'])) echo $parameters['prolog'];
     else virtual(multidomain_get_file($config->html_prolog));
 
@@ -127,23 +131,23 @@ function print_html_body_begin(&$parameters){
 
 } //end function print_html_body_begin
 
-    
+
 /**
  *  Print end of html body
- * 
+ *
  *  This function should be replaced by smarty template
- *  
+ *
  *  @deprecated
- */     
+ */
 
 function print_html_body_end(&$parameters){
-    global $config, $_page_tab;     
+    global $config, $_page_tab;
 
     echo "</div><!-- swMain -->\n";
 
     if (isset($parameters['epilog'])) echo $parameters['epilog'];
     else virtual(multidomain_get_file($config->html_epilog));
-    
+
     echo "</body>\n";
 }
 
