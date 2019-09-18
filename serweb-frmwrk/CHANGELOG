@@ -1,3 +1,4 @@
+* Ability to define custom HTML headers in page attributes
 * Fixing TYPO in name of page_controller class
 * Upgrading bundled Smarty to version 3.1.33
 * Adding ability to use PDO as DB abstraction layer
