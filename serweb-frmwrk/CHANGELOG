@@ -1,3 +1,5 @@
+* Fixing TYPO in name of page_controller class
+* Upgrading bundled Smarty to version 3.1.33
 * Adding ability to use PDO as DB abstraction layer
 * Use better functions for getting random numbers for UUIDs (with PHP7)
 * Fix problem of loading data-layer methods with multiple instances of CData_Layer class
