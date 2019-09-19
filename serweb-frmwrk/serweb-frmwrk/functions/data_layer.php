@@ -114,10 +114,6 @@ class CData_Layer{
             $instances[$instance_name]->name = $instance_name;
         }
 
-        if (!isset($_SESSION['data_conn'][$instance_name]))
-            $_SESSION['data_conn'][$instance_name] = array('proxy' => null,
-                                                           'db_dsn' => null);
-
         return $instances[$instance_name];
     }
 
