@@ -160,7 +160,7 @@ class page_controller{
      *  - pre_html_output
      *  - post_html_output
      *
-     * The callback function shall accept one parameter of the page_conroller_event object
+     * The callback function shall accept one parameter of the page_controller_event object
      *
      * @param string   $event_name
      * @param callback $callback
@@ -191,7 +191,7 @@ class page_controller{
             return ($a['priority'] < $b['priority']) ? -1 : 1;
         });
 
-        $event = new page_conroller_event($event_name);
+        $event = new page_controller_event($event_name);
         $event->controller = $this;
 
         foreach($listeners as $listener){
@@ -1419,7 +1419,7 @@ class page_controller{
     }
 }
 
-class page_conroller_event{
+class page_controller_event{
     public $name;
     public $controller;
     public $stop_propagation;
