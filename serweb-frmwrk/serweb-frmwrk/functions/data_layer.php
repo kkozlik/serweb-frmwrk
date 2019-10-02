@@ -47,6 +47,9 @@ class CData_Layer{
 
     static $method_class_map = array();
 
+    /** listeners of events and their priorities */
+    private static $static_listeners = array();
+    private $listeners = array();
 
     /**
      *  Handle call of unknow methods
@@ -254,6 +257,58 @@ class CData_Layer{
         $this->db_collation = $d->db_collation;
     }
 
+    /**
+     * Attach an event listener.
+     * As of now following events are supported:
+     *
+     *  - pre_connect                  - before connecting to DB
+     *  - post_connect                 - after connecting to DB
+     *
+     * The callback function shall accept one parameter of the CData_Layer_Event object
+     *
+     * @param string   $event_name
+     * @param callback $callback
+     * @param integer  $priority
+     * @return void
+     */
+    public function attach_listener($event_name, $callback, $priority=0)
+    {
+        $this->listeners[$event_name][] = array("priority" => $priority,
+                                                "callback" => $callback);
+    }
+    public static function attach_common_listener($event_name, $callback, $priority=0)
+    {
+        static::$static_listeners[$event_name][] = array("priority" => $priority,
+                                                         "callback" => $callback);
+    }
+
+    /**
+     * Trigger event of given name.
+     * This function execute all listeners of given event in their priority order.
+     *
+     * @param string $event_name
+     * @return void
+     */
+    private function trigger_event($event_name)
+    {
+        $listeners = array();
+        if (!empty(static::$static_listeners[$event_name])) $listeners = array_merge($listeners, static::$static_listeners[$event_name]);
+        if (!empty($this->listeners[$event_name]))          $listeners = array_merge($listeners, $this->listeners[$event_name]);
+        if (!$listeners) return;
+
+        usort($listeners, function($a, $b){
+            if ($a['priority'] == $b['priority']) return 0;
+            return ($a['priority'] < $b['priority']) ? -1 : 1;
+        });
+
+        $event = new CData_Layer_Event($event_name);
+        $event->dl = $this;
+
+        foreach($listeners as $listener){
+            $listener["callback"]($event);
+            if ($event->stop_propagation) break;
+        }
+    }
 
     /**
      *  Set object variable (@see db_host) by given config values
@@ -306,6 +361,7 @@ class CData_Layer{
 
         if ($this->db) return $this->db;
 
+        $this->trigger_event("pre_connect");
 
         $cfg=&$config->data_sql;
 
@@ -365,6 +421,8 @@ class CData_Layer{
             if ($this->db_charset) $this->set_db_charset($this->db_charset, null);
             if ($this->db_collation) $this->set_db_collation($this->db_collation, null);
         }
+
+        $this->trigger_event("post_connect");
 
         return $db;
     }
@@ -754,5 +812,16 @@ class CData_Layer_Common{
 
     public static function _get_required_methods(){
         return array();
+    }
+}
+
+class CData_Layer_Event{
+    public $name;
+    public $dl;
+    public $stop_propagation;
+
+    public function __construct($name){
+        $this->name = $name;
+        $this->stop_propagation = false;
     }
 }
