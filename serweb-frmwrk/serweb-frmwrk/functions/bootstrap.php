@@ -52,6 +52,10 @@ if ($_SERWEB["configdir"] != $_SERWEB["coreconfigdir"]){
     }
 }
 
+if (isset($_SERWEB["onconfigload"]) and is_callable($_SERWEB["onconfigload"])){
+    call_user_func($_SERWEB["onconfigload"]);
+}
+
 /** require database abstraction layer */
 if ($config->data_sql->abstraction_layer=="MDB2")   require_once 'MDB2.php';
 elseif ($config->data_sql->abstraction_layer=="DB") require_once 'DB.php';
@@ -140,6 +144,8 @@ else{
 require_once ($_SERWEB["corefunctionsdir"] . "functions.php");
 
 require_once ($_SERWEB["corefunctionsdir"] . "exceptions.php");
+
+sw_log('New request: '.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"], PEAR_LOG_DEBUG);
 
 /** require Smarty and create Smarty instance */
 require($_SERWEB["corefunctionsdir"]."smarty_serweb.php");
