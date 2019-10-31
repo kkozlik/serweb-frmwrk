@@ -36,7 +36,8 @@ function print_html_head($parameters=array()){
 
     header("Content-Type: text/html; charset=".$lang_set['charset']);
 
-    if ($config->html_doctype=='strict'){
+    if (isset($parameters['doc_type'])) echo $parameters['doc_type']."\n";
+    elseif ($config->html_doctype=='strict'){
         ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <?php
     }elseif ($config->html_doctype=='transitional'){
