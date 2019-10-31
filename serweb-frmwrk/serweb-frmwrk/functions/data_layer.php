@@ -517,6 +517,8 @@ class CData_Layer{
      *  Start a transaction on the current connection
      */
     function transaction_start(){
+        global $config;
+
         $this->connect_to_db();
 
         /* initialize variables after rollback */
@@ -527,8 +529,13 @@ class CData_Layer{
 
         /* don't call "start transaction" in nested transactions */
         if ($this->transaction_semaphore == 0){
-            $res=$this->db->query("start transaction");
-            if ($this->dbIsError($res)) throw new DBException($res);
+            if ($config->data_sql->abstraction_layer=="PDO"){
+                $res=$this->db->beginTransaction();
+            }
+            else{
+                $res=$this->db->query("start transaction");
+                if ($this->dbIsError($res)) throw new DBException($res);
+            }
         }
 
         $this->transaction_semaphore++;
@@ -540,6 +547,7 @@ class CData_Layer{
      *  Commit the transaction on the current connection
      */
     function transaction_commit(){
+        global $config;
 
         $this->transaction_semaphore--;
 
@@ -550,8 +558,13 @@ class CData_Layer{
 
         /* don't call "commit" in nested transactions or if rollback was called */
         if ($this->transaction_semaphore == 0 and !$this->transaction_rollback){
-            $res=$this->db->query("commit");
-            if ($this->dbIsError($res)) throw new DBException($res);
+            if ($config->data_sql->abstraction_layer=="PDO"){
+                $res=$this->db->commit();
+            }
+            else{
+                $res=$this->db->query("commit");
+                if ($this->dbIsError($res)) throw new DBException($res);
+            }
         }
 
         return true;
@@ -561,11 +574,17 @@ class CData_Layer{
      *  Rollback changes done due the transaction
      */
     function transaction_rollback(){
+        global $config;
 
         $this->transaction_rollback = true;
 
-        $res=$this->db->query("rollback");
-        if ($this->dbIsError($res)) throw new DBException($res);
+        if ($config->data_sql->abstraction_layer=="PDO"){
+            $res=$this->db->rollBack();
+        }
+        else{
+            $res=$this->db->query("rollback");
+            if ($this->dbIsError($res)) throw new DBException($res);
+        }
 
         return true;
     }
