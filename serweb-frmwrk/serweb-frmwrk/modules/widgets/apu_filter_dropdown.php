@@ -1,51 +1,51 @@
 <?php
 /**
  * Application unit filter - dropdown
- * 
- *  
+ *
+ *
  * @author    Karel Kozlik
  * @version   $Id: apu_filter.php,v 1.1 2006/07/20 16:06:15 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 /**
  *  Application unit filter - dropdown
  *
  *
  *  This application unit is used for display filter form
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'filter_items'              (array)  default: none
- *  if is set, the list of fields which could be used as filter criteria is 
+ *  if is set, the list of fields which could be used as filter criteria is
  *  limited to specified fields
- *  
+ *
  *  'form_name'                 (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']          (form)          
+ *  opt['smarty_form']          (form)
  *   phplib html form
- *   
- *  
+ *
+ *
  */
 
 class apu_filter_dropdown extends apu_base_class{
     var $form_elements;
     var $get_params = array();
     var $filter_applied = false;
-    
 
-    /** 
-     *  return required data layer methods - static class 
+
+    /**
+     *  return required data layer methods - static class
      *
      *  @return array   array of required data layer methods
      */
@@ -54,31 +54,31 @@ class apu_filter_dropdown extends apu_base_class{
     }
 
     /**
-     *  return array of strings - required javascript files 
+     *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
         return array();
     }
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function apu_filter_dropdown(){
         global $lang_str;
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
         $this->opt['filter_name'] =         '';
 
         $this->opt['on_change_callback'] =          '';
         $this->opt['filter_items'] = array();
         $this->opt['exclude_filter_items'] = array();
 
-        
+
         /*** names of variables assigned to smarty ***/
         /* form */
         $this->opt['smarty_form'] =         'filter_form';
@@ -88,8 +88,8 @@ class apu_filter_dropdown extends apu_base_class{
 
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['b_ok']);
-        
-        
+
+
     }
 
     function set_base_apu(&$apu){
@@ -113,7 +113,7 @@ class apu_filter_dropdown extends apu_base_class{
         if (!isset($_SESSION['apu_filter_dropdown'][$session_name])){
             $_SESSION['apu_filter_dropdown'][$session_name] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_filter_dropdown'][$session_name];
 
         $clean_filter = true;
@@ -130,8 +130,8 @@ class apu_filter_dropdown extends apu_base_class{
                 break;
             }
         }
-        
-        
+
+
         if ($clean_filter) $this->session = array();
 
 
@@ -143,21 +143,20 @@ class apu_filter_dropdown extends apu_base_class{
         if (!isset($this->session['act_row'])){
             $this->session['act_row'] = 0;
         }
-        
+
         if (isset($_GET['act_row'])){
             $this->session['act_row'] = $_GET['act_row'];
         }
 
     }
-    
+
     /**
      *  Method perform action update
      *
-     *  @param array $errors    array with error messages
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
-    function action_update(&$errors){
+    function action_update(){
 
         if (!isset($_POST['filter_val']))   $_POST['filter_val'] = null;
         if (!isset($_POST['filter_op']))    $_POST['filter_op'] = null;
@@ -183,10 +182,10 @@ class apu_filter_dropdown extends apu_base_class{
                     }
         		}
         		if (!$label) $label = $this->session['f_field'];
-            
+
                 $msg = $label." ".$this->session['f_op']." '".$this->session['f_val']."'";
             }
-        
+
             action_log($this->base_apu->opt['screen_name'], "filter", "new filter criteria:".$msg);
         }
 
@@ -199,9 +198,9 @@ class apu_filter_dropdown extends apu_base_class{
         $get[] = 'filter_updated='.RawURLEncode($this->opt['instance_id']);
         return $get;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
@@ -213,7 +212,7 @@ class apu_filter_dropdown extends apu_base_class{
                                  'validate_form'=>false,
                                  'reload'=>false);
     }
-    
+
     function post_determine_action(){
         if (isset($_GET['act_row'])){ //if pagination have been done, log action
             if (isset($this->base_apu->opt['screen_name'])){
@@ -223,23 +222,22 @@ class apu_filter_dropdown extends apu_base_class{
     }
 
     /**
-     *  create html form 
+     *  create html form
      *
-     *  @param array $errors    array with error messages
      *  @return null            FALSE on failure
      */
-    function create_html_form(&$errors){
-        parent::create_html_form($errors);
-        
+    function create_html_form(){
+        parent::create_html_form();
+
         global $lang_str;
-        
+
         $this->form_elements = $this->base_apu->get_filter_form();
 
-        /* if option 'filter_items' is set, 
+        /* if option 'filter_items' is set,
            limit list of form elements to only items specified by this option */
         if ($this->opt['filter_items']){
             foreach ($this->form_elements as $k=>$v){
-                if (!in_array($this->form_elements[$k]['name'], $this->opt['filter_items'])) 
+                if (!in_array($this->form_elements[$k]['name'], $this->opt['filter_items']))
                     unset($this->form_elements[$k]);
             }
         }
@@ -248,7 +246,7 @@ class apu_filter_dropdown extends apu_base_class{
            remove items specified by this option from the list of form elements */
         if ($this->opt['exclude_filter_items']){
             foreach ($this->form_elements as $k=>$v){
-                if (in_array($this->form_elements[$k]['name'], $this->opt['exclude_filter_items'])) 
+                if (in_array($this->form_elements[$k]['name'], $this->opt['exclude_filter_items']))
                     unset($this->form_elements[$k]);
             }
         }
@@ -292,30 +290,30 @@ class apu_filter_dropdown extends apu_base_class{
                                      "name"=>"filter_val",
                                      "value"=>$this->session['f_val'],
                                      "disabled"=>!(bool)$this->session['f_field']));
-        
+
         $this->f->add_element(array("type"=>"button",
                                      "name"=>"filter_reset",
                                      "button_type"=>"submit",
                                      "content"=>$lang_str['b_reset'],
                                      "extra_html"=>"onclick='this.form.filter_field.selectedIndex=0; this.form.filter_field.onchange();'",
                                      "disabled"=>!(bool)$this->session['f_field']));
-        
+
         $this->f->add_element(array("type"=>"hidden",
                                      "name"=>"filter_updated",
                                      "value"=>1));
     }
 
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
 
         $smarty->assign($this->opt['smarty_filter_applied'], $this->filter_applied);
     }
-        
+
     /**
-     *  return info need to assign html form to smarty 
+     *  return info need to assign html form to smarty
      */
     function pass_form_to_html(){
         return array('smarty_name' => $this->opt['smarty_form'],
@@ -324,33 +322,33 @@ class apu_filter_dropdown extends apu_base_class{
                      'before'      => '',
                      'get_param'   => $this->get_params);
     }
-    
+
     function get_act_row(){
         return $this->session['act_row'];
     }
-    
+
     function set_act_row($v){
         $this->session['act_row'] = $v;
     }
-    
+
     function get_filter_values(){
         $f_values = array();
-        if ($this->session['f_field']) 
+        if ($this->session['f_field'])
             $f_values[$this->session['f_field']] = $this->session['f_val'];
-    
+
         return $f_values;
     }
 
     function get_filter(){
         $f_ops = array();
-        if ($this->session['f_field']) 
-            $f_ops[$this->session['f_field']] = new Filter($this->session['f_field'], 
+        if ($this->session['f_field'])
+            $f_ops[$this->session['f_field']] = new Filter($this->session['f_field'],
                                                            $this->session['f_val'],
                                                            $this->session['f_op'],
-                                                           false);  
+                                                           false);
         return $f_ops;
     }
-    
+
     function set_get_param_for_redirect($str){
         $this->session['get_param']=$str;
     }
@@ -358,8 +356,6 @@ class apu_filter_dropdown extends apu_base_class{
     function is_form_submited(){
         return ($this->action['action'] == "update");
     }
-    
+
 }
 
-
-?>

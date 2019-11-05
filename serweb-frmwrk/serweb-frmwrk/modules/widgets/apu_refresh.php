@@ -1,47 +1,47 @@
 <?php
 /**
- * Application unit refresh 
- * 
+ * Application unit refresh
+ *
  * @author    Karel Kozlik
  * @version   $Id: $
  * @package   serweb
- */ 
+ */
 
 /**
- *  Application unit refresh 
+ *  Application unit refresh
  *
  *
- *  This application unit is used for display refresh form and refresh page 
+ *  This application unit is used for display refresh form and refresh page
  *  after timeout exceeded
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'form_name'                 (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']          (form)          
+ *  opt['smarty_form']          (form)
  *   phplib html form
- *   
- *  
+ *
+ *
  */
 
 class apu_refresh extends apu_base_class{
     var $form_elements;
     var $get_params = array();
     var $base_apu = null;
-    
 
-    /** 
-     *  return required data layer methods - static class 
+
+    /**
+     *  return required data layer methods - static class
      *
      *  @return array   array of required data layer methods
      */
@@ -50,24 +50,24 @@ class apu_refresh extends apu_base_class{
     }
 
     /**
-     *  return array of strings - required javascript files 
+     *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
         return array();
     }
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function apu_refresh(){
         global $lang_str;
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
         $this->opt['refresh_name'] =         '';
 
         $this->opt['on_change_callback'] =          '';
@@ -77,7 +77,7 @@ class apu_refresh extends apu_base_class{
         $this->opt['default_timeout'] = 'off';
         $this->opt['reset_to_default'] = true;
 
-        
+
         /*** names of variables assigned to smarty ***/
         /* form */
         $this->opt['smarty_form'] =         'form';
@@ -86,11 +86,11 @@ class apu_refresh extends apu_base_class{
 
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['b_ok']);
-        
+
 
         $this->opt['smarty_url_refresh_arr'] =  "refresh_urls";
         $this->opt['smarty_refresh_timeout'] =  "refresh_timeout";
-        
+
     }
 
     function set_base_apu(&$apu){
@@ -114,7 +114,7 @@ class apu_refresh extends apu_base_class{
         if (!isset($_SESSION['apu_refresh'][$session_name])){
             $_SESSION['apu_refresh'][$session_name] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_refresh'][$session_name];
 
         $clean_refresh = $this->opt['reset_to_default'];
@@ -131,21 +131,20 @@ class apu_refresh extends apu_base_class{
                 break;
             }
         }
-                    
+
         if ($clean_refresh) $this->session = array();
 
         if (!isset($this->session['timeout']))  $this->session['timeout'] = $this->opt['default_timeout'];
     }
-    
+
     /**
      *  Method perform action update
      *
-     *  @param array $errors    array with error messages
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
-    function action_update(&$errors){
-        
+    function action_update(){
+
         if (isset($_GET['refresh_timeout'])){
             $this->session['timeout']   = $_GET['refresh_timeout'];
         }
@@ -170,9 +169,9 @@ class apu_refresh extends apu_base_class{
         $get[] = 'refresh_updated='.RawURLEncode($this->opt['instance_id']);
         return $get;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
@@ -189,16 +188,15 @@ class apu_refresh extends apu_base_class{
                                  'validate_form'=>false,
                                  'reload'=>false);
     }
-    
+
     /**
-     *  create html form 
+     *  create html form
      *
-     *  @param array $errors    array with error messages
      *  @return null            FALSE on failure
      */
-    function create_html_form(&$errors){
-        parent::create_html_form($errors);
-        
+    function create_html_form(){
+        parent::create_html_form();
+
         $f_options = $this->f->array_to_opt($this->opt['timeouts']);
 
         $this->f->add_element(array("type"=>"select",
@@ -217,11 +215,11 @@ class apu_refresh extends apu_base_class{
                 setTimeout('location.reload(true);', ".(1000*(int)$this->session['timeout']).");
             ";
             $this->controler->set_onload_js($onload_js);
-        }        
+        }
     }
 
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -238,9 +236,9 @@ class apu_refresh extends apu_base_class{
         $smarty->assign($this->opt['smarty_refresh_timeout'], $this->session['timeout']);
 
     }
-        
+
     /**
-     *  return info need to assign html form to smarty 
+     *  return info need to assign html form to smarty
      */
     function pass_form_to_html(){
         return array('smarty_name' => $this->opt['smarty_form'],
@@ -250,5 +248,3 @@ class apu_refresh extends apu_base_class{
                      'get_param'   => $this->get_params);
     }
 }
-
-?>

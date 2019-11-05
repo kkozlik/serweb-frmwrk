@@ -128,11 +128,10 @@ class apu_sorter extends apu_base_class{
     /**
      *  Method perform action update
      *
-     *  @param array $errors    array with error messages
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
-    function action_update(&$errors){
+    function action_update(){
 
         if ($this->session['sort_col'] == $this->col_to_sort){
             $this->session['reverse_order'] = !$this->session['reverse_order'];
@@ -149,7 +148,7 @@ class apu_sorter extends apu_base_class{
         if (isset($this->base_apu->opt['screen_name'])){
             $msg = "Sorting order changed to sort entries by '".$this->col_to_sort."'";
             if ($this->session['reverse_order']) $msg .= " in reverse order";
-        
+
             action_log($this->base_apu->opt['screen_name'], $this->action, $msg);
         }
 
