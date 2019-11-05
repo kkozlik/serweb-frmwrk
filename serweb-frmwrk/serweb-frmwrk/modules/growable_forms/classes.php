@@ -17,7 +17,7 @@ class Growable_Forms{
     var $item_order_form_el;
     /** name attribute of the html form */
     var $form_name;
-    /** URL that is accessed via AJAX when new item should be added to the form. 
+    /** URL that is accessed via AJAX when new item should be added to the form.
      *  It should invoke add_item_handler() method */
     var $add_item_url;
     /** URL param containing ID of new item */
@@ -39,7 +39,7 @@ class Growable_Forms{
     var $smarty_fr_param = "first_row";
     /** name of smarty variable containing item as returnet by its 'to_smarty' method */
     var $smarty_item_param = "item";
-    /** assoc array containing extra params provided to smarty. Should be set 
+    /** assoc array containing extra params provided to smarty. Should be set
      *  before add_item_handler() method is invoked */
     var $smarty_extra_params = array();
 
@@ -56,10 +56,10 @@ class Growable_Forms{
     /** name of static function of the class that create one instance */
     var $item_creator = "create";
     /** callback (as for PHP function call_user_func) that return new instance
-     *  of one item. If is set, this callback overrides $this->item_creator 
+     *  of one item. If is set, this callback overrides $this->item_creator
      *  property and is used instead of calling $item_class::$item_creator
-     *  
-     *  The callback function should accept one parameter which contain ID of 
+     *
+     *  The callback function should accept one parameter which contain ID of
      *  the item to be created.
      */
     var $item_create_fn = null;
@@ -72,17 +72,17 @@ class Growable_Forms{
     /** name of method of the class that return data to be included to json
      *  response (in the 'items' key) */
     var $item_to_response_fn = null;
-    
+
 
     /** name of javascript variable holding the javascript object */
     var $js_ctl = "Growable_Forms";
 
     /** name of custom javascript function called on js object initialization */
-    var $custom_init_js_fn = null;    
+    var $custom_init_js_fn = null;
 
     /** */
     var $max_new_id_used = 0;
-    
+
     /** array of item IDs to be created */
     var $ins_ids = array();
     /** array of item IDs to be deleted */
@@ -93,36 +93,36 @@ class Growable_Forms{
     var $items = array();
     /** array containing IDs of items in the DB */
     var $items_ids = array();
-    /** array of items beeing updated - its same as $this->items, 
+    /** array of items beeing updated - its same as $this->items,
      *  but the items of $this->del_ids are removed */
     var $upd_items = null;
     /** */
     var $smarty_items = array();
-    
+
     /** list of item IDs to be created */
     var $new_item_elements = "";
-    
+
 
     /**
      *  Constructor
-     *  
+     *
      *  @param  form_ext    $form                   HTML form used by the invoking APU
      *  @param  string      $form_name              name attribute of the html form
-     *  @param  function    $add_item_to_form_fn    callback function creating form 
+     *  @param  function    $add_item_to_form_fn    callback function creating form
      *                                              entries for one item
      *  @param  string      $item_class             name of PHP class representing one item
-     *  @param  string      $add_item_url           URL that is accessed via AJAX 
-     *                                              when new item should be added 
-     *                                              to the form. It should invoke 
+     *  @param  string      $add_item_url           URL that is accessed via AJAX
+     *                                              when new item should be added
+     *                                              to the form. It should invoke
      *                                              add_item_handler() method
-     *  @param  string      $smarty_template        filename of smarty template 
+     *  @param  string      $smarty_template        filename of smarty template
      *                                              for one item
-     */         
-    function Growable_Forms(&$form, $form_name, $add_item_to_form_fn, 
+     */
+    function Growable_Forms(&$form, $form_name, $add_item_to_form_fn,
                             $item_class, $add_item_url, $smarty_template){
 
         $this->f =                      &$form;
-        $this->form_name =              $form_name; 
+        $this->form_name =              $form_name;
         $this->add_item_to_form_fn =    $add_item_to_form_fn;
         $this->item_class =             $item_class;
         $this->add_item_url =           $add_item_url;
@@ -130,23 +130,23 @@ class Growable_Forms{
     }
 
     /**
-     *  Init function should be called when all variables are set     
-     */    
+     *  Init function should be called when all variables are set
+     */
     function init(){
         $this->get_ins_del_items();
     }
 
     /**
      *  Activate ordering of items
-     *  
-     *  @param  string  $item_order_form_el     Prefix of form element (it's just 
-     *                                          a name without ID) containing 
+     *
+     *  @param  string  $item_order_form_el     Prefix of form element (it's just
+     *                                          a name without ID) containing
      *                                          ordering value
-     *  @param  string  $item_order_var         name of variable of the class 
+     *  @param  string  $item_order_var         name of variable of the class
      *                                          that holds ordering of the item
      */
     function activate_ordering($item_order_form_el, $item_order_var){
-                               
+
         $this->item_order_form_el =    $item_order_form_el;
         $this->item_order_var =        $item_order_var;
     }
@@ -159,7 +159,7 @@ class Growable_Forms{
 
         $new_id = 0;
         foreach($ids as $v){
-            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $new_id)) 
+            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $new_id))
                 $new_id = substr($v, 1)+1;
         }
 
@@ -169,25 +169,25 @@ class Growable_Forms{
 
     /**
      *  Return javascript code initializing the JS controler
-     *  
-     *  @param  bool    $controls_init_call     specifies whether call of controls_init() 
+     *
+     *  @param  bool    $controls_init_call     specifies whether call of controls_init()
      *                                          function should be included. It's useful
-     *                                          to set it to FALSE and postpone call of 
-     *                                          the method if js_ctl object will 
-     *                                          be modified later.    
-     */         
+     *                                          to set it to FALSE and postpone call of
+     *                                          the method if js_ctl object will
+     *                                          be modified later.
+     */
     function get_init_js($controls_init_call=true){
         $js = "
             var {$this->js_ctl};
-            {$this->js_ctl} = new Growable_Forms_ctl('{$this->js_ctl}', '{$this->new_items_form_el}', 
+            {$this->js_ctl} = new Growable_Forms_ctl('{$this->js_ctl}', '{$this->new_items_form_el}',
                                     '{$this->del_items_form_el}');
             {$this->js_ctl}.add_item_url = '".js_escape($this->add_item_url)."';
             {$this->js_ctl}.add_item_url_id_param = '".js_escape($this->add_item_url_id_param)."';
             {$this->js_ctl}.add_item_url_fr_param = '".js_escape($this->add_item_url_fr_param)."';
             {$this->js_ctl}.max_items = {$this->max_items};
             {$this->js_ctl}.min_items = {$this->min_items};
-            {$this->js_ctl}.new_item_id = ".$this->get_new_item_id().";            
-            {$this->js_ctl}.view = ".($this->view_only?"true":"false").";            
+            {$this->js_ctl}.new_item_id = ".$this->get_new_item_id().";
+            {$this->js_ctl}.view = ".($this->view_only?"true":"false").";
             ";
 
         if ($this->custom_init_js_fn)
@@ -196,11 +196,11 @@ class Growable_Forms{
         if ($this->item_order_form_el)
             $js .= "{$this->js_ctl}.ordering_form_el = '".$this->item_order_form_el."';\n";
 
-    
+
         $js .= "
             {$this->js_ctl}.init('{$this->form_name}');
             ";
-            
+
         if ($controls_init_call) $js .= $this->get_controls_init_js_call();
 
         return $js;
@@ -208,7 +208,7 @@ class Growable_Forms{
 
     /**
      *  Return javascript for call of controls_init() function
-     */         
+     */
     function get_controls_init_js_call(){
 
         $js = "
@@ -217,10 +217,10 @@ class Growable_Forms{
 
         return $js;
     }
-    
+
     /**
      *  Return structure that is passed to smarty template
-     */         
+     */
     function get_smarty_var(){
         return array("add_item_url" => "javascript:".rawurlencode($this->js_ctl.".add_item();"),
                      "items" => $this->smarty_items,
@@ -245,24 +245,24 @@ class Growable_Forms{
             $del_ids = array();
         else
             $del_ids = explode(";", $_POST[$this->del_items_form_el]);
-        
+
         if (!isset($_POST[$this->db_items_form_el]) or $_POST[$this->db_items_form_el] == "")
             $db_ids = array();
         else
             $db_ids = explode(";", $_POST[$this->db_items_form_el]);
-        
-        /* walk throught new and deleted IDs to be sure we will not 
+
+        /* walk throught new and deleted IDs to be sure we will not
            generate duplicated IDs*/
         foreach($ins_ids as $v){
-            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $this->max_new_id_used)) 
+            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $this->max_new_id_used))
                 $this->max_new_id_used = substr($v, 1)+1;
         }
 
         foreach($del_ids as $v){
-            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $this->max_new_id_used)) 
+            if (substr($v, 0, 1)=='x' and (substr($v, 1) >= $this->max_new_id_used))
                 $this->max_new_id_used = substr($v, 1)+1;
         }
-        
+
         //array of IDs that were inserted and imediately deleted (without insert to DB)
         $del_ins_ids = array_intersect($ins_ids, $del_ids);
 
@@ -273,7 +273,7 @@ class Growable_Forms{
 
     /**
      *  Set list of items
-     */         
+     */
     function set_items($items){
         $this->items = $items;
 
@@ -291,10 +291,10 @@ class Growable_Forms{
 
     /**
      *  Duplicate items.
-     *         
-     *  This method should be called when 'copy' action is invoked. It change 
+     *
+     *  This method should be called when 'copy' action is invoked. It change
      *  IDs of items and the list of IDs to new_item_elements list.
-     */         
+     */
     function duplicate_items(){
         $i=0;
         foreach($this->items as $k => $v){
@@ -307,35 +307,35 @@ class Growable_Forms{
 
     /**
      *  Return list of items to be updated.
-     *  
+     *
      *  From list of currently configured items the function remove items
-     *  that has been deleted.                   
-     */    
+     *  that has been deleted.
+     */
     function get_updated_items(){
 
-        // if method has been already called do not make the list again but 
+        // if method has been already called do not make the list again but
         // return stored value
         if (!is_null($this->upd_items)) return $this->upd_items;
 
         // otherwise make the list of updated items
         $items = $this->items;
-    
+
         //remove inserted and deleted items
         foreach($items as $k => $v){
             if (in_array($v->{$this->item_id_var}, $this->del_ids)) unset($items[$k]);
             if (in_array($v->{$this->item_id_var}, $this->ins_ids)) unset($items[$k]);
         }
-        
+
         $this->upd_items = $items;
         return $this->upd_items;
     }
 
     /**
-     *  Add item ID to the DEL list (and remove it from INS or UPD list 
+     *  Add item ID to the DEL list (and remove it from INS or UPD list
      *  if necessary)
-     *  
-     *  @param  string  $id          
-     */         
+     *
+     *  @param  string  $id
+     */
     function del_item($id){
         if (!in_array($id, $this->del_ids)) $this->del_ids[] = $id;
         if (false !== $key = array_search($id, $this->ins_ids)) unset($this->ins_ids[$key]);
@@ -345,7 +345,7 @@ class Growable_Forms{
 
     /**
      *  Return URLs that will be used in control links for one item
-     */         
+     */
     function get_control_links($id){
         $links = array();
         $links["url_del_item"] =  "javascript:".rawurlencode($this->js_ctl.".del_item('".$id."');");
@@ -357,15 +357,15 @@ class Growable_Forms{
 
 
     /**
-     *  If there were conrurent changes in the list of items this functions 
+     *  If there were conrurent changes in the list of items this functions
      *  should deal with them.
-     *  
-     *  If there are items in the DB that did not exist at the time the page 
+     *
+     *  If there are items in the DB that did not exist at the time the page
      *  has been generated, they are added to "del_ids" list to delete them.
-     *  
-     *  If some items has been deleted from the DB in the meantime, they are 
-     *  added to the "ins_ids" list to recreate them.                     
-     */         
+     *
+     *  If some items has been deleted from the DB in the meantime, they are
+     *  added to the "ins_ids" list to recreate them.
+     */
     function solve_concurent_changes(){
         foreach($this->items as $k=>$v){
             if (!in_array($v->{$this->item_id_var}, $this->db_ids))
@@ -379,7 +379,7 @@ class Growable_Forms{
 
     /**
      *  Add inserted items (to be created) into internal list of items ($this->items)
-     */         
+     */
     function add_items_tbc(){
 
         /* add inserted items to array of items to be added to form */
@@ -405,11 +405,11 @@ class Growable_Forms{
 
     /**
      *  Create html form elements for all items
-     */         
+     */
     function add_items_to_form(){
         /* sort items by the ordering */
         if ($this->item_order_var){
-            uasort($this->items, create_function('$a, $b', 
+            uasort($this->items, create_function('$a, $b',
                 'if ($a->'.$this->item_order_var.' == $b->'.$this->item_order_var.') return 0;
                  return ($a->'.$this->item_order_var.' < $b->'.$this->item_order_var.') ? -1 : 1;'));
         }
@@ -418,9 +418,9 @@ class Growable_Forms{
             // skip items that should be deleted
             if (in_array($v->{$this->item_id_var}, $this->del_ids)) continue;
 
-            // create form elements calling user funct    
-            call_user_func_array($this->add_item_to_form_fn, array(&$this->f, $v));    
-            
+            // create form elements calling user funct
+            call_user_func_array($this->add_item_to_form_fn, array(&$this->f, $v));
+
             // create record to be provided to smarty template
             $smarty_item = array();
             $smarty_item['id'] = $v->{$this->item_id_var};
@@ -432,34 +432,34 @@ class Growable_Forms{
 
             $this->smarty_items[$v->{$this->item_id_var}] = $smarty_item;
         }
-        
+
 
         $this->f->add_element(array("type"=>"hidden",
                                     "name"=>$this->new_items_form_el,
                                     "value"=>$this->new_item_elements));
-                                    
+
         $this->f->add_element(array("type"=>"hidden",
                                     "name"=>$this->del_items_form_el,
                                     "value"=>""));
-                
+
         $this->f->add_element(array("type"=>"hidden",
                                     "name"=>$this->db_items_form_el,
                                     "value"=>implode(";", $this->items_ids)));
-                
+
     }
-    
+
     /**
      *  Handler of action "add item"
-     *  
+     *
      *  Generates html code for one item and return it
-     */         
+     */
     function add_item_handler(){
         global $lang_str, $smarty;
-        
+
         $id = $_GET[$this->add_item_url_id_param];
         $first_row = $_GET[$this->add_item_url_fr_param];
         $links = $this->get_control_links($id);
-        
+
         $f = new form_ext();
         $sm = new Smarty_Serweb();
 
@@ -471,19 +471,19 @@ class Growable_Forms{
             $item = call_user_func(array($this->item_class, $this->item_creator));
             $item->{$this->item_id_var} = $id;
         }
-        
-        // create html for the item
-        call_user_func_array($this->add_item_to_form_fn, array(&$f, $item));    
 
-        // copy already set template vars to the new smarty object 
-        $tpl_vars = &$smarty->getTemplateVars();
+        // create html for the item
+        call_user_func_array($this->add_item_to_form_fn, array(&$f, $item));
+
+        // copy already set template vars to the new smarty object
+        $tpl_vars = $smarty->getTemplateVars();
         foreach($tpl_vars as $k => $v){
             $sm->assign($k, $tpl_vars[$k]);
         }
 
-        // assign smarty templates    
-        $sm->assign_phplib_form($this->smarty_form_param, 
-                                $f, 
+        // assign smarty templates
+        $sm->assign_phplib_form($this->smarty_form_param,
+                                $f,
                                 array(),
                                 array());
 
@@ -507,24 +507,24 @@ class Growable_Forms{
         $response->formElements = $f->get_hidden_els_as_string();
         $response->customData = array();
         $response->items = array();
-        
+
         if ($this->item_to_response_fn and method_exists($item, $this->item_to_response_fn)){
             $response->items[$id] = $item->{$this->item_to_response_fn}();
         }
 
-        return $response;    
+        return $response;
     }
 
     /**
-     *  This method should be used when server needs to generate more items 
-     *  on one request from client. In this case the add_item_handler() needs 
+     *  This method should be used when server needs to generate more items
+     *  on one request from client. In this case the add_item_handler() needs
      *  to be called multiple times and between each call of add_item_handler(),
      *  this method should be called.
-     *  
+     *
      *  Client specify ID for first item as "xN" where N is some number. This
      *  method generates another IDs as "yNpM" where M is 1 on first call and
-     *  is increased with each call of this method.                                   
-     */         
+     *  is increased with each call of this method.
+     */
     function generate_id_for_another_item(){
         static $base_num = null;
         static $cnt = 0;
@@ -539,24 +539,24 @@ class Growable_Forms{
         // if generating ID for another row, clear the "first row" flag
         $_GET[$this->add_item_url_fr_param] = 0;
     }
-    
+
     /**
      *  Returns same response as add_item_handler(), but empty.
-     */         
+     */
     function get_empty_response(){
         $response = new stdClass();
         $response->tableRows = "";
         $response->formElements = "";
         $response->customData = array();
         $response->items = array();
-        
+
         return $response;
     }
-    
+
     /**
      *  Joins two responses of add_item_handler() together. It's useful
      *  when add_item_handler() is called multiple times;
-     */         
+     */
     function join_responses($resp1, $resp2){
         $resp1->tableRows    .= $resp2->tableRows;
         $resp1->formElements .= $resp2->formElements;
@@ -564,16 +564,15 @@ class Growable_Forms{
         $resp1->items         = array_merge($resp1->items, $resp2->items);
         return $resp1;
     }
-    
+
     /**
      *  Set custom data to be send in response
-     *  
-     *  @param Object   $response   
+     *
+     *  @param Object   $response
      *  @param String   $var_name   name of variable to be set
-     *  @param mixed    $var_value  value of the variable          
-     */    
+     *  @param mixed    $var_value  value of the variable
+     */
     function set_response_custom_data(&$response, $var_name, $var_value){
         $response->customData[$var_name] = $var_value;
     }
 }
-?>
