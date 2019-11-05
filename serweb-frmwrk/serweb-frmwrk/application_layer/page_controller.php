@@ -208,7 +208,7 @@ class page_controller{
      *  @obsoleted since 2014-04-28
      */
     function errors_to_get_array(){
-        return "";
+        return array();
     }
 
     /**
@@ -806,7 +806,7 @@ class page_controller{
      *  @param  array   $get_param      array of GET parameters send in the URL
      *  @return none                    this function finish execution of script
      */
-    function reload($get_param){
+    function reload($get_param=array()){
         global $sess;
 
         $errors = ErrorHandler::get_errors_array();
