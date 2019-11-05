@@ -39,65 +39,61 @@
  */
 
   function smarty_function_pager($params, &$smarty){
-      /* 
+      /*
       @param    array     $page            - associative array containing next four items:
-                int       'pos'            - number of first item on a page 
+                int       'pos'            - number of first item on a page
                 int       'items'          - number of all items
-                int       'limit'          - number of items on a page 
+                int       'limit'          - number of items on a page
                 string    'url'            - url of pages - number of first item is appended
      */
 
-	// START INIT
-	$link_limit	= 10;
-	$separator    = '&nbsp;';
-	$class_text   = 'nav';
-	$class_num    = 'nav';
-	$class_numon  = 'navActual';
-	$txt_prev     = 'previous';            // previous
-	$txt_next     = 'next';                // next
-	$txt_first    = '';
-	$txt_last     = '';
-	$display      = '';
-	$link_special_html = '';
-	
+    // START INIT
+    $link_limit = 10;
+    $separator    = '&nbsp;';
+    $class_text   = 'nav';
+    $class_num    = 'nav';
+    $class_numon  = 'navActual';
+    $txt_prev     = 'previous';            // previous
+    $txt_next     = 'next';                // next
+    $txt_first    = '';
+    $txt_last     = '';
+    $display      = '';
+    $link_special_html = '';
+
     // Optional parameter to verify if page links are to be displayed or not
     $skip_page_links = '';
 
-	foreach($params as $key=>$value) {
-		if ($key == 'page') continue;
-		$tmps[strtolower($key)] = $value;
-		$tmp = strtolower($key);
-		if (!(${$tmp} = $value)) {
-			${$tmp} = '';
-		}
-	}    
+    foreach($params as $key=>$value) {
+        if ($key == 'page') continue;
+        $tmps[strtolower($key)] = $value;
+        $tmp = strtolower($key);
+        ${$tmp} = $value;
+    }
 
-	foreach($params['page'] as $key=>$value) {
-		$tmps[strtolower($key)] = $value;
-		$tmp = strtolower($key);
-		if (!(${$tmp} = $value)) {
-			${$tmp} = '';
-		}
-	}    
-	// START data check
-	$minVars = array('pos', 'items', 'limit', 'url');
-	foreach($minVars as $tmp)  {
-		if (!isset($params['page'][$tmp])) {
-			$smarty->trigger_error('plugin "pager": missing or empty parameter: page["'.$tmp.'"]');
-		}
-	}
+    foreach($params['page'] as $key=>$value) {
+        $tmps[strtolower($key)] = $value;
+        $tmp = strtolower($key);
+        ${$tmp} = $value;
+    }
+    // START data check
+    $minVars = array('pos', 'items', 'limit', 'url');
+    foreach($minVars as $tmp)  {
+        if (!isset($params['page'][$tmp])) {
+            $smarty->trigger_error('plugin "pager": missing or empty parameter: page["'.$tmp.'"]');
+        }
+    }
 
-	  
-	if ($items <= $limit and $display!='always') return "";
-	$out="";
 
-	$lfrom=$pos-($link_limit*$limit); if ($lfrom<0) $lfrom=0;
-	$lto=$pos+(($link_limit+1)*$limit); if ($lto>$items) $lto=$items;
+    if ($items <= $limit and $display!='always') return "";
+    $out="";
 
-	if ($txt_first){
-		if ($pos>0) $out.='<a href="'.htmlspecialchars(str_replace("<pager>", 0, $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_first.'</a>'.$separator;
-		elseif($display=='always') $out.='<span class="'.$class_text.'">'.$txt_first.'</span>'.$separator;
-	}
+    $lfrom=$pos-($link_limit*$limit); if ($lfrom<0) $lfrom=0;
+    $lto=$pos+(($link_limit+1)*$limit); if ($lto>$items) $lto=$items;
+
+    if ($txt_first){
+        if ($pos>0) $out.='<a href="'.htmlspecialchars(str_replace("<pager>", 0, $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_first.'</a>'.$separator;
+        elseif($display=='always') $out.='<span class="'.$class_text.'">'.$txt_first.'</span>'.$separator;
+    }
 
     // If page links are not the displayed
     if(true == $skip_page_links)
@@ -124,20 +120,16 @@
         }
     }
 
- 	if (($pos+$limit)<$items) 
-		$out.=$separator.'<a href="'.htmlspecialchars(str_replace("<pager>", ($pos+$limit), $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_next.'</a>';
-	elseif ($display=='always') $out.=$separator.'<span class="'.$class_text.'">'.$txt_next.'</span>';
+    if (($pos+$limit)<$items)
+        $out.=$separator.'<a href="'.htmlspecialchars(str_replace("<pager>", ($pos+$limit), $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_next.'</a>';
+    elseif ($display=='always') $out.=$separator.'<span class="'.$class_text.'">'.$txt_next.'</span>';
 
-	if ($txt_last){
-	 	if (($pos+$limit)<$items) 
-			$out.=$separator.'<a href="'.htmlspecialchars(str_replace("<pager>", (floor($items/$limit)*$limit), $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_last.'</a>';
-		elseif ($display=='always') $out.=$separator.'<span class="'.$class_text.'">'.$txt_last.'</span>';
-	}
+    if ($txt_last){
+        if (($pos+$limit)<$items)
+            $out.=$separator.'<a href="'.htmlspecialchars(str_replace("<pager>", (floor($items/$limit)*$limit), $url), ENT_QUOTES).'" class="'.$class_text.'" '.$link_special_html.'>'.$txt_last.'</a>';
+        elseif ($display=='always') $out.=$separator.'<span class="'.$class_text.'">'.$txt_last.'</span>';
+    }
 
-	
-	return $out;  
+
+    return $out;
 }
-
-
-
-?>
