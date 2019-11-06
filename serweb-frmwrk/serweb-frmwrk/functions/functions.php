@@ -3,7 +3,6 @@
  * Miscellaneous functions and variable definitions
  *
  * @author    Karel Kozlik
- * @version   $Id: functions.php,v 1.101 2010/01/22 16:55:08 kozlik Exp $
  * @package   serweb
  */
 
@@ -125,11 +124,11 @@ class Creg{
 
         $this->address="(".$this->user."@)?".$this->host."(:".$this->port.")?".$this->uri_parameters;
 
-        /** regex matching sip uri */
+        /** Regex matching sip uri. See RFC 3261 chapter 25.1 */
         $this->sip_address="[sS][iI][pP]:".$this->address;
-        /** regex matching sips uri */
+        /** Regex matching sips uri. See RFC 3261 chapter 25.1 */
         $this->sips_address="[sS][iI][pP][sS]:".$this->address;
-        /** regex matching sip or sips uri */
+        /** Regex matching sip or sips uri. See RFC 3261 chapter 25.1 */
         $this->sip_s_address="[sS][iI][pP][sS]?:".$this->address;
 
 
@@ -336,7 +335,7 @@ class Creg{
      *  @return bool
      */
     function is_ipv4address($adr){
-        if (preg_match("/^".$this->ipv4address."$/", $adr)) return true;
+        if (preg_match(pregize("^".$this->ipv4address."$"), $adr)) return true;
         else return false;
     }
 
@@ -648,7 +647,7 @@ class Creg{
      */
     function check_sip_address($sip_addr){
 
-        if (!preg_match("/^".$this->sip_s_address."$/", $sip_addr)){
+        if (!preg_match(pregize("^".$this->sip_s_address."$"), $sip_addr)){
             return false;
         }
         else{
@@ -676,7 +675,7 @@ class Creg{
      */
     function check_ipv4_address($ip_addr){
 
-        if (!preg_match("/^".$this->ipv4address."$/", $ip_addr)){
+        if (!preg_match(pregize("^".$this->ipv4address."$"), $ip_addr)){
             return false;
         }
         else{
@@ -704,7 +703,7 @@ class Creg{
         $value_a = explode("/", $ip_addr, 2);
 
         if (!isset($value_a[1])) $value_a[1] = "";
-        if (!preg_match("/^".$this->ipv4address."$/", $value_a[0])){
+        if (!preg_match(pregize("^".$this->ipv4address."$"), $value_a[0])){
             return false;
         }
         else{
@@ -796,7 +795,7 @@ class Creg{
      */
     function check_ipv4_addr_port($value){
 
-        if (!preg_match("/^".$this->ipv4address.":".$this->port."$/", $value)){
+        if (!preg_match(pregize("^".$this->ipv4address.":".$this->port."$"), $value)){
             return false;
         }
         else{
@@ -823,7 +822,7 @@ class Creg{
      */
     function check_hostname($value){
 
-        if (!preg_match("/^".$this->host."$/", $value)){
+        if (!preg_match(pregize("^".$this->host."$"), $value)){
             return false;
         }
         else{
@@ -841,7 +840,7 @@ class Creg{
      *  string representation). Natural number is non-negative integer.
      */
     function is_natural_num($val){
-        if (preg_match("/^".$this->natural_num."$/", $val)) return true;
+        if (preg_match(pregize("^".$this->natural_num."$"), $val)) return true;
         return false;
     }
 }
@@ -1752,5 +1751,3 @@ function clone_array($array){
 
     return $clone;
 }
-
-?>
