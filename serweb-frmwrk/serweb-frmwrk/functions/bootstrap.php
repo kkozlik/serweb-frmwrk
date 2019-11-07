@@ -145,7 +145,10 @@ require_once ($_SERWEB["corefunctionsdir"] . "functions.php");
 
 require_once ($_SERWEB["corefunctionsdir"] . "exceptions.php");
 
-sw_log('New request: '.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"], PEAR_LOG_DEBUG);
+if (isset($_SERVER["HTTP_HOST"]) and isset($_SERVER["REQUEST_URI"])){
+    // When running from cli, the variables bellow are not set
+    sw_log('New request: '.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"], PEAR_LOG_DEBUG);
+}
 
 /** require Smarty and create Smarty instance */
 require($_SERWEB["corefunctionsdir"]."smarty_serweb.php");
