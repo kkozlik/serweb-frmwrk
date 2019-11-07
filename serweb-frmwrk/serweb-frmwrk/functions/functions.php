@@ -1139,7 +1139,7 @@ function read_txt_file($filename, $replacements){
         if (trim($line) == "") $reading_headers = false;
 
         if ($reading_headers){
-            $h = split(':', $line, 2);
+            $h = explode(':', $line, 2);
             $headers[strtolower(trim($h[0]))] = trim($h[1]);
         }
         else{
