@@ -106,7 +106,7 @@ class Growable_Forms{
     /**
      *  Constructor
      *
-     *  @param  form_ext    $form                   HTML form used by the invoking APU
+     *  @param  OohForm     $form                   HTML form used by the invoking APU
      *  @param  string      $form_name              name attribute of the html form
      *  @param  function    $add_item_to_form_fn    callback function creating form
      *                                              entries for one item
@@ -460,7 +460,7 @@ class Growable_Forms{
         $first_row = $_GET[$this->add_item_url_fr_param];
         $links = $this->get_control_links($id);
 
-        $f = new form_ext();
+        $f = new OohForm();
         $sm = new Smarty_Serweb();
 
         // create instance of one item

@@ -16,7 +16,7 @@
  *  --------------
  *  instance_id         unique identificator of instance of application unit
  *  form_submit         assotiative array describe submit element of form.
- *                      for details see description of method add_submit in class form_ext
+ *                      for details see description of method add_submit in class OohForm
  *  </pre>
  *
  *  @package   serweb
@@ -109,7 +109,7 @@ class apu_base_class{
         }
         /* else create own form object */
         else{
-            $this->f = new form_ext();
+            $this->f = new OohForm();
         }
     }
 
@@ -235,5 +235,3 @@ class apu_base_class{
                      'before'      => $this->js_after);
     }
 }
-
-?>

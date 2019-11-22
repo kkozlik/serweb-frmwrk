@@ -73,7 +73,7 @@ function load_apu($apu){
 
 global $_SERWEB;
 
-require_once ($_SERWEB["corefunctionsdir"] . "oohform_ext.php");
+require_once ($_SERWEB["corefunctionsdir"] . "ooh_form/ooh_form.php");
 require_once ($_SERWEB["appdir"] . "apu_base_class.php");
 require_once ($_SERWEB["appdir"] . "page_controller.php");
 

@@ -22,7 +22,7 @@
  *
  *  'form_submit'               (assoc)
  *   assotiative array describe submit element of form. For details see description
- *   of method add_submit in class form_ext
+ *   of method add_submit in class OohForm
  *
  *  'smarty_form'               name of smarty variable - see below
  *

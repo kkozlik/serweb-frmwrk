@@ -157,6 +157,8 @@ class page_controller{
      *  - post_execute              - after actions are executed (only if validation succeeded)
      *  - pre_invalid               - before form_invalid methods of APU are executed (only if validation failed)
      *  - post_invalid              - after form_invalid methods of APU are executed (only if validation failed)
+     *  - pre_form_smarty           - before form is assigned to smarty variable
+     *  - post_form_smarty          - after form is assigned to smarty variable
      *  - pre_html_output
      *  - post_html_output
      *
@@ -167,7 +169,7 @@ class page_controller{
      * @param integer  $priority
      * @return void
      */
-    public function attach_listener($event_name, $callback, $priority=0)
+    public function attach_listener($event_name, $callback, $priority=50)
     {
         $this->listeners[$event_name][] = array("priority" => $priority,
                                                 "callback" => $callback);
@@ -180,7 +182,7 @@ class page_controller{
      * @param string $event_name
      * @return void
      */
-    private function trigger_event($event_name)
+    public function trigger_event($event_name)
     {
         if (empty($this->listeners[$event_name])) return;
 
@@ -728,7 +730,7 @@ class page_controller{
                                                     'text' => $lang_str['b_submit']);
 
             $this->f[$form_name]['smarty_name'] = 'form_'.$form_name;   // name of smarty variable
-            $this->f[$form_name]['form'] = new form_ext();              // form object
+            $this->f[$form_name]['form'] = new OohForm();              // form object
             $this->f[$form_name]['apu_names'] = array();                // set of apu names added to hidden form element of this form
             $this->f[$form_name]['js_before'] = "";
             $this->f[$form_name]['js_after'] = "";
@@ -767,7 +769,7 @@ class page_controller{
      *  </code>
      *
      *  @param string $form_name    name of existing html form
-     *  @param array  $submit       assotiative array describe submit element of shared form. For details see description of method add_submit in class form_ext
+     *  @param array  $submit       assotiative array describe submit element of shared form. For details see description of method add_submit in class OohForm
      *  @return bool                FALSE if form with given name still not exists, TRUE otherwise
      */
     function set_submit_for_form($form_name, $submit){

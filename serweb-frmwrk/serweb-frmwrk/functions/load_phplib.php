@@ -17,7 +17,6 @@ require_once($_SERWEB["phplibdir"] . "perm4.1.php");      /* Disable this, if yo
 
 require_once($_SERWEB["phplibdir"] . "local/local.php");     /* Required, contains your local configuration. */
 require_once($_SERWEB["phplibdir"] . "page4.1.php");      /* Required, contains the page management functions. */
-require_once($_SERWEB["phplibdir"] . "oohforms.php");  /* Required for object oriented HTML forms. */
 
 function phplib_load($features = null){
 

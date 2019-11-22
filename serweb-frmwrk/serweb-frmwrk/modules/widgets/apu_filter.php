@@ -22,7 +22,7 @@
  *
  *  'form_submit'               (assoc)
  *   assotiative array describe submit element of form. For details see description
- *   of method add_submit in class form_ext
+ *   of method add_submit in class OohForm
  *
  *  'smarty_form'               name of smarty variable - see below
  *
@@ -197,21 +197,21 @@ class apu_filter extends apu_base_class{
                                  'validate_form'=>false,
                                  'reload'=>false);
     }
-    
+
     /**
-     *  create html form 
+     *  create html form
      *
      *  @return null            FALSE on failure
      */
     function create_html_form(){
         parent::create_html_form();
-        
+
         $this->get_form_elements();
 
         $js_elements = array();
-        
+
         foreach ($this->form_elements as $k => $v){
-            
+
             if (!isset($this->session['f_values'][$v['name']])){
                 if (isset($v['initial'])) $this->session['f_values'][$v['name']] = $v['initial'];
                 else                      $this->session['f_values'][$v['name']] = null;
@@ -364,13 +364,13 @@ class apu_filter extends apu_base_class{
                 $op = "like";
             }
 
-            $f_ops[$v['name']] = new Filter($v['name'], $fv[$v['name']], $op, $this->opt['partial_match']);  
+            $f_ops[$v['name']] = new Filter($v['name'], $fv[$v['name']], $op, $this->opt['partial_match']);
         }
 
 
         return $f_ops;
     }
-    
+
     function set_get_param_for_redirect($str){
         $this->session['get_param']=$str;
     }

@@ -1,12 +1,11 @@
 <?php
 /**
  * Smarty template engine customized for serweb
- * 
+ *
  * @author     Karel Kozlik
- * @version    $Id: smarty_serweb.php,v 1.9 2007/02/14 16:46:32 kozlik Exp $
  * @package    serweb
  * @subpackage framework
- */ 
+ */
 
 /**
  *  include the smarty engine
@@ -18,19 +17,19 @@ require($_SERWEB["smartydir"].'Smarty.class.php');
 
 /**
  * Smarty template engine customized for serweb
- * 
+ *
  * @package    serweb
  * @subpackage framework
- */ 
+ */
 class Smarty_Serweb extends Smarty {
 
-    function Smarty_Serweb() {
+    public function __construct() {
         global $config, $_SERWEB;
-        
+
         // Smarty does not support "magic_quotes_runtime" enabled
         // So make sure to disable it.
         ini_set("magic_quotes_runtime", 0);
-    
+
         // Class Constructor. These automatically get set with each new instance.
         parent::__construct();
 
@@ -61,69 +60,69 @@ class Smarty_Serweb extends Smarty {
 
 
     /**
-     *  Assign PHPLib form to smarty variable
-     *  
-     *  @param  string  $name           name of smarty variable
-     *  @param  object  $form           phplib form
+     *  Assign OOH form to smarty variable
+     *
+     *  @param  string  $form_name      name of smarty variable
+     *  @param  object  $form           OOH Form
      *  @param  array   $start_arg      associative array of arguments of method {@link form::start() $form->start}
      *  @param  array   $finish_arg     associative array of arguments of method {@link form::finish() $form->finish}
      */
-    
-    function assign_phplib_form($name, $form, $start_arg = array(), $finish_arg = array()){
+    function assign_phplib_form($form_name, OohForm $form, $start_arg = array(), $finish_arg = array()){
         global $controler;
 
-        /* assign default values to args */     
-        if (!isset($start_arg['jvs_name']))     $start_arg['jvs_name']="";
-        if (!isset($start_arg['method']))       $start_arg['method']="";
-        if (!isset($start_arg['action']))       $start_arg['action']="";
-        if (!isset($start_arg['target']))       $start_arg['target']="";
-        if (!isset($start_arg['form_name']))    $start_arg['form_name']="";
-        
-        if (!isset($finish_arg['after']))   $finish_arg['after']="";
-        if (!isset($finish_arg['before']))  $finish_arg['before']="";
+        $controler->trigger_event("pre_form_smarty");
 
         /* do not leave 'action' empty */
-        if (!$start_arg['action']) {
+        if (empty($start_arg['action'])) {
             $start_arg['action'] = $controler->url($_SERVER['PHP_SELF']);
         }
 
+        /* assign default values to args */
+        if (isset($start_arg['form_name']))     $form->name($start_arg['form_name']);
+        if (isset($start_arg['jvs_name']))      $form->jvs_name($start_arg['jvs_name']);
+        if (isset($start_arg['method']))        $form->method($start_arg['method']);
+        if (isset($start_arg['action']))        $form->action($start_arg['action']);
+        if (isset($start_arg['target']))        $form->target($start_arg['target']);
+
+        if (isset($finish_arg['before']))       $form->js_before($finish_arg['before']);
+        if (isset($finish_arg['after']))        $form->js_after($finish_arg['after']);
+
+
         /* create associative array of form elements and begin and end tags of form */
+        $f = array();
 
         /* add begin tag to assoc array */
-        $f['start']=$form->get_start($start_arg['jvs_name'], $start_arg['method'], $start_arg['action'], $start_arg['target'], $start_arg['form_name']);
+        $f['start'] =  $form->start();
+        /* add end tag to assoc array */
+        $f['finish'] = $form->finish();
 
         /* add elements of form to assoc array */
-        if (is_array($form->elements)){
-            foreach($form->elements as $nm => $el){
-                /* if element is radio we must add form elements for each radio button */
-                if (get_class($el['ob']) == 'of_radio'){
-                    /* values of radio buttos shold be stored in 'options' property, if they are not -> ignore this element */
-                    if (isset($el['ob']->options) and is_array($el['ob']->options)){
-                        foreach($el['ob']->options as $opt){
-                            $f[$nm.'_'.$opt['value']] = $form->get_element($nm, $opt['value']);
-                        }
-                    }
+        foreach($form->get_element_names() as $name){
+            $el = $form->get_element_obj($name);
+
+            /* if element is radio we must add form elements for each radio button */
+            if ($el->get_type() == 'radio'){
+                $radio_values = $el->get_radio_values();
+                foreach($radio_values as $val){
+                    $f[$name.'_'.$val] = $form->get_element($name, $val);
                 }
-                /* if element is submit and it is not image, we have to strip the '_x' from end of its name */
-                elseif (get_class($el['ob']) == 'of_submit'){
-                    if (!$el['ob']->src) $f_nm = substr($nm, 0, -2);
-                    else                 $f_nm = $nm;
-                    
-                    $f[$f_nm] = $form->get_element($nm);
-                }
-                else {
-                    /* for all others elements simply add them to $f array */
-                    $f[$nm] = $form->get_element($nm);
-                }
+            }
+            /* if element is submit and it is not image, we have to strip the '_x' from end of its name */
+            elseif ($el->get_type() == 'submit'){
+                if (!$el->is_submit_image()) $f_nm = substr($name, 0, -2);
+                else                         $f_nm = $name;
+
+                $f[$f_nm] = $form->get_element($name);
+            }
+            else {
+                /* for all others elements simply add them to $f array */
+                $f[$name] = $form->get_element($name);
             }
         }
 
-        /* add end tag to assoc array */
-        $f['finish']=$form->get_finish($finish_arg['after'], $finish_arg['before']);
+        $this->assign($form_name, $f);
+        $this->assign($form_name."obj", $form);
 
-        $this->assign($name, $f);   
+        $controler->trigger_event("post_form_smarty");
     }
-    
 }
-
-?>
