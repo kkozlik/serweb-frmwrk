@@ -47,6 +47,10 @@ class OohElCommon {
         $this->setup_element($options);
     }
 
+    public function set_form($form){
+        $this->form = $form;
+    }
+
     public function __toString(){
         return $this->self_get($this->value);
     }
@@ -61,6 +65,14 @@ class OohElCommon {
 
     public function get_value(){
         return $this->value;
+    }
+
+    public function get_js_trim_value(){
+        return $this->js_trim_value;
+    }
+
+    public function do_js_validation(){
+        return (!$this->skip_validation and $this->js_validate);
     }
 
     public function do_php_validation(){
