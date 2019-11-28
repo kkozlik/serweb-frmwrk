@@ -2,7 +2,7 @@
 
 class OohForm {
     private $elements = [];
-    private $isfile;
+    private $isfile=false;
 
     private $id;
     private $name    = "oohform";
@@ -29,6 +29,10 @@ class OohForm {
 
     public function __construct(){
         if (!empty($_SERVER['PHP_SELF']))    $this->action = $_SERVER['PHP_SELF'];
+
+        $this->add_element(array("type"=>"hidden",
+                                 "name"=>"form_cancels",
+                                 "value"=>""));
     }
 
     public function __toString(){
@@ -159,7 +163,7 @@ class OohForm {
                 $el = $elrec["ob"];
 
                 if ($el->js_trim_value){
-                    $str .= "phplib_ctl.add_event(document.getElementById('".$el->name."'), 'blur', phplib_ctl.oh_trim);\n";
+                    $str .= "phplib_ctl.add_event(document.getElementById('".$el->get_name()."'), 'blur', phplib_ctl.oh_trim);\n";
                 }
             }
 
@@ -171,7 +175,7 @@ class OohForm {
                 $el = $elrec["ob"];
 
                 if ($el->js_trim_value){
-                    $str .= "phplib_ctl.trim(document.getElementById('".$el->name."'));\n";
+                    $str .= "phplib_ctl.trim(document.getElementById('".$el->get_name()."'));\n";
                 }
 
                 if (!$el->skip_validation and $el->js_validate) $str .= $el->self_get_js();
@@ -205,12 +209,14 @@ class OohForm {
     }
 
     public function add_cancel($submit){
-        $this->form_cancels[] = "cancel";
+        $this->form_cancels["cancel"] = true;
+        $this->get_element_obj('form_cancels')->value(implode(" ", array_keys($this->form_cancels)));
         $this->add_extra_submit("cancel", $submit);
     }
 
     public function add_extra_cancel($name, $submit){
-        $this->form_cancels[] = $name;
+        $this->form_cancels[$name] = true;
+        $this->get_element_obj('form_cancels')->value(implode(" ", array_keys($this->form_cancels)));
         $this->add_extra_submit($name, $submit);
     }
 
@@ -231,7 +237,7 @@ class OohForm {
                              "extrahtml"=>"alt='".$submit['text']."' ".$extrahtml);
 
             /* if it is a cancel button, disable form validation */
-            if (in_array($name, $this->form_cancels)) $element['extrahtml'] .= " onclick='this.form.onsubmit=null;'";
+            if (isset($this->form_cancels[$name])) $element['extrahtml'] .= " onclick='this.form.onsubmit=null;'";
             break;
 
         case "button":
@@ -243,7 +249,7 @@ class OohForm {
                              "extrahtml"=>$extrahtml);
 
             /* if it is a cancel button, disable form validation */
-            if (in_array($name, $this->form_cancels)) $element['extrahtml'] = "onclick='this.form.onsubmit=null;'";
+            if (isset($this->form_cancels[$name])) $element['extrahtml'] = "onclick='this.form.onsubmit=null;'";
             break;
 
         case "hidden":
@@ -254,7 +260,7 @@ class OohForm {
                              "class"=>$class,
                              "extrahtml"=>$extrahtml);
 
-            if (in_array($name, $this->form_cancels)) $this->hidden_cancels = $name."_x";
+            if (isset($this->form_cancels[$name])) $this->hidden_cancels = $name."_x";
             else $this->hidden_submits[] = $name."_x";
         }
 
@@ -317,7 +323,7 @@ class OohForm {
         $el = $this->elements[$name]["ob"];
         if (is_null($value)) $value = $el->get_value();
 
-        // if (true == $flag_nametranslation) $el->name = $orig_name;
+        // if (true == $flag_nametranslation) $el->get_name() = $orig_name;
 
         $str .= $el->self_get($value);
 
@@ -328,14 +334,15 @@ class OohForm {
      *  Return names of all hidden elements in the form
      *
      *  Elements used internaly by this class are skipped (hidden submits,
-     *  hidden cancels)
+     *  hidden cancels and 'form_cancels')
      *
      *  @return array
      */
     protected function get_hidden_el_names(){
         return array_diff((array)$this->hidden,
                     array_merge($this->hidden_cancels,
-                                $this->hidden_submits));
+                                $this->hidden_submits,
+                                array("form_cancels")));
     }
 
     /**
