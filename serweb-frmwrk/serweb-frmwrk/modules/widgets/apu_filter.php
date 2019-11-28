@@ -286,7 +286,7 @@ class apu_filter extends apu_base_class{
             $js_elements[] = $js_el;
         }
 
-        $this->opt['form_clear']['extra_html'] = "onclick='filter_form_ctl.filter_clear();'";
+        $this->opt['form_clear']['extrahtml'] = "onclick='filter_form_ctl.filter_clear();'";
         $this->f->add_extra_submit("f_clear", $this->opt['form_clear']);
 
         $onload_js = "
