@@ -5,6 +5,12 @@ class OohElSubmit extends OohElCommon {
     public static $default_class;
     protected $src;
 
+    public function get_name(){
+        // strip the '_x' from end of the name
+        if (substr($this->name, -2) == '_x') return substr($this->name, 0, -2);
+        else return $this->name;
+    }
+
     public function self_get($val) {
 
         $id =           $this->get_id();
@@ -26,6 +32,10 @@ class OohElSubmit extends OohElCommon {
         $str .= " />";
 
         return $str;
+    }
+
+    public function self_load_defaults($val) {
+        // SUBMIT will not change its value
     }
 
     public function is_submit_image() {

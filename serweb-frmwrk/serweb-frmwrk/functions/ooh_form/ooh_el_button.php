@@ -35,4 +35,8 @@ class OohElButton extends OohElCommon {
 
         return $str;
     }
+
+    public function self_load_defaults($val) {
+        // BUTTON will not change its value
+    }
 }
