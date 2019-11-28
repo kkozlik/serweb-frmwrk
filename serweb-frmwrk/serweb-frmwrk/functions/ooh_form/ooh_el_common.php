@@ -19,6 +19,7 @@ class OohElCommon {
     protected $js_validate = true;
     protected $php_validate = true;
     protected $skip_validation = false;
+    protected $skip_load_default = false;
 
     protected $form;          //reference to the html form (set during element creation)
 
