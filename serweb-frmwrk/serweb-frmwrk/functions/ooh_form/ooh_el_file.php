@@ -6,7 +6,7 @@ class OohElFile extends OohElCommon {
     protected $size;
 
     public function is_file(){
-        return false;
+        return true;
     }
 
     public function self_get($val) {
