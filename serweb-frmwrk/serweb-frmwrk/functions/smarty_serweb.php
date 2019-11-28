@@ -107,13 +107,6 @@ class Smarty_Serweb extends Smarty {
                     $f[$name.'_'.$val] = $form->get_element($name, $val);
                 }
             }
-            /* if element is submit and it is not image, we have to strip the '_x' from end of its name */
-            elseif ($el->get_type() == 'submit'){
-                if (!$el->is_submit_image()) $f_nm = substr($name, 0, -2);
-                else                         $f_nm = $name;
-
-                $f[$f_nm] = $form->get_element($name);
-            }
             else {
                 /* for all others elements simply add them to $f array */
                 $f[$name] = $form->get_element($name);
