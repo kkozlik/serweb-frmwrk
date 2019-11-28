@@ -6,7 +6,7 @@ class OohForm {
 
     private $id;
     private $name    = "oohform";
-    private $jvs_name= "oohform";
+    private $jvs_name;
     private $classes = [];
     private $method  = "POST";
     private $target  = "_self";
@@ -45,6 +45,7 @@ class OohForm {
         foreach($this->elements as &$el){
             // Make copy of elements when cloning
             $el['ob'] = clone $el['ob'];
+            $el['ob']->set_form($this);
         }
     }
 
@@ -149,10 +150,10 @@ class OohForm {
             foreach($this->hidden as $elname) $str .= $this->get_element($elname);
         }
         $str .= "</form>";
-        return $str;
+        return $str.$this->js_validator();
     }
 
-    public function get_js_validator(){
+    public function js_validator(){
         $str = "";
 
         if ($this->jvs_name) {
@@ -162,7 +163,7 @@ class OohForm {
             foreach($this->elements as $elrec){
                 $el = $elrec["ob"];
 
-                if ($el->js_trim_value){
+                if ($el->get_js_trim_value()){
                     $str .= "phplib_ctl.add_event(document.getElementById('".$el->get_name()."'), 'blur', phplib_ctl.oh_trim);\n";
                 }
             }
@@ -174,11 +175,11 @@ class OohForm {
             foreach($this->elements as $elrec){
                 $el = $elrec["ob"];
 
-                if ($el->js_trim_value){
+                if ($el->get_js_trim_value()){
                     $str .= "phplib_ctl.trim(document.getElementById('".$el->get_name()."'));\n";
                 }
 
-                if (!$el->skip_validation and $el->js_validate) $str .= $el->self_get_js();
+                if ($el->do_js_validation()) $str .= $el->self_get_js();
             }
 
             if ($this->js_after) $str .= "$this->js_after\n";
