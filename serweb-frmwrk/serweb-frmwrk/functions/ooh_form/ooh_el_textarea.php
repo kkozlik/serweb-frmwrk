@@ -23,7 +23,7 @@ class OohElTextarea extends OohElCommon {
         $title =        $this->get_title();
         $placeholder =  $this->get_placeholder();
 
-        $str = "<textarea name='$this->name' id='$this->name'";
+        $str = "<textarea name='$this->name' ";
 
 
         if ($this->rows)    $str .= " rows='$this->rows'";
