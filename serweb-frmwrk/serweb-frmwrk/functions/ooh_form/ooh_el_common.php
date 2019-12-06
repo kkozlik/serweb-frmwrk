@@ -182,7 +182,7 @@ class OohElCommon {
         return $this->disabled;
     }
 
-    protected function get_id($key=null){
+    public function get_id($key=null){
 
         $id = $this->id;
         if (!$id and $this->form->get_option('generate_ids_by_names')) {
