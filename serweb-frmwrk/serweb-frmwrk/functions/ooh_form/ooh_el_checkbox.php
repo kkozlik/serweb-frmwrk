@@ -42,7 +42,7 @@ class OohElCheckbox extends OohElCommon {
     public function self_load_defaults($val) {
         if ($this->multiple)
             $this->value = $val;
-        elseif (isset($val) && (!$this->value || $val==$this->value))
+        elseif (isset($val))
             $this->checked=1;
         else
             $this->checked=0;
