@@ -1,3 +1,17 @@
+serweb-frmwrk (2.1.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Ability to define custom HTML headers in page attributes
+  * Fixing TYPO in name of page_controller class
+  * Upgrading bundled Smarty to version 3.1.33
+  * Adding ability to use PDO as DB abstraction layer
+  * Use better functions for getting random numbers for UUIDs (with PHP7)
+  * Fix problem of loading data-layer methods with multiple instances of CData_Layer class
+  * Allow to disable default functions for print html head/end
+  * Moving code for get list of required javascript into spearate functions
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 19 Dec 2019 16:38:27 +0100
+
 serweb-frmwrk (2.0.0) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
