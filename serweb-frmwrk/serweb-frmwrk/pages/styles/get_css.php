@@ -9,8 +9,8 @@ Header("content-type: text/css");
 if (getenv('SERWEB_AUTO_PREPEND')) {
     if (!file_exists(getenv('SERWEB_AUTO_PREPEND'))) {
         $err = "Auto prepend file configured in ".
-               "'SERWEB_AUTO_PREPEND' environment variable, does not exists: ". 
-               getenv('SERWEB_AUTO_PREPEND'); 
+               "'SERWEB_AUTO_PREPEND' environment variable, does not exists: ".
+               getenv('SERWEB_AUTO_PREPEND');
         trigger_error($err, E_USER_ERROR);
         die($err);
     }
@@ -34,7 +34,5 @@ elseif (file_exists($_SERWEB["coretemplatesdir"].$_GET['css'])){
     require($_SERWEB["coretemplatesdir"].$_GET['css']);
 }
 else{
-    echo "CSS file has not been found: ".$_GET['css'];
+    echo "CSS file has not been found: ".htmlspecialchars($_GET['css']);
 }
-
-?>
