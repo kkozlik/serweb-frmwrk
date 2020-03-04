@@ -119,7 +119,7 @@ class page_controller{
     /** list of interapu vars */
     var $interapu_vars = array();
     /** reference to container inside session variable */
-    var $session;
+    protected $session;
     /** post init function */
     var $post_init = null;
 
@@ -135,7 +135,7 @@ class page_controller{
         $this->errors = clone_array($eh->get_errors_array());
         $eh -> set_errors_ref($this->errors);
 
-        $this->session_init();
+        if (PHPlib::$session) PHPlib::$session->register_and_call_init_fn([$this, "session_init"]);
         $this->messages_from_get_param();
         $this->init_this_uid_and_did();
         $this->set_interapu_vars();

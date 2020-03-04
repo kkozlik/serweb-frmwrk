@@ -147,6 +147,9 @@ class Session {
   var $allowcache = 'nocache';
 
 
+  protected $on_init = [];
+
+
   /**
   * Sets the session name before the session starts.
   *
@@ -154,7 +157,7 @@ class Session {
   *
   * @see  name()
   */
-  function Session() {
+  function __construct() {
     $this->name($this->name);
   } // end constructor
 
@@ -199,11 +202,33 @@ class Session {
     return $ok;
   } // end func start
 
+
+  /**
+   * Register callback function executed when session is reopened
+   *
+   * @param [callable] $callback
+   */
+  public function register_init_fn($callback){
+    $this->on_init[] = $callback;
+  }
+
+  /**
+   * Execute and register callback function executed when session is reopened
+   *
+   * @param [callable] $callback
+   */
+  public function register_and_call_init_fn($callback){
+    $callback();
+    $this->register_init_fn($callback);
+  }
+
   public function reopen_session(){
     // workaround for the problem that session_start() creates multiple session cookies headers
     // Set "use_cookies" to zero shall disable creation of the cookie header
     ini_set ("session.use_cookies","0");
     session_start(['use_cookies' => 0]);
+
+    foreach($this->on_init as $listener) $listener();
   }
 
   // CLose the session and release the session lock
