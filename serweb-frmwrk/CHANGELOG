@@ -1,4 +1,5 @@
 * Fix XSS vulnerability in get_js and get_css files
+* Adding add_extrahtml() method to Ooh form elements
 
 Version 2.1.0
 ==============

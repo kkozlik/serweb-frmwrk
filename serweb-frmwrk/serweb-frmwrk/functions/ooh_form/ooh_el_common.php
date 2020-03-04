@@ -111,6 +111,10 @@ class OohElCommon {
         $this->ignore_default_class = (bool)$val;
         return $this;
     }
+    public function add_extrahtml($val){
+        $this->extrahtml .= " ".$val;
+        return $this;
+    }
 
     /**
      * Using setter metods (which return $this) in template and you do not want to generate any output, use this function;
