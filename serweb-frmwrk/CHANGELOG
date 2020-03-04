@@ -1,6 +1,7 @@
 * Fix XSS vulnerability in get_js and get_css files
 * Adding add_extrahtml() method to Ooh form elements
 * Reinitialize page_controller->session variable when session is reopened
+* Adding session property to apu_base_class
 
 Version 2.1.0
 ==============

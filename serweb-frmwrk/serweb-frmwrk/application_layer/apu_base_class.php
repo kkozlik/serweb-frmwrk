@@ -45,6 +45,8 @@ class apu_base_class{
     /** javascript executed after HTML for is validated */
     var $js_after  = "";
 
+    protected $session;
+
     /* constructor */
     function apu_base_class(){
         global $lang_str;
@@ -111,6 +113,17 @@ class apu_base_class{
         else{
             $this->f = new OohForm();
         }
+
+        if (PHPlib::$session) PHPlib::$session->register_and_call_init_fn([$this, "session_init"]);
+    }
+
+    public function session_init(){
+        $classname = get_class($this);
+        if (!isset($_SESSION[$classname][$this->opt['instance_id']])){
+            $_SESSION[$classname][$this->opt['instance_id']] = array();
+        }
+
+        $this->session = &$_SESSION[$classname][$this->opt['instance_id']];
     }
 
     function action_default(){
