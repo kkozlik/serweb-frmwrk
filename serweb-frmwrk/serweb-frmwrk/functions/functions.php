@@ -1204,6 +1204,25 @@ function sw_log($message, $priority = null){
 }
 
 /**
+ * Write an exceptio into serweb log
+ *
+ * @param Throwable $e
+ * @param string $priority      Check sw_log() function for details.
+ */
+function sw_log_exception(Throwable $e, $priority = PEAR_LOG_CRIT){
+    $prev = $e->getPrevious();
+    if ($prev) sw_log_exception($prev, $priority);
+
+    $log_message = "Unhandled exception '".get_class($e)."' ";
+    $log_message .= "with message: '".$e->getMessage()."' ";
+    $log_message .= "in ".$e->getFile().":".$e->getLine()."\n";
+    $log_message .= "Stack trace: \n";
+    $log_message .= $e->getTraceAsString();
+
+    sw_log($log_message, $priority);
+}
+
+/**
  *  Log action of user
  *
  *  Allowed options:
