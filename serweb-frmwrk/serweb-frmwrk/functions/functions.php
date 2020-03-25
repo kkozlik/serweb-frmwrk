@@ -1195,8 +1195,9 @@ function sw_log($message, $priority = null){
 
         return call_user_func($config->custom_log_function, $priority, $message, $db[0]['file'], $db[0]['line']);
     }
+    elseif ($serwebLog){
+        if (!is_string($message)) $message = json_encode($message);
 
-    if ($serwebLog){
         return $serwebLog->log($message, $priority);
     }
 
@@ -1310,18 +1311,19 @@ function log_errors($err_object, &$errors){
     }
     $errors[] = $err_message;
 
+    $userInfo = "";
+    if (method_exists($e->pear_err, 'getUserInfo')) $userInfo = $e->pear_err->getUserInfo();
+    $log_message = $e->pear_err->getMessage()." - ".$userInfo;
 
     //if custom log function is defined, use it for log errors
     if (!empty($config->custom_log_function)){
-        $log_message= $err_object->getMessage()." - ".$err_object->getUserInfo();
-
         call_user_func($config->custom_log_function, PEAR_LOG_ERR, $log_message, $last_frame['file'], $last_frame['line']);
     }
 
     //otherwise if logging is enabled, use default log function
     elseif ($serwebLog){
 
-        $log_message= "file: ".$last_frame['file'].":".$last_frame['line'].": ".$err_object->getMessage()." - ".$err_object->getUserInfo();
+        $log_message= "file: ".$last_frame['file'].":".$last_frame['line'].": ".$log_message;
         //remove endlines from the log message
         $log_message=str_replace(array("\n", "\r"), "", $log_message);
         $log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);

@@ -1391,20 +1391,24 @@ class page_controller{
         catch(PearErrorException $e){
             global $serwebLog;
 
-        	//if custom log function is defined, use it for log errors
-        	if (!empty($config->custom_log_function)){
-        		$log_message= $e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
-        		call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());
-        	}
+            $userInfo = "";
+            if (method_exists($e->pear_err, 'getUserInfo')) $userInfo = $e->pear_err->getUserInfo();
+            $log_message = $e->pear_err->getMessage()." - ".$userInfo;
 
-        	//otherwise if logging is enabled, use default log function
-        	elseif ($serwebLog){
-        		$log_message= "file: ".$e->getFile().":".$e->getLine().": ".$e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo();
-        		//remove endlines from the log message
-        		$log_message=str_replace(array("\n", "\r"), "", $log_message);
-        		$log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
-        		$serwebLog->log($log_message, PEAR_LOG_ALERT);
-        	}
+            //if custom log function is defined, use it for log errors
+            if (!empty($config->custom_log_function)){
+                call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());
+            }
+
+            //otherwise if logging is enabled, use default log function
+            elseif ($serwebLog){
+                $log_message= "file: ".$e->getFile().":".$e->getLine().": ".$log_message;
+
+                //remove endlines from the log message
+                $log_message=str_replace(array("\n", "\r"), "", $log_message);
+                $log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
+                $serwebLog->log($log_message, PEAR_LOG_ALERT);
+            }
 
             // @todo: display some pretty screen explaining there is
             // unexpected error.
