@@ -4,6 +4,7 @@
 * Adding session property to apu_base_class
 * Adding sw_log_exception() function
 * Fix PHP crash in handler of PearErrorException
+* Improving general exception handling and logging failed SQL queries
 
 Version 2.1.0
 ==============

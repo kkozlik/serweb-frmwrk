@@ -1389,31 +1389,31 @@ class page_controller{
             page_close();
         }
         catch(PearErrorException $e){
-            global $serwebLog;
 
             $userInfo = "";
             if (method_exists($e->pear_err, 'getUserInfo')) $userInfo = $e->pear_err->getUserInfo();
             $log_message = $e->pear_err->getMessage()." - ".$userInfo;
 
-            //if custom log function is defined, use it for log errors
-            if (!empty($config->custom_log_function)){
-                call_user_func($config->custom_log_function, PEAR_LOG_ALERT, $log_message, $e->getFile(), $e->getLine());
+            sw_log($log_message, PEAR_LOG_ALERT, ['file' => $e->getFile(), 'line' => $e->getLine()]);
+
+            $this->internal_server_error($e);
+        }
+        catch(PDOException $e){
+
+            $log_message = "DB query failed";
+            if ($e->query){
+                $log_message .= ":\n{$e->query}";
             }
 
-            //otherwise if logging is enabled, use default log function
-            elseif ($serwebLog){
-                $log_message= "file: ".$e->getFile().":".$e->getLine().": ".$log_message;
+            sw_log($log_message, PEAR_LOG_ALERT, ['file' => $e->getFile(), 'line' => $e->getLine()]);
+            sw_log_exception($e, PEAR_LOG_ALERT);
 
-                //remove endlines from the log message
-                $log_message=str_replace(array("\n", "\r"), "", $log_message);
-                $log_message=preg_replace("/[[:space:]]{2,}/", " ", $log_message);
-                $serwebLog->log($log_message, PEAR_LOG_ALERT);
-            }
+            $this->internal_server_error($e);
+        }
+        catch(Exception $e){
+            sw_log_exception($e, PEAR_LOG_ALERT);
 
-            // @todo: display some pretty screen explaining there is
-            // unexpected error.
-            // But for now just let the exception unhandled
-            throw $e;
+            $this->internal_server_error($e);
         }
 
         // All DB transactions should be commited now. If there is any
@@ -1422,6 +1422,40 @@ class page_controller{
         if ($GLOBALS['data']->is_transaction_in_progress()){
             $GLOBALS['data']->transaction_rollback();
         }
+    }
+
+    /**
+     * Generate 'internal server error' screen and exit script execution.
+     *
+     * @param mixed $param Can be instance of Exception class or string message
+     */
+    public function internal_server_error($param){
+
+        sw_log("INTERNAL SERVER ERROR REPORTED", PEAR_LOG_ALERT);
+
+        if (php_sapi_name() == 'cli'){
+            fwrite(STDERR, "AN INTERNAL ERROR HAS OCCURED\n");
+            exit(9);
+        }
+
+        // Send http response 500 Internal Server Error
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol.' 500 Internal Server Error', true, 500);
+
+        echo <<<EOT
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>An internal error has occurred</title>
+</head>
+<body>
+  <h2>An internal error has occurred.</h2>
+</body>
+</html>
+EOT;
+        exit(9);
+
     }
 }
 

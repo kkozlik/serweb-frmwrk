@@ -1183,17 +1183,24 @@ function read_txt_file($filename, $replacements){
  *
  *  @param mixed $message       String or object containing the message to log.
  *  @param mixed $priority      The priority of the message. Valid values are: PEAR_LOG_EMERG, PEAR_LOG_ALERT, PEAR_LOG_CRIT, PEAR_LOG_ERR, PEAR_LOG_WARNING, PEAR_LOG_NOTICE, PEAR_LOG_INFO, and PEAR_LOG_DEBUG.
+ *  @param array $opts          Allowed options:
+ *                               - 'file' filename of the log message origin
+ *                               - 'line' linenumber of the log message origin
  *  @return boolean             True on success or false on failure
  */
 
-function sw_log($message, $priority = null){
+function sw_log($message, $priority = null, $opts=[]){
     global $serwebLog, $config;
 
     //if custom log function is defined, use it for log errors
     if (!empty($config->custom_log_function)){
-        $db = debug_backtrace();
+        if (!isset($opts['file']) || !isset($opts['line'])){
+            $db = debug_backtrace();
+            $opts['file'] = $db[0]['file'];
+            $opts['line'] = $db[0]['line'];
+        }
 
-        return call_user_func($config->custom_log_function, $priority, $message, $db[0]['file'], $db[0]['line']);
+        return call_user_func($config->custom_log_function, $priority, $message, $opts['file'], $opts['line']);
     }
     elseif ($serwebLog){
         if (!is_string($message)) $message = json_encode($message);
@@ -1211,6 +1218,7 @@ function sw_log($message, $priority = null){
  * @param string $priority      Check sw_log() function for details.
  */
 function sw_log_exception(Throwable $e, $priority = PEAR_LOG_CRIT){
+
     $prev = $e->getPrevious();
     if ($prev) sw_log_exception($prev, $priority);
 
@@ -1220,7 +1228,7 @@ function sw_log_exception(Throwable $e, $priority = PEAR_LOG_CRIT){
     $log_message .= "Stack trace: \n";
     $log_message .= $e->getTraceAsString();
 
-    sw_log($log_message, $priority);
+    return sw_log($log_message, $priority, ['file' => $e->getFile(), 'line' => $e->getLine()]);
 }
 
 /**

@@ -107,7 +107,7 @@ class CData_Layer{
      *  @static
      *  @access public
      */
-    function &singleton($instance_name){
+    function &singleton($instance_name = null){
         static $instances = array();
 
         if (!$instance_name) $instance_name = "auth_user";
@@ -377,6 +377,8 @@ class CData_Layer{
 
             $codeFailed = null;
             $isError = false;
+            $exception = null;
+
             if ($config->data_sql->abstraction_layer=="MDB2"){
                 $db = MDB2::connect($this->db_host['parsed'], true);
                 $isError = MDB2::isError($db);
@@ -389,12 +391,12 @@ class CData_Layer{
             }
             else{
                 try {
-                    $db = new PDO($this->db_host['pdo_dsn'],
-                                  $this->db_host['parsed']['username'],
-                                  $this->db_host['parsed']['password']);
+                    $db = new Serweb_PDO($this->db_host['pdo_dsn'],
+                                         $this->db_host['parsed']['username'],
+                                         $this->db_host['parsed']['password']);
                 } catch (PDOException $e) {
                     $isError = true;
-                    $db = $e;
+                    $exception = $e;
                 }
             }
 
@@ -408,14 +410,12 @@ class CData_Layer{
                         $cont=1; continue;
                     }
                 }
-                throw new DBException($db);
+                if ($exception) throw $exception;
+                else throw new DBException($db);
             }
         }while($cont);
 
         $this->db=$db;
-        if ($config->data_sql->abstraction_layer=="PDO"){
-            $this->db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        }
 
         if ($this->db_host['parsed']['phptype'] !== 'sqlite') { // charset is per-db in sqlite
             if ($this->db_charset) $this->set_db_charset($this->db_charset, null);
