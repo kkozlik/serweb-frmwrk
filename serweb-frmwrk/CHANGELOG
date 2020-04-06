@@ -1,3 +1,6 @@
+Version 2.2.0
+==============
+
 * Fix XSS vulnerability in get_js and get_css files
 * Adding add_extrahtml() method to Ooh form elements
 * Reinitialize page_controller->session variable when session is reopened

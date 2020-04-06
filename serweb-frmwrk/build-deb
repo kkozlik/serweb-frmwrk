@@ -5,6 +5,7 @@
 # Before running it update the debian/changelog file with running commands:
 #  dch -i               # add the changelog entries in this step
 #  dch -r -D stable     # change distribution from UNRELEASED to stable
+#  add release label to CHANGELOG file
 
 # stop on any error
 set -e

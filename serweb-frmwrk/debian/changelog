@@ -1,3 +1,16 @@
+serweb-frmwrk (2.2.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Fix XSS vulnerability in get_js and get_css files
+  * Adding add_extrahtml() method to Ooh form elements
+  * Reinitialize page_controller->session variable when session is reopened
+  * Adding session property to apu_base_class
+  * Adding sw_log_exception() function
+  * Fix PHP crash in handler of PearErrorException
+  * Improving general exception handling and logging failed SQL queries
+
+ --  <kk@kk-iquest.kufr.cz>  Mon, 06 Apr 2020 21:20:17 +0200
+
 serweb-frmwrk (2.1.0) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
