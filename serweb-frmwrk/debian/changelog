@@ -1,3 +1,10 @@
+serweb-frmwrk (2.2.1) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Log new requests a bit later. Logging function might require access e.g. session 
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 09 Apr 2020 22:31:09 +0200
+
 serweb-frmwrk (2.2.0) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
