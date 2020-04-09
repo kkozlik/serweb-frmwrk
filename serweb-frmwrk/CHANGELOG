@@ -1,3 +1,5 @@
+* Log new requests a bit later. Logging function might require access e.g. session
+
 Version 2.2.0
 ==============
 
