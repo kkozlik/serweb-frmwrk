@@ -47,7 +47,10 @@ function print_html_head($parameters=array()){
         echo "<!DOCTYPE {$config->html_doctype}>\n";
     }
 
-    echo "<html>\n<head>\n";
+    $lang = "";
+    if (!empty($lang_set['lang_code'])) $lang = "lang='{$lang_set['lang_code']}'";
+
+    echo "<html $lang>\n<head>\n";
 
     if ($title) echo "    <title>".$title."</title>\n";
 ?>
@@ -151,6 +154,3 @@ function print_html_body_end(&$parameters){
 
     echo "</body>\n";
 }
-
-
-?>

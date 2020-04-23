@@ -1,12 +1,12 @@
 <?php
 /**
  * Functions for corect pick language file and load it
- * 
+ *
  * @author    Karel Kozlik
  * @version   $Id: load_lang.php,v 1.13 2007/02/14 16:36:39 kozlik Exp $
  * @package   serweb
  * @subpackage framework
- */ 
+ */
 
 global $_SERWEB;
 
@@ -28,18 +28,18 @@ if ($_SERWEB["configdir"] != $_SERWEB["coreconfigdir"] and
  *
  * @package    serweb
  * @subpackage framework
- */ 
+ */
 class Lang {
 
     function internationalize($str){
         global $lang_str;
-        
-        if (substr($str, 0, 1) == '@' and 
+
+        if (substr($str, 0, 1) == '@' and
             isset($lang_str[substr($str, 1)])){
-        
+
             return $lang_str[substr($str, 1)];
         }
-        
+
         return $str;
     }
 }
@@ -56,10 +56,10 @@ class Lang {
  *
  * @access  private
  */
- 
+
 function lang_detect($str = '', $envType = ''){
     global $available_languages;
-    
+
     foreach($available_languages AS $key => $value) {
         // $envType =  1 for the 'HTTP_ACCEPT_LANGUAGE' environment variable,
         //             2 for the 'HTTP_USER_AGENT' one
@@ -71,7 +71,7 @@ function lang_detect($str = '', $envType = ''){
         }
     }
     return false;
-} 
+}
 
 
 
@@ -86,7 +86,7 @@ function determine_lang(){
         $_SESSION['lang'] = $config->force_lang;
     }
 
-    
+
     // If session variable is set, obtain language from it
     if (isset($_SESSION['lang'])){
         if (isset($available_languages[$_SESSION['lang']])) return $_SESSION['lang'];
@@ -96,7 +96,7 @@ function determine_lang(){
     // Lang is not know yet
     // try to findout user's language by checking user attribute
 
-    if (isset($_SESSION['auth']) and 
+    if (isset($_SESSION['auth']) and
         is_a($_SESSION['auth'], 'Auth') and
         $_SESSION['auth']->is_authenticated()){
 
@@ -108,7 +108,7 @@ function determine_lang(){
         if (false != $lang) return $lang;
 
     }
-    
+
 
     // try to findout user's language by checking cookie
 
@@ -117,7 +117,7 @@ function determine_lang(){
     }
 
     // try to findout user's language by checking its HTTP_ACCEPT_LANGUAGE variable
-    
+
     if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
         $accepted    = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
         $acceptedCnt = count($accepted);
@@ -126,7 +126,7 @@ function determine_lang(){
             if (false != $lang) return $lang;
         }
     }
-    
+
     // try to findout user's language by checking its HTTP_USER_AGENT variable
 
     if (!empty($_SERVER['HTTP_USER_AGENT'])) {
@@ -158,16 +158,16 @@ function determine_lang(){
 
 
     // Didn't catch any valid lang : we use the default settings
-    
+
     return $config->default_lang;
 
 }
 
 /**
  *  Function load additional language file
- *  
- *  This function may be used for example to loading modules purpose 
- *  
+ *
+ *  This function may be used for example to loading modules purpose
+ *
  *  @param  string  $ldir   path to directory which is scanned for language files
  *  @return bool            TRUE on success, FALSE when file is not found
  */
@@ -178,7 +178,7 @@ function load_another_lang($ldir){
 
     $primary_lang_file   = $ldir.$available_languages[$_SESSION['lang']][1].".php";
     $secondary_lang_file = $ldir.$available_languages[$reference_language][1].".php";
-    
+
     if (file_exists($primary_lang_file)){
         require_once($primary_lang_file);
     }
@@ -186,10 +186,10 @@ function load_another_lang($ldir){
         require_once($secondary_lang_file);
     }
     else{
-        ErrorHandler::log_errors(PEAR::RaiseError("Can't find requested language file", 
-                                 NULL, NULL, NULL, 
+        ErrorHandler::log_errors(PEAR::RaiseError("Can't find requested language file",
+                                 NULL, NULL, NULL,
                                  "Nor requested(".$primary_lang_file.") neither default(".$secondary_lang_file.") language file not exists"));
-        
+
         return false;
     }
 
@@ -217,6 +217,7 @@ else{
 
 /* set value of $lang_set[ldir] by avaiable_languages array */
 $lang_set['ldir'] = $available_languages[$_SESSION['lang']][2];
+$lang_set['lang_code'] = $available_languages[$_SESSION['lang']][2];
 
 global $data;
 
@@ -227,5 +228,3 @@ if (!empty($config->data_sql->set_charset)){
 if (!empty($config->data_sql->collation)){
     $data->set_db_collation($config->data_sql->collation, null);
 }
-
-?>
