@@ -185,6 +185,9 @@ init_modules();
 
 if (isset($_SERVER["HTTP_HOST"]) and isset($_SERVER["REQUEST_URI"])){
     // When running from cli, the variables bellow are not set
-    sw_log('New request: '.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"], PEAR_LOG_DEBUG);
+    sw_log('*** BOOTSTRAP: New request: '.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"], PEAR_LOG_DEBUG);
+}
+elseif(php_sapi_name() == "cli" and isset($_SERVER['argv'])){
+    sw_log('*** BOOTSTRAP: Script executed: '.implode(" ", $_SERVER['argv']), PEAR_LOG_DEBUG);
 }
 
