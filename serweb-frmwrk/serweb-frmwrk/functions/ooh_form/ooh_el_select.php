@@ -3,6 +3,13 @@
 class OohElSelect extends OohElCommon {
 
     public static $default_class;
+    public static $default_option_class;
+    public static $optgroup_selectable_class;
+    public static $optgroup_member_class;
+    public static $optgroup_member_indent = "&nbsp;&nbsp;&nbsp;";
+
+    const OPTGROUP_SELECTABLE = 'selectable';
+
     protected $options = [];
     protected $optgroup;
     protected $size;
@@ -47,7 +54,12 @@ class OohElSelect extends OohElCommon {
 
         if ($this->optgroup){
             foreach ($this->options as $optgroup){
-                $str .= $this->get_optgroup($optgroup);
+                if ($this->optgroup === static::OPTGROUP_SELECTABLE){
+                    $str .= $this->get_selectable_optgroup($optgroup);
+                }
+                else{
+                    $str .= $this->get_optgroup($optgroup);
+                }
             }
         }
         else{
@@ -60,33 +72,96 @@ class OohElSelect extends OohElCommon {
         return $str;
     }
 
-    public function get_optgroup($optgroup){
-        $str = "<optgroup ";
+    protected function get_optgroup_attrs($optgroup){
+        $attrs = [];
 
-        $str .= " label=\"" .  htmlspecialchars($optgroup["label"], ENT_QUOTES) . "\"";
         if (!empty($optgroup['disabled'])){
-            $str .= " disabled";
+            $attrs[] = "disabled";
         }
 
         if (!empty($optgroup['title'])) {
-            $str .= " title=\"".htmlspecialchars($optgroup['title'], ENT_QUOTES)."\"";
-        }
-
-        if (!empty($optgroup['class'])) {
-            $str .= " class=\"".implode(" ", (array)$optgroup['class'])."\"";
+            $attrs[] = "title=\"".htmlspecialchars($optgroup['title'], ENT_QUOTES)."\"";
         }
 
         if (!empty($optgroup['id'])) {
-            $str .= " id=\"".htmlspecialchars($optgroup['id'], ENT_QUOTES)."\"";
+            $attrs[] = "id=\"".htmlspecialchars($optgroup['id'], ENT_QUOTES)."\"";
         }
 
-        if (!empty($optgroup['extrahtml'])) $str .= " ".$optgroup['extrahtml'];
+        if (!empty($optgroup['extrahtml'])) $attrs[] = $optgroup['extrahtml'];
+
+        return $attrs;
+    }
+
+    protected function get_optgroup_class_attr($optgroup, $default_class){
+        $classes = [];
+        if (!empty($optgroup['class'])) {
+            $classes = (array)$optgroup['class'];
+        }
+
+        if ($default_class) $classes[] = $default_class;
+
+        if (!empty($classes)) {
+            return "class=\"".implode(" ", $classes)."\"";
+        }
+
+        return '';
+    }
+
+    public function get_optgroup($optgroup){
+
+        $str = "<optgroup ";
+
+        $str .= " label=\"" .  htmlspecialchars($optgroup["label"], ENT_QUOTES) . "\"";
+        $str .=  " ".$this->get_optgroup_class_attr($optgroup, null);
+        $str .= implode(" ", $this->get_optgroup_attrs($optgroup));
 
         $str .= ">\n";
         foreach ($optgroup['options'] as $o){
             $str .= $this->get_option($o);
         }
         $str .= "</optgroup>\n";
+        return $str;
+    }
+
+    /**
+     * Renders optgroup that is clickable and selectable.
+     *
+     * This is implemented by simple trick: <option> html element is used
+     * instead of <optgroup>. See this link: https://stackoverflow.com/a/9892421
+     *
+     * The application have to define proper css classes and take care of proper
+     * rendering vi css.
+     *
+     * OohElSelect::$optgroup_selectable_class is used for the "group" option element
+     * OohElSelect::$optgroup_member_class     is used for the "group member" option element
+     *
+     * Labels of "group member" options are intended with: OohElSelect::$optgroup_member_indent
+     * It might be tricky to do the indentation via css.
+     *
+     * @return string
+     */
+    public function get_selectable_optgroup($optgroup){
+
+        $str = "<option";
+
+        if (isset($optgroup["value"])){
+            $str .= " value=\"" .  htmlspecialchars($optgroup["value"], ENT_QUOTES) . "\"";
+        }
+
+        $str .=  " ".$this->get_optgroup_class_attr($optgroup, static::$optgroup_selectable_class);
+        $str .= implode(" ", $this->get_optgroup_attrs($optgroup));
+
+        $str .= ">" . htmlspecialchars($optgroup["label"], ENT_QUOTES) . "</option>\n";
+
+        foreach ($optgroup['options'] as $o){
+            if (empty($o['class'])) $o['class'] = Array();
+            else                    $o['class'] = (array)$o['class'];
+            if (static::$optgroup_member_class) $o['class'][] = static::$optgroup_member_class;
+            if (static::$optgroup_member_indent) $o['label-indent'] = static::$optgroup_member_indent;
+
+            $str .= $this->get_option($o);
+        }
+
         return $str;
     }
 
@@ -103,8 +178,12 @@ class OohElSelect extends OohElCommon {
                 $str .= " disabled";
             }
 
-            if (!empty($o['class'])) {
-                $str .= " class=\"".implode(" ", (array)$o['class'])."\"";
+            $classes = [];
+            if (!empty($o['class'])) $classes = (array)$o['class'];
+            if (static::$default_option_class) $classes[] = static::$default_option_class;
+
+            if ($classes) {
+                $str .= " class=\"".implode(" ", $classes)."\"";
             }
 
             if (!empty($o['id'])) {
@@ -125,7 +204,13 @@ class OohElSelect extends OohElCommon {
                 }
             }
 
-            $str .= ">" . htmlspecialchars($o["label"], ENT_QUOTES) . "</option>\n";
+            $str .= ">";
+
+            if (!empty($o['label-indent'])) {
+                $str .= $o['label-indent'];
+            }
+
+            $str .= htmlspecialchars($o["label"], ENT_QUOTES) . "</option>\n";
         }
         else {
             // cast value of option to string for purpose of comparing

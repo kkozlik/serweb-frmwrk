@@ -1,4 +1,5 @@
 * Log when executed from CLI
+* Possibility to render optgroups of select clickable (use <option> tag for them)
 
 Version 2.2.2
 ==============
