@@ -263,6 +263,7 @@ class CData_Layer{
      *
      *  - pre_connect                  - before connecting to DB
      *  - post_connect                 - after connecting to DB
+     *  - connect_failed               - when connecting to DB failed
      *
      * The callback function shall accept one parameter of the CData_Layer_Event object
      *
@@ -289,7 +290,7 @@ class CData_Layer{
      * @param string $event_name
      * @return void
      */
-    private function trigger_event($event_name)
+    private function trigger_event($event_name, $arguments=[])
     {
         $listeners = array();
         if (!empty(static::$static_listeners[$event_name])) $listeners = array_merge($listeners, static::$static_listeners[$event_name]);
@@ -305,7 +306,7 @@ class CData_Layer{
         $event->dl = $this;
 
         foreach($listeners as $listener){
-            $listener["callback"]($event);
+            $listener["callback"]($event, $arguments);
             if ($event->stop_propagation) break;
         }
     }
@@ -410,8 +411,11 @@ class CData_Layer{
                         $cont=1; continue;
                     }
                 }
-                if ($exception) throw $exception;
-                else throw new DBException($db);
+
+                if (!$exception) $exception = new DBException($db);
+                $this->trigger_event("connect_failed", ['exception' => $exception]);
+
+                throw $exception;
             }
         }while($cont);
 

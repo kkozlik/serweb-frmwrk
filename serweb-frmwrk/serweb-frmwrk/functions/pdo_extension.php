@@ -11,7 +11,12 @@ class Serweb_PDO extends PDO{
 
     public function __construct(...$params){
 
-        parent::__construct(...$params);
+        try{
+           parent::__construct(...$params);
+        }
+        catch(PDOException $e){
+            throw new PDOException('Cannot connect to database: '.$e->getMessage(), $e->getCode(), $e);
+        }
 
         //Set connection to raise exception when error
         $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
