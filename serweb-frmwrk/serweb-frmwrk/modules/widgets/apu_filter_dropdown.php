@@ -293,9 +293,9 @@ class apu_filter_dropdown extends apu_base_class{
 
         $this->f->add_element(array("type"=>"button",
                                      "name"=>"filter_reset",
-                                     "button_type"=>"submit",
+                                     "button_type"=>"button",
                                      "content"=>$lang_str['b_reset'],
-                                     "extrahtml"=>"onclick='this.form.filter_field.selectedIndex=0; this.form.filter_field.onchange();'",
+                                     "extrahtml"=>"onclick='this.form.filter_field.selectedIndex=0; this.form.filter_field.onchange(); this.form.submit();'",
                                      "disabled"=>!(bool)$this->session['f_field']));
 
         $this->f->add_element(array("type"=>"hidden",
