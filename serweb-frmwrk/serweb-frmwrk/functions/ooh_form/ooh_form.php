@@ -107,7 +107,7 @@ class OohForm {
         return $this->options[$name];
     }
 
-    private function get_id(){
+    public function get_id(){
         $id = $this->id;
         if (!$id and $this->options['generate_ids_by_names']) $id = $this->name;
         if ($id and $this->options['id_prefix']) $id = $this->options['id_prefix'].$id;
