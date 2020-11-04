@@ -498,7 +498,6 @@ class Creg{
      *  @param  string  $adr    IPv4 address
      *  @param  array   $format allowed formats of netmask. It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
-     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
     function check_netmask($adr, $format = array("bitcount", "decimal", "hexadecimal")){
@@ -532,6 +531,26 @@ class Creg{
             return true;
         }
 
+        if (in_array("hexadecimal", $format) and substr($adr, 0, 2) == '0x'){
+            $starting = true;
+            $hex = strtolower(substr($adr, 2));
+
+            for($i=0; $i<strlen($hex); $i++){
+                if ($starting){
+                    /* allow ones at the begining */
+                    if ($hex[$i] == 'f') continue;
+                    if (!in_array($hex[$i], array('e', 'c', '8', '0'))){
+                        return false;
+                    }
+                    $starting = false;
+                }
+                /* allow only zeros at the end */
+                elseif ($hex[$i] != '0') return false;
+            }
+
+            return true;
+        }
+
         return false;
     }
 
@@ -543,7 +562,6 @@ class Creg{
      *  @param  string  $netmask    netmask
      *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
-     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
     function check_network_address($ip, $netmask, $mask_format = array("bitcount", "decimal", "hexadecimal")){
@@ -561,6 +579,17 @@ class Creg{
             for ($i=0; $i<4; $i++){
                 $ip = (int)$parts_ip[$i];
                 $mask = (int)$parts_mask[$i];
+                if ($ip != ($ip & $mask)) return false;
+            }
+        }
+
+        if ($mask_format == "hexadecimal"){
+            $parts_ip = explode(".", $ip);
+            $parts_mask = str_split(substr($netmask, 2), 2);
+
+            for ($i=0; $i<4; $i++){
+                $ip = (int)$parts_ip[$i];
+                $mask = hexdec($parts_mask[$i]);
                 if ($ip != ($ip & $mask)) return false;
             }
         }
@@ -695,7 +724,6 @@ class Creg{
      *  @param  string  $ip_addr
      *  @param  array   $mask_format allowed formats of netmask. It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
-     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
     function check_ipv4_addr_netmask($ip_addr, $mask_format = array("bitcount", "decimal", "hexadecimal")){
@@ -770,7 +798,6 @@ class Creg{
      *  @param  string  $ip_addr
      *  @param  array   $mask_format allowed formats of netmask (for v4 only). It can contain following values:
      *                          "bitcount", "decimal", "hexadecimal"
-     *                          Note: "hexadecimal" is not implemented yet
      *  @return bool
      */
     function check_ip_addr_netmask($ip_addr, $mask_format = array("bitcount", "decimal", "hexadecimal")){
