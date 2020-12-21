@@ -109,6 +109,9 @@ class OohElSelect extends OohElCommon {
 
     public function get_optgroup($optgroup){
 
+        // If the 'options' property is not set assume this is an <option> outside <optgroup>
+        if (!isset($optgroup['options'])) return $this->get_option($optgroup);
+
         $str = "<optgroup ";
 
         $str .= " label=\"" .  htmlspecialchars($optgroup["label"], ENT_QUOTES) . "\"";
@@ -141,6 +144,9 @@ class OohElSelect extends OohElCommon {
      * @return string
      */
     public function get_selectable_optgroup($optgroup){
+
+        // If the 'options' property is not set assume this is an <option> outside <optgroup>
+        if (!isset($optgroup['options'])) return $this->get_option($optgroup);
 
         $str = "<option";
 
