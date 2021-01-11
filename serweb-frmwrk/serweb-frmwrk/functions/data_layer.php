@@ -102,12 +102,16 @@ class CData_Layer{
      *  $instance_name, only creating a new instance if no data_layer instance with
      *  the same name currently exists.
      *
-     *  @param string $instance_name    name of data_layer instance, if empty "auth_user" is used
+     *  @param string $instance_name                    name of data_layer instance, if empty "auth_user" is used
+     *  @param string|CData_Layer $template_instance    if is set, the internal variables (like charset or collation)
+     *                                                  of newly created CData_Layer instance is set according to another
+     *                                                  existing instance.
+     *
      *  @return object CData_Layer      instance of CData_Layer class
      *  @static
      *  @access public
      */
-    function &singleton($instance_name = null){
+    function &singleton($instance_name = null, $template_instance = null){
         static $instances = array();
 
         if (!$instance_name) $instance_name = "auth_user";
@@ -115,6 +119,21 @@ class CData_Layer{
         if (!isset($instances[$instance_name])){
             $instances[$instance_name] = &CData_Layer::create();
             $instances[$instance_name]->name = $instance_name;
+
+            if ($template_instance){
+                if (is_a($template_instance, "CData_Layer")){
+                    $instances[$instance_name]->setup_by_another_instance($template_instance);
+                }
+                else{
+                    if (is_set($instances[$template_instance])){
+                        $instances[$instance_name]->setup_by_another_instance($instances[$template_instance]);
+                    }
+                    else{
+                        throw new UnexpectedValueException("Data layer instance named '$template_instance' does not exists");
+                    }
+                }
+            }
+
         }
 
         return $instances[$instance_name];
