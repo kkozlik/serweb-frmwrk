@@ -182,7 +182,7 @@ class OohElCommon {
         if (empty($a['name'])) throw new Exception('Name of the form element is not set');
     }
 
-    protected function is_disabled(){
+    public function is_disabled(){
         return $this->disabled;
     }
 
@@ -208,22 +208,22 @@ class OohElCommon {
         return $c::$default_class;
    }
 
-    protected function get_classes(){
+    public function get_classes(){
         $classes = $this->classes;
 
         if (!$this->ignore_default_class and $default_class=$this->get_default_class()) $classes[] = $default_class;
         return implode(" ", $classes);
     }
 
-    protected function get_extrahtml(){
+    public function get_extrahtml(){
         return $this->extrahtml;
     }
 
-    protected function get_title(){
+    public function get_title(){
         return $this->title;
     }
 
-    protected function get_placeholder(){
+    public function get_placeholder(){
         return str_replace(array("\n", "\r"),
                            array("", ""),
                            $this->placeholder);
