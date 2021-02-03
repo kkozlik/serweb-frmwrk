@@ -967,6 +967,12 @@ Growable_Forms_ctl.prototype.del_item = function(id){
         }
     }
 
+    // remove ordering form elements
+    if (this.ordering_form_el != null){
+        var ordering_el = this.form[this.ordering_form_el+id];
+        ordering_el.parentNode.removeChild(ordering_el);
+    }
+
     var item_cnt = this.count_items();
 
     /* enable add link when max number of items have not been reached */
