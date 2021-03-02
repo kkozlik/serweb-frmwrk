@@ -3,6 +3,7 @@
 * Possibility to render options outside optgroup when optgroups are used
 * check_netmask() and check_network_address() functions support hex format of netmask 
 * when removing a row of growable forms, remove also hidden form field containing ordering number
+* Enhanced configuration for logger
 
 Version 2.2.2
 ==============

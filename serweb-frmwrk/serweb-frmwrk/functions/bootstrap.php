@@ -70,7 +70,7 @@ if ($config->enable_logging){
 
         $handler = "file";
         $name = $config->log_file;
-        $ident = "serweb";
+        $ident = isset($config->log_ident) ? $config->log_ident : "serweb";
         $conf = array();
         $level = null;
 
@@ -109,6 +109,10 @@ if ($config->enable_logging){
                 $name = substr($config->log_file, 10);
                 $name = constant($name); // convert the constant name to its value
             }
+        }
+
+        if (isset($config->log_options)){
+            $conf = array_merge($conf, $config->log_options);
         }
 
         $GLOBALS['serwebLog'] = Log::singleton($handler, $name, $ident, $conf, $level);
