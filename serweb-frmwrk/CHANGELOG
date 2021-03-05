@@ -5,6 +5,7 @@
 * when removing a row of growable forms, remove also hidden form field containing ordering number
 * Enhanced configuration for logger
 * Fix sql formating of float strings
+* RecursiveMkdir() function report $dirname on error
 
 Version 2.2.2
 ==============

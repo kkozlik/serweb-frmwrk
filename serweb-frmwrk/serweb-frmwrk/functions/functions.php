@@ -1505,7 +1505,7 @@ function RecursiveMkdir($path, $mode=0777){
         // directory so that it gets created.
         RecursiveMkdir(dirname($path));
 
-        mkdir($path, $mode);
+        if (!mkdir($path, $mode)) trigger_error("Failed to create directory: '$path'", E_USER_WARNING);
     }
 }
 
