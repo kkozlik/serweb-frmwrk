@@ -641,6 +641,19 @@ class Domains{
 /**
  *  OO extension for IPC semaphores
  *
+ *  Usage example:
+ *  --------------
+ *
+ *      $sem = new Shm_Semaphore(__FILE__, "s", 1, 0600);
+ *      if (!$sem->acquire()){
+ *          report error
+ *          return;
+ *      }
+ *
+ *      ---- critical section ----
+ *
+ *      $sem->release();
+ *
  *  @package    serweb
  */
 class Shm_Semaphore{
