@@ -6,6 +6,7 @@
 * Enhanced configuration for logger
 * Fix sql formating of float strings
 * RecursiveMkdir() function report $dirname on error
+* Fix 'content-type' header returned by get_js.php script
 
 Version 2.2.2
 ==============
