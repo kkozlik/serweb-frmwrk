@@ -44,6 +44,20 @@ $config->timezone = null;
  */
 $config->get_user_timezone_fn = null;
 
+/* ------------------------------------------------------------*/
+/* Cookies                                                     */
+/* ------------------------------------------------------------*/
+
+/**
+ * Options for cookies set by serweb (session cookie and serweb_lang cookie).
+ * The array could have same keys as PHP function `setcookie()`. Check that
+ * function for more info.
+ */
+$config->cookie_options = [
+   'secure'   => false,   // or true
+   'httponly' => false,   // or true
+   'samesite' => 'Lax'    // None || Lax  || Strict
+];
 
 /* ------------------------------------------------------------*/
 /* serweb appearance                                           */

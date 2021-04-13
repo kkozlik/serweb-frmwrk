@@ -1807,3 +1807,32 @@ function clone_array($array){
 
     return $clone;
 }
+
+/**
+ * Set cookie, using $config->cookie_options
+ *
+ * @param string $name
+ * @param string $value
+ * @param array $options
+ * @return bool
+ */
+function serwebSetCookie($name, $value, $options){
+    global $config;
+
+    $options = array_merge($config->cookie_options, $options);
+
+    if (PHP_VERSION_ID < 70300){
+        // Code for PHP < 7.3.0 - that does not support $options parameter and 'samesite' key
+        $expires =  isset($options['expires'])  ? $options['expires']  : 0;
+        $path =     isset($options['path'])     ? $options['path']     : "";
+        $domain =   isset($options['domain'])   ? $options['domain']   : "";
+        $secure =   isset($options['secure'])   ? $options['secure']   : false;
+        $httponly = isset($options['httponly']) ? $options['httponly'] : false;
+
+        return setcookie($name, $value, $expires, $path, $domain, $secure, $httponly);
+    }
+    else{
+        return setcookie($name, $value, $options);
+    }
+
+}

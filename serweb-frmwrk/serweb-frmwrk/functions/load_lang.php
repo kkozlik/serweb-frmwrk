@@ -201,8 +201,13 @@ $_SESSION['lang'] = determine_lang();
 
 //set cookie containing selected lang
 //cookie expires in one year
-setcookie('serweb_lang', $_SESSION['lang'], time()+31536000, $config->root_path);
-
+serwebSetCookie(
+    'serweb_lang',
+    $_SESSION['lang'],
+    [
+        'expires' => time()+31536000,
+        'path'    => $config->root_path,
+    ]);
 
 
 /** load strings of selected language */

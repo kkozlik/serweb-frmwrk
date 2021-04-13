@@ -242,11 +242,18 @@ class Session {
    */
   function set_cookie(){
     if ("cookie" == $this->mode) {
-		if ($this->lifetime > 0) $lifetime = time()+$this->lifetime*60;
-		else $lifetime = 0;
+      if ($this->lifetime > 0) $lifetime = time()+$this->lifetime*60;
+      else $lifetime = 0;
 
-		SetCookie($this->name, $this->id, $lifetime, $this->cookie_path, $this->cookie_domain);
-	}
+      serwebSetCookie(
+        $this->name,
+        $this->id,
+        [
+          'expires' => $lifetime,
+          'path' =>    $this->cookie_path,
+          'domain' =>  $this->cookie_domain,
+        ]);
+	  }
   }
 
   /**
@@ -392,7 +399,15 @@ class Session {
 
     if (get_cfg_var ('session.use_cookies') == 1) {
       $cookie_params = session_get_cookie_params();
-      setCookie($this->name, '', 0, $cookie_params['path'], $cookie_params['domain']);
+      serwebSetCookie(
+        $this->name,
+        '',
+        [
+          'expires' => 0,
+          'path' =>    $cookie_params['path'],
+          'domain' =>  $cookie_params['domain'],
+        ]);
+
       $_COOKIE[$this->name] = "";
     }
 
