@@ -9,6 +9,7 @@
 * Fix 'content-type' header returned by get_js.php script
 * Adding config option for globaly set cookie parameters
 * Allow to globaly configure initial values of OohForm class options
+* Ability to set `generate_ids_by_names` per element of OohForm
 
 Version 2.2.2
 ==============

@@ -20,6 +20,7 @@ class OohElCommon {
     protected $php_validate = true;
     protected $skip_validation = false;
     protected $skip_load_default = false;
+    protected $generate_ids_by_names = null;
 
     protected $form;          //reference to the html form (set during element creation)
 
@@ -117,6 +118,19 @@ class OohElCommon {
     }
 
     /**
+     * Set whether element ID shall be generated from value of the element name
+     *
+     * If set tu NULL the value of form option 'generate_ids_by_names' is used
+     *
+     * @param bool|null $val
+     * @return OohElCommon
+     */
+    public function id_name($val){
+        $this->generate_ids_by_names = $val;
+        return $this;
+    }
+
+    /**
      * Using setter metods (which return $this) in template and you do not want to generate any output, use this function;
      * Example:
      *    {$form->el('foo')->add_class('bar')->mute()}
@@ -189,7 +203,11 @@ class OohElCommon {
     public function get_id($key=null){
 
         $id = $this->id;
-        if (!$id and $this->form->get_option('generate_ids_by_names')) {
+
+        $generate_ids_by_names = $this->generate_ids_by_names;
+        if (is_null($generate_ids_by_names)) $generate_ids_by_names = $this->form->get_option('generate_ids_by_names');
+
+        if (!$id and $generate_ids_by_names) {
             // strip '[]' from the end of the name
             $id = preg_replace("/(^[^][]+)(.*)/", "\\1", $this->name);
         }
