@@ -118,6 +118,14 @@ $config->strict_phonenumber_regex = "\\+?[0-9]+";
 
 $config->identifier_regex = "[0-9A-Za-z_]+";
 
+/**
+ * Change initial values of OohForm class options
+ */
+$config->ooh_form_cfg = [
+   // 'id_prefix' => '',
+   // 'generate_ids_by_names' => true,
+];
+
 /* ------------------------------------------------------------*/
 /* Logging                                                      */
 /* ------------------------------------------------------------*/

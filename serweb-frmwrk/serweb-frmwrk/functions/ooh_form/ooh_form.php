@@ -28,7 +28,20 @@ class OohForm {
     ];
 
     public function __construct(){
+        global $config;
+
         if (!empty($_SERVER['PHP_SELF']))    $this->action = $_SERVER['PHP_SELF'];
+
+        if (isset($config->ooh_form_cfg)){
+            foreach ($config->ooh_form_cfg as $opt_name => $opt_value){
+                if (!isset($this->options[$opt_name])){
+                    sw_log(__CLASS__."::".__FUNCTION__."(): Config variable \$config->ooh_form_cfg contain unknown option '$opt_name'");
+                    continue;
+                }
+
+                $this->options[$opt_name] = $opt_value;
+            }
+        }
 
         $this->add_element(array("type"=>"hidden",
                                  "name"=>"form_cancels",
