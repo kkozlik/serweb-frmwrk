@@ -1,3 +1,21 @@
+serweb-frmwrk (2.2.3) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Log when executed from CLI
+  * Possibility to render optgroups of select clickable (use <option> tag for them)
+  * Possibility to render options outside optgroup when optgroups are used
+  * check_netmask() and check_network_address() functions support hex format of netmask
+  * when removing a row of growable forms, remove also hidden form field containing ordering number
+  * Enhanced configuration for logger
+  * Fix sql formating of float strings
+  * RecursiveMkdir() function report $dirname on error
+  * Fix 'content-type' header returned by get_js.php script
+  * Adding config option for globaly set cookie parameters
+  * Allow to globaly configure initial values of OohForm class options
+  * Ability to set `generate_ids_by_names` per element of OohForm
+
+ --  <kk@kk-iquest.kufr.cz>  Wed, 28 Apr 2021 11:05:15 +0200
+
 serweb-frmwrk (2.2.2) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
