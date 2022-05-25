@@ -99,6 +99,9 @@ class Session {
   */
   var $cookie_domain = '';
 
+  var $cookie_secure = true;
+  var $cookie_httponly = true;
+  var $cookie_samesite = 'Lax';
 
   /**
   * Propagation mode is by default set to cookie
@@ -249,9 +252,12 @@ class Session {
         $this->name,
         $this->id,
         [
-          'expires' => $lifetime,
-          'path' =>    $this->cookie_path,
-          'domain' =>  $this->cookie_domain,
+          'expires' =>  $lifetime,
+          'path' =>     $this->cookie_path,
+          'domain' =>   $this->cookie_domain,
+          'secure' =>   $this->cookie_secure,
+          'httponly' => $this->cookie_httponly,
+          'samesite' => $this->cookie_samesite,
         ]);
 	  }
   }
@@ -403,9 +409,12 @@ class Session {
         $this->name,
         '',
         [
-          'expires' => 0,
-          'path' =>    $cookie_params['path'],
-          'domain' =>  $cookie_params['domain'],
+          'expires' =>  0,
+          'path' =>     $cookie_params['path'],
+          'domain' =>   $cookie_params['domain'],
+          'secure' =>   $cookie_params['secure'],
+          'httponly' => $cookie_params['httponly'],
+          'samesite' => $cookie_params['samesite'],
         ]);
 
       $_COOKIE[$this->name] = "";
@@ -696,7 +705,7 @@ class Session {
         $lifetime = 0;
       }
 
-      session_set_cookie_params($lifetime, $this->cookie_path, $this->cookie_domain);
+      session_set_cookie_params($lifetime, $this->cookie_path, $this->cookie_domain, $this->cookie_secure, $this->cookie_httponly);
   } // end func set_tokenname
 
 

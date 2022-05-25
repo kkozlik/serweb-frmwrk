@@ -8,25 +8,27 @@
 
 /**
  *	main session class
- *	
+ *
  *	@package   PHPLib
  */
- 
+
 class phplib_Session extends Session {
 	var $classname = "phplib_Session";
-	
+
 	var $trans_id_enabled = false;
 	var $cookiename     = "";                ## defaults to classname
 	var $mode           = "cookie";          ## We propagate session IDs with cookies
 	var $fallback_mode  = "get";
 	var $allowcache     = "no";              ## "public", "private", or "no"
 	var $lifetime       = 0;                 ## 0 = do session cookies, else minutes
+	var $cookie_secure   = true;
+	var $cookie_httponly = false;
 }
 
 
 /**
  *	default auth class
- *	
+ *
  *	@package   PHPLib
  */
 
@@ -37,12 +39,12 @@ class phplib_Auth extends Auth {
 	/**
 	 *	contructor
 	 */
-	 
+
 	function phplib_Auth(){
 		global $config;
 		/* call parent's constructor */
 		$this->Auth();
-		
+
 		$this->lifetime = $config->auth_lifetime;
 		$this->auth['adm_domains'] = null;
 	}
@@ -51,7 +53,7 @@ class phplib_Auth extends Auth {
 	 *	Function is called when user is not authenticated
 	 *
 	 *	If user is logged in and authentication expired, this function
-	 *	display relogin page. Otherwise if user is not logged in yet, is 
+	 *	display relogin page. Otherwise if user is not logged in yet, is
 	 *	redirected to login page
 	 */
 
@@ -60,13 +62,13 @@ class phplib_Auth extends Auth {
 		global $_SERWEB;
 
 		$this->auth['adm_domains'] = null;
-		
+
 		//user is not logged in, forward to login screen
 		if (!isset($this->auth["uid"]) or is_null($this->auth["uid"])){
 			Header("Location: ".$sess->url("index.php"));
 			exit;
 		}
-		
+
 		//else display relogin form
 		include($_SERWEB["serwebdir"] . "relogin.php");
 	}
@@ -81,7 +83,7 @@ class phplib_Auth extends Auth {
 	 */
 
 	function auth_validatelogin() {
-	
+
 		$password = "";
 		if (isset($_POST['password'])) $password = $_POST['password'];
 
@@ -103,10 +105,10 @@ class phplib_Auth extends Auth {
 	 *	Validate given credentials and return UID if they are valid
 	 *
 	 *	@static
-	 *	@param	string	$username	
-	 *	@param	string	$did		
-	 *	@param	string	$password	
-	 *	@param	array	$optionals		
+	 *	@param	string	$username
+	 *	@param	string	$did
+	 *	@param	string	$password
+	 *	@param	array	$optionals
 	 *	@return	string				UID if credentials are valid, false otherwise
 	 */
 
@@ -135,14 +137,14 @@ class phplib_Auth extends Auth {
 		}
 
 
-		// find the realm 
+		// find the realm
 		sw_log("validate_credentials: looking for realm of domain with did: ".$did, PEAR_LOG_DEBUG);
 
 		$opt=array("did"=>$did);
 		if (false === $realm = Attributes::get_attribute($config->attr_names['digest_realm'], $opt)) return false;
 
 		$optionals['realm'] = $realm;
-	
+
 		// chceck credentials
 		sw_log("validate_credentials: checking credentials (username:did:realm): ".$username.":".$did.":".$realm, PEAR_LOG_DEBUG);
 
@@ -179,19 +181,19 @@ class phplib_Auth extends Auth {
 			return false;
 		}
 
-		return $uid;	
+		return $uid;
 	}
 
- 
+
 	/**
-	 *	Get domain id of domain 
-	 *	
+	 *	Get domain id of domain
+	 *
 	 *	@static
-	 *	@param	string	$realm		
-	 *	@param	array	$opt		
+	 *	@param	string	$realm
+	 *	@param	array	$opt
 	 *	@return	string				domain ID, FALSE on error
 	 */
-	
+
 	static function find_out_did($realm, $opt){
 		global $config;
 
@@ -199,37 +201,37 @@ class phplib_Auth extends Auth {
 
 		$dh = &Domains::singleton();
 		if (false === $did = $dh->get_did($realm)) return false;
-		
+
 		if (is_null($did)) return null;
-		
+
 		return $did;
 
-	/*	
+	/*
 		global $data_auth, $lang_str, $config;
 
 		$data_auth->add_method('get_did_by_realm');
-		
+
 		$opt = array('check_disabled_flag' => false);
 		if (false === $did = $data_auth->get_did_by_realm($realm, $opt)) return false;
-	
+
 		if (is_null($did)){
 			sw_log("find_out_did: domain id for realm '".$realm."' not found", PEAR_LOG_INFO);
 			ErrorHandler::add_error($lang_str['domain_not_found']);
 			return false;
 		}
-		
+
 		return $did;
 	*/
 	}
 
 	/**
-	 *	Get permissions of user with given UID 
-	 *	
+	 *	Get permissions of user with given UID
+	 *
 	 *	This function return the permissions of user in array
 	 *
 	 *	@static
 	 *	@param	string	$uid
-	 *	@param	array	$opt		
+	 *	@param	array	$opt
 	 *	@return	array				array of permissions or FALSE on error
 	 */
 
@@ -241,7 +243,7 @@ class phplib_Auth extends Auth {
 		$perms = array();
 
 		$attrs = &User_Attrs::singleton($uid);
-		
+
 		if (false === $attrib = $attrs->get_attribute($an["is_admin"])) return false;
 		if ($attrib) $perms[] = 'admin';
 
@@ -250,30 +252,30 @@ class phplib_Auth extends Auth {
 
 		return $perms;
 	}
-	
+
 	/**
 	 *	Get array of domains administrated by user
-	 *	
+	 *
 	 *	@param	string	$uid
-	 *	@param	array	$opt		
+	 *	@param	array	$opt
 	 *	@return	array				array of domain IDs or FALSE on error
 	 */
 
 	function get_administrated_domains(){
 		global $data_auth;
-		
+
 		if (!is_null($this->auth['adm_domains'])) return $this->auth['adm_domains'];
-		
+
 		$data_auth->add_method('get_domains_of_admin');
 		if (false === $domains = $data_auth->get_domains_of_admin($this->auth['uid'], null)) return false;
-		
+
 		return $this->auth['adm_domains'] = $domains;
 	}
 }
 
 /**
  *	@package   PHPLib
- *	@deprec  
+ *	@deprec
  */
 class phplib_Pre_Auth extends phplib_Auth {
 }
@@ -281,7 +283,7 @@ class phplib_Pre_Auth extends phplib_Auth {
 
 /**
  *	default perm class
- *	
+ *
  *	@package   PHPLib
  */
 
@@ -299,7 +301,7 @@ class phplib_Perm extends Perm {
 	 *
 	 *	This function should display page with "permissions invalid" message
 	 */
-	 
+
 	function perm_invalid($does_have, $must_have) {
 		global $_SERWEB;
 		include($_SERWEB["serwebdir"] . "perm_invalid.php");
