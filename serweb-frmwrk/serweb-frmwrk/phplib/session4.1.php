@@ -149,6 +149,12 @@ class Session {
   */
   var $allowcache = 'nocache';
 
+  /**
+   * Whether the session is started
+   *
+   * @var boolean
+   */
+  protected $active = false;
 
   protected $on_init = [];
 
@@ -172,6 +178,8 @@ class Session {
   * @access public
   */
   function start() {
+
+    $this->active = true;
 
     if ( $this->mode=="cookie"
         && $this->fallback_mode=="cookie")  {
@@ -231,14 +239,20 @@ class Session {
     ini_set ("session.use_cookies","0");
     session_start(['use_cookies' => 0]);
 
+    $this->active = true;
+
     foreach($this->on_init as $listener) $listener();
   }
 
   // CLose the session and release the session lock
   public function close_session(){
+    $this->active = false;
     session_write_close();
   }
 
+  public function is_active(){
+    return $this->active;
+  }
 
   /**
    * Sets cookie if it is not set yet
