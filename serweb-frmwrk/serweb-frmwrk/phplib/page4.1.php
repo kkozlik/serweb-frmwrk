@@ -5,13 +5,6 @@
  * @package   PHPLib
  */
 
-
-class PHPlib{
-    public static $session = null;
-    public static $auth = null;
-    public static $perm = null;
-}
-
 /**
  *	@return none
  */

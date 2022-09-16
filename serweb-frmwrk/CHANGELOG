@@ -1,3 +1,5 @@
+* Improve loading of phplib - load only what is needed
+
 Version 2.2.3
 ==============
 
