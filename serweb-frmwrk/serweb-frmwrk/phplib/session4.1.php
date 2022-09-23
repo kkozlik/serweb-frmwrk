@@ -60,7 +60,7 @@ class Session {
   * @var  string
   * @see  id(), Session()
   */
-  var $id = "";
+  protected $id = "";
 
 
   /**
@@ -305,28 +305,20 @@ class Session {
    *
    * If id is specified, it will replace the current session id.
    *
-   * @param  string  If given, sets the new session id
-   * @return string  current session id
-   * @access public
+   * @param  string       If given, sets the new session id
+   * @return string|bool  current session id, alse on failure
    */
-  function id($sid = '') {
-
-    if (!$sid)
-      $sid = ("" == $this->cookiename) ? $this->classname : $this->cookiename;
-
-    if ($sid = (string)$sid) {
+  public function id(?string $sid = null) {
+    if ($sid) {
+      if (!session_id($sid)) return false;
 
       $this->id = $sid;
-      $ok = session_id($sid);
-
-    } else {
-
-      $ok = session_id();
-
+      return $this->id;
     }
-
-    return $ok;
-  } // end func id
+    else {
+      return session_id();
+    }
+  }
 
 
   /**
