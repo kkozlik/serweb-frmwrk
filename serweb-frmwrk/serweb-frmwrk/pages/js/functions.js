@@ -5,17 +5,17 @@
 
 /**
  *	Execute function in diferent scope
- */ 
+ */
 Function.prototype.bindObj = function(object) {
 	var __method = this;
 	return function() {
 		return __method.apply(object, arguments);
 	}
-} 
+}
 
 /**
  *	Trim methods for a string
- */ 
+ */
 String.prototype.trim = function() {
 	return this.replace(/^\s+|\s+$/g,"");
 }
@@ -30,26 +30,26 @@ String.prototype.rtrim = function() {
 
 /**
  *  Simplify inheritance
- *  
- *  @reference: http://phrogz.net/JS/Classes/OOPinJS2.html  
- */ 
-Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
-	if ( parentClassOrObject.constructor == Function ) 
-	{ 
-		//Normal Inheritance 
+ *
+ *  @reference: http://phrogz.net/JS/Classes/OOPinJS2.html
+ */
+Function.prototype.inheritsFrom = function( parentClassOrObject ){
+	if ( parentClassOrObject.constructor == Function )
+	{
+		//Normal Inheritance
 		this.prototype = new parentClassOrObject;
 		this.prototype.constructor = this;
 		this.prototype.parent = parentClassOrObject.prototype;
-	} 
-	else 
-	{ 
-		//Pure Virtual Inheritance 
+	}
+	else
+	{
+		//Pure Virtual Inheritance
 		this.prototype = parentClassOrObject;
 		this.prototype.constructor = this;
 		this.prototype.parent = parentClassOrObject;
-	} 
+	}
 	return this;
-} 
+}
 
 function loadJS(url){
    var e = document.createElement("script");
@@ -70,16 +70,16 @@ function linkConfirmation(theLink, message){
 
 
 /**
- *	Send a synchronic http request 
- *	
+ *	Send a synchronic http request
+ *
  *	Send http request with method POST and 'post_data' in its body.
- *	If param 'post_data' is not present, method GET is used instead POST 
+ *	If param 'post_data' is not present, method GET is used instead POST
  *
  *  @param	string	url			URL of the request
  *  @param	string	post_data 	data sent in the request
  *  @return http_request		result of the requst
- */  
- 
+ */
+
 function ajax_sync_request(url, post_data){
 	var http_request;
 
@@ -88,7 +88,7 @@ function ajax_sync_request(url, post_data){
 	} else if (window.ActiveXObject) { // IE
 		http_request = new ActiveXObject('Microsoft.XMLHTTP');
 	} else return null;
-	
+
 
 	if (post_data){
 		http_request.open('POST', url, false);
@@ -104,17 +104,17 @@ function ajax_sync_request(url, post_data){
 }
 
 /**
- *	Send a asynchronic http request 
- *	
+ *	Send a asynchronic http request
+ *
  *	Send http request with method POST and 'post_data' in its body.
- *	If param 'post_data' is not present, method GET is used instead POST 
+ *	If param 'post_data' is not present, method GET is used instead POST
  *
  *  @param	string		url			URL of the request
  *  @param	string		post_data 	data sent in the request
  *  @param	function	callback 	function called when httP request state change
  *  @return http_request			result of the requst
- */  
- 
+ */
+
 function ajax_async_request(url, post_data, callback){
 	var http_request;
 
@@ -123,7 +123,7 @@ function ajax_async_request(url, post_data, callback){
 	} else if (window.ActiveXObject) { // IE
 		http_request = new ActiveXObject('Microsoft.XMLHTTP');
 	} else return null;
-	
+
 
 	if (post_data){
 		http_request.open('POST', url, true);
@@ -142,8 +142,8 @@ function ajax_async_request(url, post_data, callback){
 
 /**
  *	Add new css class to html element
- * 
- *	@param	object	el  
+ *
+ *	@param	object	el
  *	@param	string	className
  */
 function addClassNameToEl(el, className){
@@ -152,14 +152,14 @@ function addClassNameToEl(el, className){
 
 /**
  *	Remove the css class to html element
- * 
- *	@param	object	el  
+ *
+ *	@param	object	el
  *	@param	string	className
  */
 function remClassNameFromEl(el, className){
 	var newClassName = "";
 	var classNames = el.className.split(' ');
-		
+
 	for (var i=0; i<classNames.length; i++){
 		if (classNames[i] != className) newClassName += " "+classNames[i];
 	}
@@ -169,18 +169,18 @@ function remClassNameFromEl(el, className){
 
 /**
  *  Check whether html element has given class
- * 
- *	@param	object	el  
+ *
+ *	@param	object	el
  *	@param	string	className
- */ 
+ */
 function hasClassName(el, className) {
     return el.className && new RegExp("(^|\\s)" + className + "(\\s|$)").test(el.className);
 }
 
 /**
  *	Enable form element and remove CSS class "disabled" from it
- * 
- *	@param	object	el  
+ *
+ *	@param	object	el
  */
 function enableFormEl(el){
     el.disabled = false;
@@ -189,8 +189,8 @@ function enableFormEl(el){
 
 /**
  *	Disable form element and set CSS class "disabled" to it
- * 
- *	@param	object	el  
+ *
+ *	@param	object	el
  */
 function disableFormEl(el){
     el.disabled = true;
@@ -198,7 +198,7 @@ function disableFormEl(el){
 }
 
 /**
- *  toggle visibility of an element 
+ *  toggle visibility of an element
  */
 function toggle_visibility(el){
 	if (el.style.display=="none" || el.style.display==""){
@@ -211,7 +211,7 @@ function toggle_visibility(el){
 
 /**
  *  Return the item of radio button with given value
- */ 
+ */
 function get_radio_by_value(el, val){
 
     for (var i=0; i<el.length; i++){
@@ -223,11 +223,11 @@ function get_radio_by_value(el, val){
 }
 
 /**
- *  Return the value of the radio button that is checked. Return null value 
+ *  Return the value of the radio button that is checked. Return null value
  *  if none are checked.
  */
 function get_radio_value(el){
- 
+
    for(var i=0; i<el.length; i++){
       if(el[i].checked){
          return el[i].value;
@@ -237,8 +237,8 @@ function get_radio_value(el){
 }
 
 /**
- *  Set the radio button with the given value as being checked. 
- *  If the given value does not exist, all the radio buttons are reset to unchecked. 
+ *  Set the radio button with the given value as being checked.
+ *  If the given value does not exist, all the radio buttons are reset to unchecked.
  */
 function set_radio_value(el, val) {
 
@@ -249,21 +249,21 @@ function set_radio_value(el, val) {
 
 
 /**
- *  Get element identified by its tag name and class name. Function return 
+ *  Get element identified by its tag name and class name. Function return
  *  only first matched element or null
- *      
+ *
  *  @param  Element parentEl     parrent element of the tree inside which the search is performed
  *  @param  string  tagName      name of tag to search
  *  @param  string  className    name of class
- *  @return Element 
- */ 
+ *  @return Element
+ */
 function get_element_by_className(parentEl, tagName, className){
 
     if (tagName == null)    tagName = '*';
 
     var elements = parentEl.getElementsByTagName(tagName);
     var classNames;
-    
+
 
     for (var i=0; i<elements.length; i++){
         classNames = elements[i].className.split(' ');
@@ -277,12 +277,12 @@ function get_element_by_className(parentEl, tagName, className){
 
 /**
  *  Get array of elements identified by its tag name and class name
- *      
+ *
  *  @param  Element parentEl     parrent element of the tree inside which the search is performed
  *  @param  string  tagName      name of tag to search
  *  @param  string  className    name of class
- *  @return Array 
- */ 
+ *  @return Array
+ */
 function get_elements_by_className(parentEl, tagName, className){
 
     if (tagName == null)    tagName = '*';
@@ -290,7 +290,7 @@ function get_elements_by_className(parentEl, tagName, className){
     var classElements = new Array();
     var elements = parentEl.getElementsByTagName(tagName);
     var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
-    
+
 
     for (var i=0, j=0; i<elements.length; i++){
         if (pattern.test(elements[i].className)) classElements[j++] = elements[i];
@@ -301,10 +301,10 @@ function get_elements_by_className(parentEl, tagName, className){
 
 /**
  *  Checks if a value exists in an array
- *  
+ *
  *  @param  mixed   value   The searched value
  *  @param  Array   ar      The array
- *  @return bool            Returns TRUE if value is found in the array, FALSE otherwise.     
+ *  @return bool            Returns TRUE if value is found in the array, FALSE otherwise.
  */
 function in_array(value, ar){
 	for (var i=0; i<ar.length; i++){
@@ -315,9 +315,9 @@ function in_array(value, ar){
 
 /**
  *  Get value of selected option in dropdown. Return null if no option is selected
- *  in "select-one" element. Return array of values if the element 
+ *  in "select-one" element. Return array of values if the element
  *  is "select-multiple".
- */ 
+ */
 function get_select_value(el){
 
     if (el.type == "select-one"){
@@ -335,13 +335,13 @@ function get_select_value(el){
         }
         return sdValues;
     }
-    
+
     return null;
 }
 
 /**
  *      Set selectedIndex of select by value of option
- */ 
+ */
 function set_select_by_value(el, val){
 
     for (var i=0; i<el.options.length; i++){
@@ -355,18 +355,18 @@ function set_select_by_value(el, val){
 
 /**
  *      Enable/disable a link
- *      
- *  THis function expect the &lt;a&gt; element wrapped within &lt;span&gt; element. 
+ *
+ *  THis function expect the &lt;a&gt; element wrapped within &lt;span&gt; element.
  *  Reference to the &lt;span&gt; should be parameter of the function. Function
- *  also expect the link is initialy enabled. 
- *      
+ *  also expect the link is initialy enabled.
+ *
  *  @param  bool                en      enable/disable
  *  @param  Element parentEl    parrent &lt;span&gt; element which wrap the &lt;a&gt; element
- */ 
+ */
 function enable_link(en, parentEl){
-    
+
     var linkEls = parentEl.getElementsByTagName('a');
-    
+
     if (en){ //enable
         if (linkEls.length > 0) return; // links already enabled
 
@@ -380,7 +380,7 @@ function enable_link(en, parentEl){
 
         var disabledClass = linkEls[0].getAttribute('data-disClass');
         if (disabledClass == null) disabledClass="disabledLink";
-        
+
         // save content of wraping <span> element
         parentEl.linkUserData = parentEl.innerHTML;
 
@@ -391,50 +391,55 @@ function enable_link(en, parentEl){
 
 /**
  *  This function is same as HTMLSpecialChars function from PHP
- */ 
+ */
 function HTMLSpecialChars(str){
+    if (typeof str != 'string'){
+        console.error('HTMLSpecialChars: the argument is not string but %s (%o)', typeof str, str);
+        return '';
+    }
+
     return str
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;"); 
+        .replace(/'/g, "&#039;");
 }
 
 function HTMLSpecialCharsDecode(string, quote_style) {
-    // Convert special HTML entities back to characters  
-    // 
+    // Convert special HTML entities back to characters
+    //
     // version: 1006.1915
-    // discuss at: http://phpjs.org/functions/htmlspecialchars_decode    
-    // *     example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES');    
+    // discuss at: http://phpjs.org/functions/htmlspecialchars_decode
+    // *     example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES');
     // *     returns 1: '<p>this -> &quot;</p>'
     // *     example 2: htmlspecialchars_decode("&amp;quot;");
     // *     returns 2: '&quot;'
-    
+
     var optTemp = 0, i = 0, noquotes = false;
-    
-    if (typeof quote_style === 'undefined') {        
+
+    if (typeof quote_style === 'undefined') {
         quote_style = 2;
     }
     string = string.toString().replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     var OPTS = {
-        'ENT_NOQUOTES': 0,        
+        'ENT_NOQUOTES': 0,
         'ENT_HTML_QUOTE_SINGLE' : 1,
         'ENT_HTML_QUOTE_DOUBLE' : 2,
         'ENT_COMPAT': 2,
         'ENT_QUOTES': 3,
         'ENT_IGNORE' : 4    };
-    
+
     if (quote_style === 0) {
         noquotes = true;
     }
-    
-    if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags        
+
+    if (typeof quote_style !== 'number') { // Allow for a single string or an array of string flags
         quote_style = [].concat(quote_style);
         for (i=0; i < quote_style.length; i++) {
             // Resolve string input to bitwise e.g. 'PATHINFO_EXTENSION' becomes 4
             if (OPTS[quote_style[i]] === 0) {
-                noquotes = true;            
+                noquotes = true;
             }
             else if (OPTS[quote_style[i]]) {
                 optTemp = optTemp | OPTS[quote_style[i]];
@@ -444,22 +449,22 @@ function HTMLSpecialCharsDecode(string, quote_style) {
     }
     if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
         string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
-        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP    
+        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
     }
     if (!noquotes) {
         string = string.replace(/&quot;/g, '"');
     }
-    // Put this in last place to avoid escape being double-decoded    
+    // Put this in last place to avoid escape being double-decoded
     string = string.replace(/&amp;/g, '&');
- 
+
     return string;
 }
 
 /**
  *  Parse host part from sip uri
- *    
+ *
  *  @param  string  uri     sip uri
- *  @return string          hostpart or FALSE on invalid uri 
+ *  @return string          hostpart or FALSE on invalid uri
  */
 function parse_host_from_sip_uri(uri){
 
@@ -467,13 +472,13 @@ function parse_host_from_sip_uri(uri){
     if      (uri.substr(0,4).toLowerCase() == 'sip:')  uri = uri.substr(4); //strip initial 'sip:'
     else if (uri.substr(0,5).toLowerCase() == 'sips:') uri = uri.substr(5); //strip initial 'sips:'
     else    return false; //not valid uri
-    
+
     var ipv6 = 0;
     var hostpos = uri.indexOf('@');
     var hostlen = null;
 
     if ( hostpos < 0 ) hostpos = 0;
-    else               hostpos++; 
+    else               hostpos++;
 
     for (var i=hostpos; (i < uri.length) && (hostlen == null); i++){
         switch (uri.substr(i, 1)){
@@ -483,7 +488,7 @@ function parse_host_from_sip_uri(uri){
                    if (!ipv6){ //colon is not part of ipv6 address
                         hostlen = i-1;  //colon is separator of host and port
                         break;
-                   } 
+                   }
                    break;
         case ';':
                    hostlen = i-1;  //semicolon is start of uri parameters
@@ -493,27 +498,27 @@ function parse_host_from_sip_uri(uri){
 
     if (hostlen == null) hostlen = uri.length;
 
-    // hostlen now do not contain real lenght of host part, 
+    // hostlen now do not contain real lenght of host part,
     // but the position of its end, so calculate the length:
-    
+
     hostlen = hostlen - hostpos + 1;
-    
+
     return uri.substr(hostpos, hostlen);
 }
 
 
 /**
  *  Parse port from sip uri
- *    
+ *
  *  @param  string  uri     sip uri
- *  @return int             port number or FALSE on invalid uri or NULL when no port in the uri  
+ *  @return int             port number or FALSE on invalid uri or NULL when no port in the uri
  */
 function parse_port_from_sip_uri(uri){
 
     if      (uri.substr(0,4).toLowerCase() == 'sip:')  uri = uri.substr(4); //strip initial 'sip:'
     else if (uri.substr(0,5).toLowerCase() == 'sips:') uri = uri.substr(5); //strip initial 'sips:'
     else    return false; //not valid uri
-    
+
     var ipv6 = 0;
     var portpos = null;
     var ch;
@@ -521,7 +526,7 @@ function parse_port_from_sip_uri(uri){
     /* start parsing after '@' to avoid some special characters in user part */
     var startpos = uri.indexOf('@');
     if ( startpos < 0 ) startpos = 0;
-    else                startpos++; 
+    else                startpos++;
 
     for (var i=startpos; (i < uri.length) && (portpos == null); i++){
         ch = uri.substr(i, 1);
@@ -533,7 +538,7 @@ function parse_port_from_sip_uri(uri){
                    if (!ipv6){ //colon is not part of ipv6 address
                         portpos = i;  //position of port inside address string
                         break;
-                   } 
+                   }
                    break;
         case ';':
                    return null;  //start of uri parameters -> no port in the uri
@@ -557,7 +562,7 @@ function parse_port_from_sip_uri(uri){
 
     var port = Number(uri.substr(portpos, portlen));
     if (port == Number.NaN)     return false; //should never happen, but to be sure...
-   
+
     return port;
 }
 
