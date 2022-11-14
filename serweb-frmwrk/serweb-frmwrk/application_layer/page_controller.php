@@ -98,9 +98,6 @@ class page_controller{
      */
     var $standard_html_output = true;
 
-    /** for backward compatibility - Hack protect will be removed - by setting this var to true may be enabled for single page*/
-    var $perform_hack_protect = false;
-
     /** instance of Creg class
      *  for backward compatibility, shouldn't be used
      *  instead of this use your own variable and Creg::singleton method
@@ -1169,32 +1166,6 @@ class page_controller{
         }
     }
 
-    function convert_htmlspecialchars(&$var){
-        if (is_array($var)){
-            foreach($var as $k => $v)
-                $var[$k] = $this->convert_htmlspecialchars($v);
-        }
-        elseif (is_object($var)){
-            //object shouldn't be here
-            //do nothing
-        }
-        else{
-            $var = htmlspecialchars($var, ENT_QUOTES);
-        }
-        return $var;
-    }
-
-
-    function hack_protection(){
-        if (isset($_POST)){
-            $_POST = $this->convert_htmlspecialchars($_POST);
-        }
-
-        if (isset($_GET)){
-            $_GET = $this->convert_htmlspecialchars($_GET);
-        }
-    }
-
     /**
      *  Check if admin has permissions to manage the user
      *
@@ -1244,25 +1215,6 @@ class page_controller{
                 page_close();
                 die("Change parameters of default domain is not possible");
             }
-
-            /* make code portable - if magic_quotes_gpc is set to on, strip slashes */
-            if (get_magic_quotes_gpc()) {
-               function stripslashes_deep($value){
-                   $value = is_array($value) ?
-                               array_map('stripslashes_deep', $value) :
-                               stripslashes($value);
-
-                   return $value;
-               }
-
-               $_POST = array_map('stripslashes_deep', $_POST);
-               $_GET = array_map('stripslashes_deep', $_GET);
-               $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-               $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-            }
-
-            /* translate chars '<', '>', etc. to &lt; &gt; etc.. */
-            if ($this->perform_hack_protect) $this->hack_protection();
 
             /* propagate user_id and reference to this to all application units */
             foreach($this->apu_objects as $key=>$val){
