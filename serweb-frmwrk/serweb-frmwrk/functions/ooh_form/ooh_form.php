@@ -148,10 +148,6 @@ class OohForm {
         $str .= " method='".strtolower($method)."'";
         $str .= " action='".htmlspecialchars($this->action, ENT_QUOTES)."'";
         $str .= " target='$this->target'";
-
-        if ($this->jvs_name) {
-            $str .= " onsubmit=\"return {$this->jvs_name}_Validator(this)\"";
-        }
         $str .= ">";
 
         return $str;
@@ -166,41 +162,72 @@ class OohForm {
         return $str.$this->js_validator();
     }
 
-    public function js_validator(){
-        $str = "";
+    private function js_validator_get_fn($name){
+        $validator_str = "";
 
-        if ($this->jvs_name) {
-            $jvs_name = $this->jvs_name;
-            $str .= "<script type='text/javascript' >\n<!--\n";
+        if ($this->js_before) $validator_str .= "{$this->js_before}\n";
 
-            foreach($this->elements as $elrec){
-                $el = $elrec["ob"];
+        foreach($this->elements as $elrec){
+            $el = $elrec["ob"];
 
-                if ($el->get_js_trim_value()){
-                    $str .= "phplib_ctl.add_event(document.getElementById('".$el->get_name()."'), 'blur', phplib_ctl.oh_trim);\n";
-                }
+            if ($el->get_js_trim_value()){
+                $validator_str .= "phplib_ctl.trim(document.getElementById('".$el->get_name()."'));\n";
             }
 
-            $str .= "\nfunction ${jvs_name}_Validator(f) {\n";
-
-            if ($this->js_before) $str .= "{$this->js_before}\n";
-
-            foreach($this->elements as $elrec){
-                $el = $elrec["ob"];
-
-                if ($el->get_js_trim_value()){
-                    $str .= "phplib_ctl.trim(document.getElementById('".$el->get_name()."'));\n";
-                }
-
-                if ($el->do_js_validation()) $str .= $el->self_get_js();
-            }
-
-            if ($this->js_after) $str .= "$this->js_after\n";
-
-            $str .= "return true;\n";
-
-            $str .= "}\n//-->\n</script>";
+            if ($el->do_js_validation()) $validator_str .= $el->self_get_js();
         }
+
+        if ($this->js_after) $validator_str .= "$this->js_after\n";
+
+        if (!$validator_str) return "";
+
+        $str  = "function ${name}(f) {\n";
+        $str .= $validator_str;
+        $str .= "return true;\n";
+        $str .= "}\n";
+
+        return $str;
+    }
+
+    public function js_validator(){
+
+        if (!$this->jvs_name) return "";
+
+        $str = "";
+        $js_str = "";
+
+        $validator_name = "{$this->jvs_name}_Validator";
+        $validator_fn = $this->js_validator_get_fn($validator_name);
+
+        foreach($this->elements as $elrec){
+            $el = $elrec["ob"];
+
+            if ($el->get_js_trim_value()){
+                $js_str .= "phplib_ctl.add_event(document.getElementById('".$el->get_id()."'), 'blur', phplib_ctl.oh_trim);\n";
+            }
+        }
+
+        if ($validator_fn){
+            $form_id = $this->get_id();
+
+            if (!$form_id){
+                throw new Exception("Cannot get ID of the HTML form: ".json_encode($this));
+            }
+
+            $js_str .= "\n";
+            $js_str .= $validator_fn;
+
+            $js_str .= "document.getElementById('".$form_id."').addEventListener('submit', $validator_fn);\n";
+        }
+
+
+        if (!$js_str) return;
+
+        $str .= "\n<script type='text/javascript' nonce='{$GLOBALS['controler']->get_nonce()}'>\n<!--\n";
+
+        $str .= $js_str;
+        $str .= "\n";
+        $str .= "//-->\n</script>";
 
         return $str;
     }

@@ -123,6 +123,8 @@ class page_controller{
     /** listeners of events and their priorities */
     private $listeners = array();
 
+    private $nonce = null;
+
     /* constructor */
     function __construct(){
 
@@ -264,6 +266,14 @@ class page_controller{
         if (!isset($_SESSION['page_ctl'])) $_SESSION['page_ctl'] = array();
 
         $this->session = &$_SESSION['page_ctl'];
+    }
+
+    public function get_nonce(){
+        if (is_null($this->nonce)){
+            $this->nonce = sha1(rfc4122_uuid());
+        }
+
+        return $this->nonce;
     }
 
     /**
@@ -1282,13 +1292,12 @@ class page_controller{
             $smarty->assign("cfg", $cfg);
 
 
-            $this->trigger_event("pre_html_output");
-
-            //page atributes - get user real name
-
             $errors = ErrorHandler::get_errors_array();
             $page_attributes['errors']=&$errors;
             $page_attributes['message']=&$this->messages;
+            $page_attributes['nonce'] = $this->get_nonce();
+
+            $this->trigger_event("pre_html_output");
 
             /* obtain list of required javascripts */
             foreach($this->apu_objects as $val){
@@ -1327,7 +1336,7 @@ class page_controller{
 
 
             if (count($this->js_after_document)){
-                echo "\n<script type=\"text/javascript\">\n<!--\n";
+                echo "\n<script type=\"text/javascript\" nonce=\"{$this->get_nonce()}\">\n<!--\n";
                 foreach($this->js_after_document as $v){
                     echo $v;
                 }

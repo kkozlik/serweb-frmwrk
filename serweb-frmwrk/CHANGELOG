@@ -1,6 +1,8 @@
 * js function HTMLSpecialChars() do not crash when the argument is not string
 * Fix Session:id() function
 * Improve loading of phplib - load only what is needed
+* Some old obsoleted stuff removed from page_controller()
+* unsafe_inline script removal
 
 Version 2.2.3
 ==============
