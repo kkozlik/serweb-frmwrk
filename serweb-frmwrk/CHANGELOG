@@ -3,6 +3,7 @@
 * Improve loading of phplib - load only what is needed
 * Some old obsoleted stuff removed from page_controller()
 * unsafe_inline script removal
+* OOH form can register event handlers using addEventListener instead of inline `onXXX` property
 
 Version 2.2.3
 ==============

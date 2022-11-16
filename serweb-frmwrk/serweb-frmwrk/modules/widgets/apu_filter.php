@@ -260,7 +260,11 @@ class apu_filter extends apu_base_class{
                             "type" => "checkbox",
                             "value" => 1,
                             "checked" => !$v['disabled'],
-                            "extrahtml" => "title='enable filtering by this flag' onclick='if (this.checked) this.form.".$v['name'].".disabled=false; else this.form.".$v['name'].".disabled=true;'"
+                            "extrahtml" => "title='enable filtering by this flag' ",
+                            "events" => [[
+                                "event" => "click",
+                                "handler" => "function(){ if (this.checked) this.form.".$v['name'].".disabled=false; else this.form.".$v['name'].".disabled=true; }"
+                            ]]
                         ));
 
 //                  $onchange .= "if (this.checked) this.form.".$v['name'].".disable=false; else this.form.".$v['name'].".disable=true;";
@@ -271,9 +275,10 @@ class apu_filter extends apu_base_class{
                     if ($v['checked']) $this->filter_applied = true;
                 }
 
-                if (empty($v['extrahtml'])) $v['extrahtml'] = "";
-                $v['extrahtml'] .= " onclick='".$onclick."'";
-
+                $v['events'] = [[
+                                "event" => "click",
+                                "handler" => "function(){ $onclick }"
+                               ]];
                 break;
             }
 
@@ -286,7 +291,11 @@ class apu_filter extends apu_base_class{
             $js_elements[] = $js_el;
         }
 
-        $this->opt['form_clear']['extrahtml'] = "onclick='filter_form_ctl.filter_clear();'";
+        $this->opt['form_clear']['events'] = [[
+            "event" => "click",
+            "handler" => "function(){ filter_form_ctl.filter_clear(); }"
+        ]];
+
         $this->f->add_extra_submit("f_clear", $this->opt['form_clear']);
 
         $onload_js = "

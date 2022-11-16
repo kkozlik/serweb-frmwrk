@@ -16,6 +16,25 @@ class OohElCommon {
     protected $placeholder;
     protected $disabled = false;
 
+    /**
+     * List of event handlers. It's array in format:
+     *
+     * ```
+     * [
+     *   [
+     *       "event"    => "click"
+     *       "handler"  => "function(e){...}"
+     *   ],
+     *   ...
+     * ]
+     * ```
+     * The `event` is name of the event and the `handler` is javascript code
+     * directly inserted into `addEventListener()` function.
+     *
+     * @var array
+     */
+    protected $events = [];
+
     protected $js_validate = true;
     protected $php_validate = true;
     protected $skip_validation = false;
@@ -60,6 +79,17 @@ class OohElCommon {
         return $this->name;
     }
 
+    /**
+     * Return name of the element used in DOM. This is usualy same as
+     * what function `get_name()` returns, but it might differ for some elements
+     * e.g. the submit one.
+     *
+     * @return string
+     */
+    public function get_dom_name() : string{
+        return $this->name;
+    }
+
     public function get_type(){
         return $this->type;
     }
@@ -70,6 +100,10 @@ class OohElCommon {
 
     public function get_js_trim_value(){
         return $this->js_trim_value;
+    }
+
+    public function get_event_handlers(){
+        return $this->events;
     }
 
     public function do_js_validation(){

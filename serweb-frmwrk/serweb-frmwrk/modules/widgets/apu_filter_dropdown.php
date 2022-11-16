@@ -175,7 +175,8 @@ class apu_filter_dropdown extends apu_base_class{
         if (isset($this->base_apu->opt['screen_name'])){
             if (!$this->session['f_field']) $msg = "None";
             else{
-        		foreach ($this->form_elements as $v){
+                $label = "";
+                foreach ($this->form_elements as $v){
                     if ($v['name'] == $this->session['f_field']) {
                         $label = isset($v['label']) ? $v['label'] : $v['name'];
                         break;
@@ -277,7 +278,10 @@ class apu_filter_dropdown extends apu_base_class{
                                      "value"=>$this->session['f_field'],
                                      "size"=>1,
                                      "options"=>$f_options,
-                                     "extrahtml"=>"onchange='if (this.selectedIndex==0) {this.form.filter_op.disabled=true;this.form.filter_val.disabled=true; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=true;} else {this.form.filter_op.disabled=false;this.form.filter_val.disabled=false; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=false;}'"));
+                                     "events" => [[
+                                         "event" => "change",
+                                         "handler" => "function(){ if (this.selectedIndex==0) {this.form.filter_op.disabled=true;this.form.filter_val.disabled=true; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=true;} else {this.form.filter_op.disabled=false;this.form.filter_val.disabled=false; if (typeof(this.form.filter_reset) != \"undefined\") this.form.filter_reset.disabled=false;}}"
+                                     ]]));
 
         $this->f->add_element(array("type"=>"select",
                                      "name"=>"filter_op",
@@ -295,8 +299,11 @@ class apu_filter_dropdown extends apu_base_class{
                                      "name"=>"filter_reset",
                                      "button_type"=>"button",
                                      "content"=>$lang_str['b_reset'],
-                                     "extrahtml"=>"onclick='this.form.filter_field.selectedIndex=0; this.form.filter_field.onchange(); this.form.submit();'",
-                                     "disabled"=>!(bool)$this->session['f_field']));
+                                     "disabled"=>!(bool)$this->session['f_field'],
+                                     "events" => [[
+                                         "event" => "click",
+                                         "handler" => "function(){ var e = new Event('change'); this.form.filter_field.selectedIndex=0; this.form.filter_field.dispatchEvent(e); this.form.submit(); }"
+                                     ]]));
 
         $this->f->add_element(array("type"=>"hidden",
                                      "name"=>"filter_updated",

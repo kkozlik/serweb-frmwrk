@@ -204,7 +204,10 @@ class apu_refresh extends apu_base_class{
                                      "value"=>$this->session['timeout'],
                                      "size"=>1,
                                      "options"=>$f_options,
-                                     "extrahtml"=>"onchange='this.form.submit();'"));
+                                     "events" => [[
+                                         "event" => "change",
+                                         "handler" => "function(){ this.form.submit(); }"
+                                     ]]));
 
         $this->f->add_element(array("type"=>"hidden",
                                      "name"=>"refresh_updated",

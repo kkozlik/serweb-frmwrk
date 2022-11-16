@@ -13,6 +13,7 @@ class OohForm {
     private $action;
     private $js_before;
     private $js_after;
+    private $js = "";
 
     private $hidden = array();
     private $hidden_submits = array();
@@ -111,6 +112,16 @@ class OohForm {
         return $this;
     }
 
+    /**
+     * Additional javascript code inserted after the form
+     *
+     * @param string $val
+     * @return void
+     */
+    public function add_js(string $val) : void{
+        $this->js .= $val;
+    }
+
     public function option($name, $val=null){
         $this->options[$name] = $val;
         return $this;
@@ -162,6 +173,44 @@ class OohForm {
         return $str.$this->js_validator();
     }
 
+    /**
+     * Generate javascript code registering event handlers to the form elements
+     *
+     * @return string
+     */
+    private function js_register_events() : string{
+        $js = "";
+        $form_id = $this->get_id();
+
+        foreach($this->elements as $elrec){
+            $el = $elrec["ob"];
+            $event_handlers = $el->get_event_handlers();
+            if (!$event_handlers) continue;
+
+            foreach($event_handlers as $event_handler){
+                $el_name = $el->get_dom_name();
+                if (!$form_id and !$this->name) throw new Exception("Cannot register event handler. Neither 'name' nor 'id' is set for the form.");
+                if (!isset($event_handler['event']))    throw new Exception("'event' property of event handler of {$el_name} is not set.");
+                if (!isset($event_handler['handler']))  throw new Exception("'handler' property of event handler of {$el_name} is not set.");
+
+                if ($form_id) $selector = "#$form_id [name=\"$el_name\"]";
+                else          $selector = "form[name=\"{$this->name}\"] [name=\"$el_name\"]";
+
+                $js .= "document.querySelectorAll('$selector').forEach(".
+                            "function(element){element.addEventListener(".
+                                "'{$event_handler['event']}', {$event_handler['handler']});});\n";
+            }
+        }
+
+        if (!$js) return "";
+
+        return "
+            document.addEventListener('DOMContentLoaded', function(event) {
+                $js
+            });
+        ";
+    }
+
     private function js_validator_get_fn($name){
         $validator_str = "";
 
@@ -194,7 +243,10 @@ class OohForm {
         if (!$this->jvs_name) return "";
 
         $str = "";
-        $js_str = "";
+        $js_str = $this->js;
+
+        if ($js_str) $js_str .= "\n";
+        $js_str .= $this->js_register_events();
 
         $validator_name = "{$this->jvs_name}_Validator";
         $validator_fn = $this->js_validator_get_fn($validator_name);
@@ -217,7 +269,7 @@ class OohForm {
             $js_str .= "\n";
             $js_str .= $validator_fn;
 
-            $js_str .= "document.getElementById('".$form_id."').addEventListener('submit', $validator_fn);\n";
+            $js_str .= "document.getElementById('".$form_id."').onsubmit= $validator_name;\n";
         }
 
 
@@ -278,7 +330,12 @@ class OohForm {
                              "extrahtml"=>"alt='".$submit['text']."' ".$extrahtml);
 
             /* if it is a cancel button, disable form validation */
-            if (isset($this->form_cancels[$name])) $element['extrahtml'] .= " onclick='this.form.onsubmit=null;'";
+            if (isset($this->form_cancels[$name])){
+                $element['events'] = [[
+                    "event" => "click",
+                    "handler" => "function(){ this.form.onsubmit=null; }"
+                ]];
+            }
             break;
 
         case "button":
@@ -290,7 +347,12 @@ class OohForm {
                              "extrahtml"=>$extrahtml);
 
             /* if it is a cancel button, disable form validation */
-            if (isset($this->form_cancels[$name])) $element['extrahtml'] = "onclick='this.form.onsubmit=null;'";
+            if (isset($this->form_cancels[$name])){
+                $element['events'] = [[
+                    "event" => "click",
+                    "handler" => "function(){ this.form.onsubmit=null; }"
+                ]];
+            }
             break;
 
         case "hidden":
@@ -303,6 +365,13 @@ class OohForm {
 
             if (isset($this->form_cancels[$name])) $this->hidden_cancels = $name."_x";
             else $this->hidden_submits[] = $name."_x";
+        }
+
+        // Add event handlers to the element
+        if (isset($submit['events']) and is_array($submit['events'])){
+            foreach($submit['events'] as $event){
+                $element['events'][] = $event;
+            }
         }
 
         $this->add_element($element);
