@@ -555,6 +555,8 @@ function Growable_Forms_ctl(varname, new_items_form_el, del_items_form_el){
 Growable_Forms_ctl.prototype.init = function(form_name){
 
     var forms = document.forms;
+    var self = this;
+
     for (var i=0; i<forms.length; i++){
         if (forms[i].name == form_name) {
             this.form = forms[i];
@@ -564,6 +566,17 @@ Growable_Forms_ctl.prototype.init = function(form_name){
 
     if (null != this.custom_init_fn){
         eval(this.custom_init_fn+"(this)");
+    }
+
+    // Register onclick event handlers to add-item link
+    if (null != this.html_add_link_id){
+        var spanEl = document.getElementById(this.html_add_link_id);
+        if (null != spanEl) {
+            spanEl.querySelectorAll('a, button').forEach(
+                function(element){
+                    element.addEventListener('click', self.add_item.bind(self));
+            });
+        }
     }
 };
 
@@ -600,6 +613,11 @@ Growable_Forms_ctl.prototype.count_items = function(){
  *  Enable/disable controls when page is loaded
  */
 Growable_Forms_ctl.prototype.controls_init = function(){
+
+    var rows = this.table_handler.get_rows();
+    for(var i=0; i<rows.length; i++){
+        this.controls_register_events(rows[i]);
+    }
 
     if (this.view){
         this.disable_controls();
@@ -659,6 +677,40 @@ Growable_Forms_ctl.prototype.controls_update = function(){
                 this.enable_down_link(true, rows[i]);
             }
         }
+    }
+}
+
+/**
+ *  Register onclick event handlers to conrol links
+ *
+ *  @param  HTMLTableRowElement row     table row containing the control links link
+ */
+Growable_Forms_ctl.prototype.controls_register_events = function(row){
+    var self = this;
+    var row_id = this.table_handler.get_row_id(row);
+
+    if (null != this.html_del_link_class){
+        var spanEl = get_element_by_className(row, 'span', this.html_del_link_class);
+        spanEl.querySelectorAll('a, button').forEach(
+            function(element){
+                element.addEventListener('click', self.del_item.bind(self, row_id));
+        });
+    }
+
+    if (null != this.html_up_link_class){
+        var spanEl = get_element_by_className(row, 'span', this.html_up_link_class);
+        spanEl.querySelectorAll('a, button').forEach(
+            function(element){
+                element.addEventListener('click', self.item_up.bind(self, row_id));
+        });
+    }
+
+    if (null != this.html_down_link_class){
+        var spanEl = get_element_by_className(row, 'span', this.html_down_link_class);
+        spanEl.querySelectorAll('a, button').forEach(
+            function(element){
+                element.addEventListener('click', self.item_down.bind(self, row_id));
+        });
     }
 }
 
@@ -915,6 +967,8 @@ Growable_Forms_ctl.prototype.add_item_callback = function(http_request){
             this.table_handler.add_row(row, new_row_pos);
             this.restore_form_values(row, el_values); //workaround for IE bug which do not preserve values of some elements
 //            this.restore_form_values(this.html_table_el, el_values); //workaround for IE bug which do not preserve values of some elements
+
+            this.controls_register_events(row);
         }
 
 

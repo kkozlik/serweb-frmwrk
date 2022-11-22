@@ -33,8 +33,6 @@ class Growable_Forms{
     var $smarty_id_param = "item_id";
     /** name of smarty variable containing strings */
     var $smarty_lang_param = "lang_str";
-    /** name of smarty variable containing control links */
-    var $smarty_links_param = "links";
     /** name of smarty variable containing first row flag */
     var $smarty_fr_param = "first_row";
     /** name of smarty variable containing item as returnet by its 'to_smarty' method */
@@ -222,8 +220,7 @@ class Growable_Forms{
      *  Return structure that is passed to smarty template
      */
     function get_smarty_var(){
-        return array("add_item_url" => "javascript:".rawurlencode($this->js_ctl.".add_item();"),
-                     "items" => $this->smarty_items,
+        return array("items" => $this->smarty_items,
                      "template" => $this->smarty_template);
     }
 
@@ -344,19 +341,6 @@ class Growable_Forms{
     }
 
     /**
-     *  Return URLs that will be used in control links for one item
-     */
-    function get_control_links($id){
-        $links = array();
-        $links["url_del_item"] =  "javascript:".rawurlencode($this->js_ctl.".del_item('".$id."');");
-        $links["url_item_up"] =   "javascript:".rawurlencode($this->js_ctl.".item_up('".$id."');");
-        $links["url_item_down"] = "javascript:".rawurlencode($this->js_ctl.".item_down('".$id."');");
-        return $links;
-    }
-
-
-
-    /**
      *  If there were conrurent changes in the list of items this functions
      *  should deal with them.
      *
@@ -424,7 +408,6 @@ class Growable_Forms{
             // create record to be provided to smarty template
             $smarty_item = array();
             $smarty_item['id'] = $v->{$this->item_id_var};
-            $smarty_item['links'] = $this->get_control_links($v->{$this->item_id_var});
 
             if (method_exists($v, $this->item_to_smarty_fn)){
                 $smarty_item['item'] = $v->{$this->item_to_smarty_fn}();
@@ -458,7 +441,6 @@ class Growable_Forms{
 
         $id = $_GET[$this->add_item_url_id_param];
         $first_row = $_GET[$this->add_item_url_fr_param];
-        $links = $this->get_control_links($id);
 
         $f = new OohForm();
         $sm = new Smarty_Serweb();
@@ -489,7 +471,6 @@ class Growable_Forms{
 
         $sm->assign($this->smarty_id_param,    $id);
         $sm->assign($this->smarty_lang_param,  $lang_str);
-        $sm->assign($this->smarty_links_param, $links);
         $sm->assign($this->smarty_fr_param,    $first_row);
 
         if (method_exists($item, $this->item_to_smarty_fn)){

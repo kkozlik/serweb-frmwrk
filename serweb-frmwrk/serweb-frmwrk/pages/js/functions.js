@@ -356,7 +356,7 @@ function set_select_by_value(el, val){
 /**
  *      Enable/disable a link
  *
- *  THis function expect the &lt;a&gt; element wrapped within &lt;span&gt; element.
+ *  This function expect the &lt;a&gt; or &lt;button&gt; element wrapped within &lt;span&gt; element.
  *  Reference to the &lt;span&gt; should be parameter of the function. Function
  *  also expect the link is initialy enabled.
  *
@@ -366,6 +366,17 @@ function set_select_by_value(el, val){
 function enable_link(en, parentEl){
 
     var linkEls = parentEl.getElementsByTagName('a');
+    var buttonEls = parentEl.getElementsByTagName('button');
+
+    if (buttonEls.length > 0){
+        // if '<button>' is used instead of '<a>'
+
+        var disabledClass = buttonEls[0].getAttribute('data-disClass');
+        if (disabledClass) buttonEls[0].classList.toggle(disabledClass, !en);
+
+        buttonEls[0].disabled = !en;
+        return;
+    }
 
     if (en){ //enable
         if (linkEls.length > 0) return; // links already enabled

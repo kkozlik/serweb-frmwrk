@@ -4,6 +4,7 @@
 * Some old obsoleted stuff removed from page_controller()
 * unsafe_inline script removal
 * OOH form can register event handlers using addEventListener instead of inline `onXXX` property
+* growable_forms do not use inline javascript in `href` attribute
 
 Version 2.2.3
 ==============
