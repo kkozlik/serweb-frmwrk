@@ -72,10 +72,10 @@ function print_html_head($parameters=array()){
     if (!empty($parameters['css_file'])){
         if (is_array($parameters['css_file'])){
             foreach($parameters['css_file'] as $v)
-                echo '    <LINK REL="StyleSheet" HREF="'.htmlspecialchars($v).'" TYPE="text/css" />'."\n";
+                echo '    <LINK REL="StyleSheet" HREF="'.htmlspecialchars($v).'" TYPE="text/css" nonce="'.$parameters['nonce'].'"/>'."\n";
         }
         else{
-            echo '    <LINK REL="StyleSheet" HREF="'.htmlspecialchars($parameters['css_file']).'" TYPE="text/css" />'."\n";
+            echo '    <LINK REL="StyleSheet" HREF="'.htmlspecialchars($parameters['css_file']).'" TYPE="text/css" nonce="'.$parameters['nonce'].'"/>'."\n";
         }
     }
 
@@ -87,7 +87,7 @@ function print_html_head($parameters=array()){
 
     if (isset($parameters['required_javascript']) and is_array($parameters['required_javascript'])){
         foreach($parameters['required_javascript'] as $v) {
-            echo '    <script type="text/javascript" src="'.htmlspecialchars($v).'"></script>'."\n";
+            echo '    <script type="text/javascript" src="'.htmlspecialchars($v).'" nonce="'.$parameters['nonce'].'"></script>'."\n";
         }
     }
 
@@ -122,12 +122,12 @@ function print_html_body_begin(&$parameters){
         $parameters['run_at_html_body_begin']($parameters);
 
     if (isset($parameters['prolog'])) echo $parameters['prolog'];
-    else virtual(multidomain_get_file($config->html_prolog));
+    else virtual($config->html_prolog);
 
     if (isset($parameters['title']) and $parameters['title']) echo $parameters['title'];
 
     if (isset($parameters['separator'])) echo $parameters['separator'];
-    else virtual(multidomain_get_file($config->html_separator));
+    else virtual($config->html_separator);
 
     echo "\n<div class=\"swMain\">\n";
 
@@ -150,7 +150,7 @@ function print_html_body_end(&$parameters){
     echo "</div><!-- swMain -->\n";
 
     if (isset($parameters['epilog'])) echo $parameters['epilog'];
-    else virtual(multidomain_get_file($config->html_epilog));
+    else virtual($config->html_epilog);
 
     echo "</body>\n";
 }
