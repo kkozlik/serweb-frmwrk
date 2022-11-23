@@ -47,8 +47,12 @@ class apu_base_class{
 
     protected $session;
 
-    /* constructor */
+    /* constructor - for backward compatibility with old code */
     function apu_base_class(){
+        self::__construct();
+    }
+
+    function __construct(){
         global $lang_str;
         $this->action="";
         /* set instance id for identification this object when multiple instances is used */

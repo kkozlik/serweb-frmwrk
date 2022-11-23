@@ -393,9 +393,11 @@ class Growable_Forms{
     function add_items_to_form(){
         /* sort items by the ordering */
         if ($this->item_order_var){
-            uasort($this->items, create_function('$a, $b',
-                'if ($a->'.$this->item_order_var.' == $b->'.$this->item_order_var.') return 0;
-                 return ($a->'.$this->item_order_var.' < $b->'.$this->item_order_var.') ? -1 : 1;'));
+            $item_order_var = $this->item_order_var;
+            uasort($this->items, function($a, $b) use ($item_order_var){
+                if ($a->$item_order_var == $b->$item_order_var) return 0;
+                return ($a->$item_order_var < $b->$item_order_var) ? -1 : 1;
+            });
         }
 
         foreach ($this->items as $k => $v){

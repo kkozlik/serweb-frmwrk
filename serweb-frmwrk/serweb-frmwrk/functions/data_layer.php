@@ -125,7 +125,7 @@ class CData_Layer{
                     $instances[$instance_name]->setup_by_another_instance($template_instance);
                 }
                 else{
-                    if (is_set($instances[$template_instance])){
+                    if (isset($instances[$template_instance])){
                         $instances[$instance_name]->setup_by_another_instance($instances[$template_instance]);
                     }
                     else{
