@@ -617,3 +617,23 @@ function getAbsolutePosition( oElement ) {
     }
 }
 
+
+/**
+ *  Execute an function named by string. See: https://stackoverflow.com/a/359910
+ *
+ *  You would call it like so:
+ *    `executeFunctionByName("My.Namespace.functionName", window, arguments);`
+ *
+ *  @param {string} functionName
+ *  @param {object} context
+ *  @returns
+ */
+function executeFunctionByName(functionName, context /*, args */) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    var namespaces = functionName.split(".");
+    var func = namespaces.pop();
+    for (var i = 0; i < namespaces.length; i++) {
+        context = context[namespaces[i]];
+    }
+    return context[func].apply(context, args);
+}

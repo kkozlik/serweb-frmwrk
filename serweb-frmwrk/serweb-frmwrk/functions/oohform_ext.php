@@ -159,13 +159,13 @@ class form_ext extends form{
                 /* if validator is set, call it */
                 if ($this->jvs_name) {
                     $str .= "  if (false != ".$this->jvs_name."_Validator(document.".$this->form_name.")) {\n";
-                    $str .= "    eval('document.".$this->form_name.".'+name+'_x.value=1'); \n";
+                    $str .= "    document['".$this->form_name.".'+name+'_x'].value=1; \n";
                     $str .= "    document.".$this->form_name.".submit(); \n";
                     $str .= "  }\n";
                 }
                 /* otherwise only run submit */
                 else {
-                    $str .= "    eval('document.".$this->form_name.".'+name+'_x.value=1'); \n";
+                    $str .= "    document['".$this->form_name.".'+name+'_x'].value=1; \n";
                     $str .= "  document.".$this->form_name.".submit(); \n";
                 }
                 $str .= "}\n";

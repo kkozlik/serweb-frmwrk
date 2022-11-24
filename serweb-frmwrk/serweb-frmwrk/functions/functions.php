@@ -6,15 +6,6 @@
  * @package   serweb
  */
 
-
-/* Hack making serweb to work in PHP4
-   for details see: http://acko.net/blog/php-clone
- */
-if (version_compare(phpversion(), '5.0') < 0) {
-    eval('function clone($object) { return $object; }');
-}
-
-
 /**
  *  Defining regular expressions
  *

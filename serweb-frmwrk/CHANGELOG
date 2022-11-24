@@ -5,6 +5,7 @@
 * unsafe_inline script removal
 * OOH form can register event handlers using addEventListener instead of inline `onXXX` property
 * growable_forms do not use inline javascript in `href` attribute
+* removed unsafe `eval()` stuff
 
 Version 2.2.3
 ==============

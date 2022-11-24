@@ -41,13 +41,6 @@ class Session {
 
 
   /**
-   * Marker: Did we already include the autoinit file?
-   *
-   * @var  boolean
-   */
-  var $in = false;
-
-  /**
    * This Array contains the registered things
    *
    * @var  array
@@ -661,14 +654,15 @@ class Session {
   function freeze() {
     $str="";
 
-    $this->serialize("this->in", $str);
-    $this->serialize("this->pt", $str);
+    if($this->pt){
+      $this->serialize("this->pt", $str);
 
-    reset($this->pt);
-    while ( list($thing) = each($this->pt) ) {
-      $thing=trim($thing);
-      if ( $thing ) {
-        $this->serialize("GLOBALS['".$thing."']", $str);
+      reset($this->pt);
+      while ( list($thing) = each($this->pt) ) {
+        $thing=trim($thing);
+        if ( $thing ) {
+          $this->serialize("GLOBALS['".$thing."']", $str);
+        }
       }
     }
 
@@ -680,9 +674,9 @@ class Session {
    *
    */
   function thaw() {
-	if (isset($_SESSION[$this->name])){
-		eval(sprintf(";%s",$_SESSION[$this->name]));
-	}
+    if (!empty($_SESSION[$this->name])){
+      eval(sprintf(";%s",$_SESSION[$this->name]));
+    }
 
   }
 
@@ -738,43 +732,5 @@ class Session {
         break;
     }
   } // end func put_headers
-
-
-  /**
-   * Reimport _GET into the global namespace previously overriden by session variables.
-   * @see  reimport_post_vars(), reimport_cookie_vars()
-   */
-  function reimport_get_vars() {
-    $this->reimport_any_vars("_GET");
-  } // end func reimport_get_vars
-
-
-  /**
-   * Reimport _POST into the global namespace previously overriden by session variables.
-   * @see  reimport_get_vars(), reimport_cookie_vars()
-   */
-  function reimport_post_vars() {
-    $this->reimport_any_vars("_POST");
-  } // end func reimport_post_vars
-
-
-  /**
-   * Reimport _COOKIE into the global namespace previously overriden by session variables.
-   * @see  reimport_post_vars(), reimport_fwr_vars()
-   */
-  function reimport_cookie_vars() {
-    $this->reimport_any_vars("_COOKIE");
-  } // end func reimport_cookie_vars
-
-
-  /**
-   *
-   * @var  array
-   */
-  function reimport_any_vars($arrayname) {
-    global $$arrayname;
-    $GLOBALS = array_merge ($GLOBALS, $$arrayname);
-  } // end func reimport_any_vars
-
 
 } // end func session

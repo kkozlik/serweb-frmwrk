@@ -565,7 +565,7 @@ Growable_Forms_ctl.prototype.init = function(form_name){
     }
 
     if (null != this.custom_init_fn){
-        eval(this.custom_init_fn+"(this)");
+        executeFunctionByName(this.custom_init_fn, window, this);
     }
 
     // Register onclick event handlers to add-item link
@@ -913,7 +913,7 @@ Growable_Forms_ctl.prototype.add_item = function(){
 Growable_Forms_ctl.prototype.add_item_callback = function(http_request){
     if (http_request.readyState == 4) {
 
-        var response = eval('(' + http_request.responseText + ')');;
+        var response = JSON.parse(http_request.responseText);
 
         // if table containing items does not exists, create it
         this.table_handler.create_table();
