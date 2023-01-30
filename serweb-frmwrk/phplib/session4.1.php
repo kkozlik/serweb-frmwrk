@@ -182,15 +182,25 @@ class Session {
     $this->set_tokenname();
     $this->put_headers();
 
+    if ( $this->mode=="cookie" and !isset($_COOKIE[$this->name])){
+      sw_log(__CLASS__."::".__FUNCTION__."(): Session cookie is not set!!! New session will be started.", PEAR_LOG_DEBUG);
+    }
+
     $ok = true;
     // check whether the session is already started and
     // start the session if it is not
-    if (session_id() === ""){
-        @$ok = session_start();
+    if ("" === $session_id = session_id()){
+      @$ok = session_start();
+      $this->id = session_id();
+
+      sw_log(__CLASS__."::".__FUNCTION__."(): New session started: $ok, Session ID: {$this->id}", PEAR_LOG_DEBUG);
+    }
+    else{
+      $this->id = $session_id;
+      sw_log(__CLASS__."::".__FUNCTION__."(): Session already exists. ID: {$this->id}", PEAR_LOG_DEBUG);
     }
 
-    $this->id = session_id();
-	$this->set_cookie();
+    $this->set_cookie();
 
     # set the  mode for this run
     if ( isset($this->fallback_mode)
@@ -254,6 +264,8 @@ class Session {
     if ("cookie" == $this->mode) {
       if ($this->lifetime > 0) $lifetime = time()+$this->lifetime*60;
       else $lifetime = 0;
+
+      sw_log(__CLASS__."::".__FUNCTION__."(): Setting cookie: '{$this->name}' to '{$this->id}'", PEAR_LOG_DEBUG);
 
       serwebSetCookie(
         $this->name,
