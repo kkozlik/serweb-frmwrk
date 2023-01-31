@@ -183,7 +183,9 @@ class Session {
     $this->put_headers();
 
     if ( $this->mode=="cookie" and !isset($_COOKIE[$this->name])){
-      sw_log(__CLASS__."::".__FUNCTION__."(): Session cookie is not set!!! New session will be started.", PEAR_LOG_DEBUG);
+      $referer = "NO REFERER";
+      if (!empty($_SERVER['HTTP_REFERER'])) $referer = $_SERVER['HTTP_REFERER'];
+      sw_log(__CLASS__."::".__FUNCTION__."(): Session cookie is not set!!! New session will be started. Referer: $referer", PEAR_LOG_DEBUG);
     }
 
     $ok = true;
