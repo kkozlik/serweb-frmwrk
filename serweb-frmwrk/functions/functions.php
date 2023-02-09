@@ -1213,7 +1213,7 @@ function sw_log($message, $priority = null, $opts=[]){
     //if custom log function is defined, use it for log errors
     if (!empty($config->custom_log_function)){
         if (!isset($opts['file']) || !isset($opts['line'])){
-            $db = debug_backtrace();
+            $db = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
             $opts['file'] = $db[0]['file'];
             $opts['line'] = $db[0]['line'];
         }
