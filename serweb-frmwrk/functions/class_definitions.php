@@ -254,7 +254,7 @@ class ErrorHandler{
      * @access public
      */
 
-    function &singleton() {
+    public static function &singleton() {
         static $instance = null;
 
         if (is_null($instance)) {
