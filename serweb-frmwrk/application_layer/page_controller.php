@@ -427,7 +427,7 @@ class page_controller{
      * return required data layer methods - static class
      * @static
      */
-    function get_required_data_layer_methods(){
+    public static function get_required_data_layer_methods(){
         return array();
     }
 

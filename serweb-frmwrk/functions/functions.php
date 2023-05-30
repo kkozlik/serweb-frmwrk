@@ -209,7 +209,7 @@ class Creg{
      *  @static
      *  @access public
      */
-    function &singleton(){
+    public static function &singleton(){
         static $instance;
 
         if(! isset($instance)) $instance = new Creg();

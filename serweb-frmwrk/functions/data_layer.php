@@ -88,7 +88,7 @@ class CData_Layer{
      *  @deprec
      */
 
-    function &create(){
+    public static function &create(){
         global $config;
 
         $obj = new CData_Layer();
@@ -111,7 +111,7 @@ class CData_Layer{
      *  @static
      *  @access public
      */
-    function &singleton($instance_name = null, $template_instance = null){
+    public static function &singleton($instance_name = null, $template_instance = null){
         static $instances = array();
 
         if (!$instance_name) $instance_name = "auth_user";
@@ -186,8 +186,7 @@ class CData_Layer{
 
         $loaded_modules = getLoadedModules();
 
-        reset($_data_layer_required_methods);
-        while (list(, $item) = each($_data_layer_required_methods)) {
+        foreach($_data_layer_required_methods as $item) {
 
             if (false ===  array_search($item, $this->_data_layer_loaded_methods)){ //if required method isn't loaded yet, load it
 
