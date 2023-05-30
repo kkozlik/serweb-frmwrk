@@ -13,39 +13,91 @@
  */
 class Creg{
 
-    var $alphanum;
-    var $mark;
-    var $reserved;
-    var $unreserved;
-    var $escaped;
-    var $user_unreserved;
-    var $user;
+    protected $SP;
+    protected $HTAB;
+    protected $alphanum;
+    protected $mark;
+    protected $reserved;
+    protected $unreserved;
+    protected $escaped;
+    protected $user_unreserved;
+    protected $uric;
+    protected $user;
+    protected $utf8_cont;
+    protected $utf8_nonascii;
 
-    var $port;
-    var $hex4;
-    var $hexseq;
-    var $hexpart;
-    var $ipv4address;
-    var $ipv6address;
-    var $ipv6reference;
+    protected $port;
+    protected $hex4;
+    protected $hexseq;
+    protected $hexpart;
+    protected $ipv4address;
+    protected $ipv6address;
+    protected $ipv6reference;
 
-    var $toplabel;
-    var $domainlabel;
-    var $hostname;
-    var $host;
+    protected $toplabel;
+    protected $domainlabel;
+    protected $hostname;
+    protected $host;
+    protected $domainname;
 
-    var $token;
-    var $param_unreserved;
-    var $paramchar;
-    var $pname;
-    var $pvalue;
-    var $uri_parameter;
-    var $uri_parameters;
+    protected $token;
+    protected $param_unreserved;
+    protected $paramchar;
+    protected $pname;
+    protected $pvalue;
+    protected $uri_parameter;
+    protected $uri_parameters;
+    protected $method;
 
-    var $address;
-    var $sip_address;
+    protected $transport_param;
+    protected $user_param;
+    protected $method_param;
+    protected $ttl_param;
+    protected $maddr_param;
+    protected $lr_param;
+    protected $other_param;
 
-    function Creg(){
+    protected $address;
+    protected $sip_address;
+    protected $sips_address;
+    protected $sip_s_address;
+    protected $srv_service;
+
+    protected $visual_separator;
+    protected $phonedigit;
+    protected $phonedigit_hex;
+    protected $local_number_digits;
+    protected $global_number_digits;
+
+    protected $phone_context;
+    protected $isdn_subaddress_param;
+    protected $extension_param;
+    protected $context_param;
+    protected $par;
+
+    protected $local_number;
+    protected $global_number;
+    protected $telephone_subscriber;
+    protected $tel_uri;
+
+    protected $sip_header_name;
+    protected $sip_header_value;
+    protected $sip_header;
+    protected $sip_header_js;
+
+    protected $phonenumber;
+    protected $phonenumber_strict;
+    protected $email;
+    protected $reason_phrase;
+    protected $reason_phrase_ascii;
+    protected $reason_phrase_js;
+    protected $reason_phrase_ascii_js;
+
+    protected $global_hex_digits;
+    protected $rn_descriptor;
+    protected $natural_num;
+
+    public function __construct(){
         global $config, $reg_validate_email;
 
         $this->SP=" ";
@@ -478,7 +530,7 @@ class Creg{
         if ($this->is_ipv4address($netmask)) return "decimal";
 
         // I am not sure about this regexp, can't find correct RFC now.
-        if (preg_match("/0x[0-9a-fA-F]{8}/")) return "hexadecimal";
+        if (preg_match("/0x[0-9a-fA-F]{8}/", $netmask)) return "hexadecimal";
 
         return false;
     }
@@ -952,249 +1004,6 @@ function send_mail($to, $text, $headers = array()){
     return $a;
 }
 
-/**
- *  Return path to file for specified language mutation
- *
- *  Path in this case mean filesystem path. This function searching in some
- *  directories and if corresponfing file is found, return path to it. Directories
- *  are scanned in this order:
- *      - dir for specified language
- *      - dir for default language
- *  If file isn't found, function return false
- *
- *  This function only prefix $filename by language (in which file exists) in
- *  order to it can be also used as path in html tree
- *
- *  @param string $filename     name of file is searching for
- *  @param string $ddir         subdirectory within html dir
- *  @param string $lang         language in "official" ISO 639 language code see {@link config_lang.php} for more info
- *  @return string              path to file on success, false on error
- */
-function get_file_by_lang($filename, $ddir, $lang){
-    global $config, $reference_language, $available_languages;
-
-    $dir=dirname(__FILE__); //html dir
-    $ln = $available_languages[$lang][2];
-    $ref_ln = $available_languages[$reference_language][2];
-
-    if (!empty($ddir) and substr($ddir, -1) != "/") $ddir.="/";
-
-    if (file_exists($dir."/".$ddir.$ln."/".$filename))
-        return $ln."/".$filename;
-
-    else if (file_exists($dir."/".$ddir.$ref_ln."/".$filename)){
-        sw_log("Useing file in default language (requested lang: ".$ln.") for filename: ".$filename, PEAR_LOG_DEBUG);
-        return $ref_ln."/".$filename;
-    }
-
-    else {
-        sw_log("File not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_WARNING);
-        return false;
-    }
-}
-
-/**
- *  Return path to button image
- *
- *  @param string $button   name of file with button image
- *  @param string $lang     language in "official" ISO 639 language code see {@link config_lang.php} for more info
- *  @return string
- */
-function get_path_to_buttons($button, $lang){
-    global $config;
-    return $config->img_src_path."int/".get_file_by_lang("buttons/".$button, "img/int", $lang);
-}
-
-/**
- *  Return path to text file for specified language mutation and concrete domain
- *
- *  Path in this case mean filesystem path. This function searching in some
- *  directories and if corresponfing file is found, return path to it. Directories
- *  are scanned in this order:
- *      - dir for specified domain and specified language
- *      - dir for specified domain and default language
- *      - dir for default domain and specified language
- *      - dir for default domain and default language
- *  If file isn't found, function return false
- *
- *  @param string $filename     name of file is searching for
- *  @param string $ddir         subdirectory within domain dir
- *  @param string $lang         language in "official" ISO 639 language code see {@link config_lang.php} for more info
- *  @param string $did          domain from which the file is requested. If not set, the DID of $config->domain is used
- *  @return string              path to file on success, false on error
- */
-function multidomain_get_lang_file($filename, $ddir, $lang, $did=null){
-    global $config, $reference_language, $available_languages;
-
-    $dir=dirname(__FILE__)."/domains/";
-    $ln = $available_languages[$lang][2];
-    $ref_ln = $available_languages[$reference_language][2];
-
-    if (is_null($did)) {
-        $did = get_did_of_virtualhost();
-        if (is_null($did) or false === $did){
-            sw_log("Useing file from default domain. Domain: ".$config->domain." not found", PEAR_LOG_WARNING);
-            $did = "_default";
-        }
-    }
-
-    if (!empty($ddir) and substr($ddir, -1) != "/") $ddir.="/";
-
-    if (file_exists($dir.$did."/".$ddir.$ln."/".$filename))
-        return $dir.$did."/".$ddir.$ln."/".$filename;
-
-    else if (file_exists($dir.$did."/".$ddir.$ref_ln."/".$filename)){
-        sw_log("Useing file in default language (requested lang: ".$ln.") for filename: ".$filename, PEAR_LOG_DEBUG);
-        return $dir.$did."/".$ddir.$ref_ln."/".$filename;
-    }
-
-    else if (file_exists($dir."_default/".$ddir.$ln."/".$filename)){
-        sw_log("Useing file from default domain for filename: ".$filename, PEAR_LOG_DEBUG);
-        return $dir."_default/".$ddir.$ln."/".$filename;
-    }
-
-    else if (file_exists($dir."_default/".$ddir.$ref_ln."/".$filename)){
-        sw_log("Useing file from default domain and in default language (requested lang: ".$ln.") for filename: ".$filename, PEAR_LOG_DEBUG);
-        return $dir."_default/".$ddir.$ref_ln."/".$filename;
-    }
-
-    else {
-        sw_log("Text file not found. Filename:".$filename.", Language:".$ln.", Subdir:".$ddir, PEAR_LOG_ERR);
-        return false;
-    }
-}
-
-/**
- *  Read txt file in specified language mutation, parse and saparate to headers and body and do replacements.
- *
- *  For more info about choice txt file read {@link multidomain_get_lang_file}
- *  Txt files in serweb (as emails, terms and conditions etc.) are stored in
- *  special format. At the beginning (but only at beginning) of these files may
- *  be comments. Lines with comments begins by "#". Rest of file is separated
- *  into two parts separated by empty line: headers and body.
- *
- *  Each header contain header name and header value. Each header must be on
- *  own line. Header name and header value is separated by ":".
- *
- *  Body is the rest of txt file after first empty line.
- *
- *  When txt file is readed, function replace all strings in form #@#some_name#@#
- *  by replacement. The parametr $replacements is array of pairs. First element
- *  of each pair is name of replacement and second element from pair is value
- *  by which is replaced.
- *
- *  Function's finding replacements in body and in header values.
- *
- *  Function return array with two keys: "headers" and "body". Body is only
- *  string. Headers contain associative array with header names as keys.
- *
- *  @param string $filename     name of file is searching for
- *  @param string $ddir         subdirectory in of domain dir
- *  @param string $lang         language in "official" ISO 639 language code see {@link config_lang.php} for more info
- *  @param array $replacements  see above
- *  @return array               parsed file or false on error
- */
-function read_lang_txt_file($filename, $ddir, $lang, $replacements){
-    $f = multidomain_get_lang_file($filename, $ddir, $lang);
-    if (!$f) {
-        sw_log("Can't find txt file ".$filename.", subdir:".$ddir.", lang:".$lang, PEAR_LOG_ERR);
-        return false;
-    }
-
-    return read_txt_file($f, $replacements);
-}
-
-/**
- *  Read txt file, parse and saparate to headers and body and do replacements.
- *
- *  Txt files in serweb (as emails, terms and conditions etc.) are stored in
- *  special format. At the beginning (but only at beginning) of these files may
- *  be comments. Lines with comments begins by "#". Rest of file is separated
- *  into two parts separated by empty line: headers and body.
- *
- *  Each header contain header name and header value. Each header must be on
- *  own line. Header name and header value is separated by ":".
- *
- *  Body is the rest of txt file after first empty line.
- *
- *  When txt file is readed, function replace all strings in form #@#some_name#@#
- *  by replacement. The parametr $replacements is array of pairs. First element
- *  of each pair is name of replacement and second element from pair is value
- *  by which is replaced.
- *
- *  Function's finding replacements in body and in header values.
- *
- *  Function return array with two keys: "headers" and "body". Body is only
- *  string. Headers contain associative array with header names as keys.
- *
- *  @param string $filename     name of file is searching for
- *  @param array $replacements  see above
- *  @return array               parsed file or false on error
- */
-function read_txt_file($filename, $replacements){
-    global $lang_set;
-
-    $fp = fopen($filename, "r");
-    if (!$fp){
-        sw_log("Can't open txt file ".$filename, PEAR_LOG_ERR);
-        return false;
-    }
-
-    $fcontent = "";
-    $accept_comments = true;
-    $reading_headers = true;
-    $headers = array();
-    $body = "";
-
-    while (!feof($fp)){
-        $line = fgets($fp);
-        if ((substr($line, 0, 1) == "#") and $accept_comments) continue;
-
-        /* accept comments only on begin of file */
-        $accept_comments = false;
-
-        /* after empty line begins body */
-        if (trim($line) == "") $reading_headers = false;
-
-        if ($reading_headers){
-            $h = explode(':', $line, 2);
-            $headers[strtolower(trim($h[0]))] = trim($h[1]);
-        }
-        else{
-            /* trim ends of lines of non empty lines */
-            if (trim($line) != "") $line = rtrim($line)." ";
-            $body .= $line;
-        }
-    }
-    fclose($fp);
-
-
-    /* get charset */
-    $file_charset = null;
-    if (isset($headers['content-type']) and
-        preg_match("/charset=([-a-z0-9]+)/i", $headers['content-type'], $regs)){
-
-        $file_charset = $regs[1];
-    }
-
-
-    foreach($replacements as $row){
-        if (!empty($file_charset) and !empty($lang_set['charset'])){
-            $row[1] = iconv($lang_set['charset'], $file_charset."//TRANSLIT", $row[1]);
-        }
-
-        //do replace in body
-        $body=str_replace("#@#".$row[0]."#@#", $row[1], $body);
-
-        //do replace in headers
-        foreach($headers as $k => $v){
-            $headers[$k] = str_replace("#@#".$row[0]."#@#", $row[1], $headers[$k]);
-        }
-    }
-
-    return array('headers' => $headers,
-                 'body' => $body);
-}
 
 /**
  *  Write to serweb log if logging is enabled
@@ -1405,48 +1214,6 @@ function getLoadedModules(){
         return array();
 }
 
-
-/**
- *  This function is used for method aggregation will work in PHP4 and PHP5
- *
- *  @param object object
- *  @param string class_name
- */
-function my_aggregate_methods(&$object, $class_name){
-
-    if (defined('PHP_MAJOR_VERSION') and defined('PHP_MINOR_VERSION') and
-        (PHP_MAJOR_VERSION > 5 or (PHP_MAJOR_VERSION == 5 and PHP_MINOR_VERSION >= 3))){
-
-        // If the PHP version is 5.3 and higher we could rely on __call() function
-        // of CData_Layer class.
-        //
-        // So do nothing
-
-        return true;
-    }
-
-    if (function_exists('aggregate_methods')){
-        return aggregate_methods($object, $class_name);
-    }
-
-    if (function_exists('runkit_class_adopt')){
-        return @runkit_class_adopt(get_class($object), $class_name);
-    }
-
-    if (function_exists('classkit_aggregate_methods')){
-        return @classkit_aggregate_methods(get_class($object), $class_name);
-    }
-
-    die("Function aggregate_methods() doesn't exists. This is probably because ".
-        "PHP 5 or later is running on this server. Try install Runkit or ".
-        "Classkit extension from PECL repository (http://pecl.php.net). ".
-        "Useing classkit is safe with ".
-        "PHP 5.0, but does not work with later versions of PHP. Useing runkit ".
-        "is experimental. Type 'pecl install -f runkit' on your command line ".
-        "for install the extension. And do not forget enable the extension in ".
-        "your php.ini file.");
-
-}
 
 /**
  *  This function return version 4 UUID by RFC4122, which is generating UUIDs

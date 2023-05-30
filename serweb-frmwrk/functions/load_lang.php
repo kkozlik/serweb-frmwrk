@@ -76,37 +76,17 @@ function lang_detect($str = '', $envType = ''){
 
 
 function determine_lang(){
-    global $config, $data, $available_languages;
-    $an = &$config->attr_names;
-    $did = null;
-
+    global $config, $available_languages;
 
     // Lang forced
     if (!empty($config->force_lang) && isset($available_languages[$config->force_lang])) {
         $_SESSION['lang'] = $config->force_lang;
     }
 
-
     // If session variable is set, obtain language from it
     if (isset($_SESSION['lang'])){
         if (isset($available_languages[$_SESSION['lang']])) return $_SESSION['lang'];
         else unset($_SESSION['lang']);
-    }
-
-    // Lang is not know yet
-    // try to findout user's language by checking user attribute
-
-    if (isset($_SESSION['auth']) and
-        is_a($_SESSION['auth'], 'Auth') and
-        $_SESSION['auth']->is_authenticated()){
-
-        $uid = $_SESSION['auth']->get_uid();
-        $did = $_SESSION['auth']->get_did(); //for checking domain attribute later
-
-        $attrs = &User_Attrs::singleton($uid);
-        $lang = lang_detect($attrs->get_attribute($an['lang']), 3);
-        if (false != $lang) return $lang;
-
     }
 
 
@@ -134,25 +114,6 @@ function determine_lang(){
         if (false != $lang) return $lang;
     }
 
-    // try to findout user's language by checking domain or global attribute
-
-    if (empty($config->do_not_set_lang_by_domain)){
-        if (is_null($did)){ // if user is not authenticated yet
-                            // get did of domain from http request
-            $data->add_method('get_did_by_realm');
-            $did = $data->get_did_by_realm($config->domain, null);
-            if (false === $did) $did = null;
-        }
-    }
-    else{
-        $did = null;
-    }
-
-    $o = array();
-    if (!is_null($did)) $o['did'] = $did;
-    $lang = lang_detect(Attributes::get_attribute($an['lang'], $o), 3);
-    if (false != $lang) return $lang;
-
 
     if (!is_null($lang) and isset($available_languages[$lang])) return $lang;
 
@@ -160,7 +121,6 @@ function determine_lang(){
     // Didn't catch any valid lang : we use the default settings
 
     return $config->default_lang;
-
 }
 
 /**

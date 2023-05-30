@@ -159,48 +159,8 @@ class SerwebUser {
         return $this->username;
     }
 
-    function get_domainname(){
-
-        if (!is_null($this->domainname)) return $this->domainname;
-
-        if (false === $did = $this->get_did()) return false;
-
-        $dh = &Domains::singleton();
-        if (false === $domainname = $dh->get_domain_name($did)) return false;
-        $this->domainname = $domainname;
-
-        return $this->domainname;
-    }
-
     function get_realm(){
         return $this->realm;
-    }
-
-    function get_uri(){
-
-        if (!is_null($this->uri)) return $this->uri->to_string();
-
-        $uh = &URIs::singleton($this->uid);
-        if (false === $uri = $uh->get_URI()) return false;
-        if (is_null($uri)) return "";
-        $this->uri = $uri;
-
-        return $this->uri->to_string();
-    }
-
-    function get_did(){
-        global $data_auth;
-
-        if (!is_null($this->did)) return $this->did;
-
-        $data_auth->add_method('get_did_by_realm');
-
-        $opt = array('check_disabled_flag' => false);
-        if (false === $did = $data_auth->get_did_by_realm($this->realm, $opt)) return false;
-
-        $this->did = $did;
-
-        return $this->did;
     }
 
     function to_get_param($param = null){
@@ -227,8 +187,7 @@ class SerwebUser {
 
     function to_smarty(){
         return array('uname' => $this->username,
-                     'realm' => $this->realm,
-                     'domain'=> $this->get_domainname());
+                     'realm' => $this->realm);
     }
 }
 
@@ -273,16 +232,12 @@ class ErrorHandler{
      *  @return none
      */
 
-    function add_error($message){
+    public static function add_error($message){
 
-        if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
-        else $in = &ErrorHandler::singleton();
+        $in = &ErrorHandler::singleton();
 
-        if (is_array($message)){
-            $in->errors = array_merge($in->errors, $message);
-        }
-        else
-            $in->errors[] = $message;
+        if (is_array($message)) $in->errors = array_merge($in->errors, $message);
+        else                    $in->errors[] = $message;
     }
 
     /**
@@ -295,10 +250,9 @@ class ErrorHandler{
      *  @return none
      */
 
-    function log_errors($err_object){
+    public static function log_errors($err_object){
 
-        if (isset($this) and is_a($this, 'ErrorHandler')) $in = &$this;
-        else $in = &ErrorHandler::singleton();
+        $in = &ErrorHandler::singleton();
 
         log_errors($err_object, $in->errors);
     }
@@ -329,313 +283,6 @@ class ErrorHandler{
         return $in->errors;
     }
 }
-
-/**
- *  Class handling domains
- *
- *  @package    serweb
- */
-class Domains{
-
-    var $domains = null;
-    var $domain_names = null;
-
-    /**
-     * Return a reference to a Domains instance, only creating a new instance
-     * if no Domains instance currently exists.
-     *
-     * You should use this if there are multiple places you might create a
-     * Domains, you don't want to create multiple instances, and you don't
-     * want to check for the existance of one each time. The singleton pattern
-     * does all the checking work for you.
-     *
-     * <b>You MUST call this method with the $var = &Domains::singleton()
-     * syntax. Without the ampersand (&) in front of the method name, you will
-     * not get a reference, you will get a copy.</b>
-     *
-     * @access public
-     */
-
-    function &singleton() {
-        $obj =  &StaticVarHandler::getvar("Domains", 0, false);
-
-        if (is_null($obj)) {
-            $obj = new Domains();
-        }
-
-        return $obj;
-    }
-
-    /**
-     *  Free memory ocupied by instance of Domains class
-     *
-     *  @access public
-     *  @static
-     */
-
-    function free() {
-        StaticVarHandler::getvar("Domains", 0, true);
-    }
-
-    /**
-     *  Flush all cached domains. Next call of get_domains() method will reload
-     *  them from DB.
-     */
-    function flush(){
-        $this->domains = null;
-        $this->domain_names = null;
-    }
-
-    /*
-     *  Load info about domains from DB
-     */
-    function load_domains(){
-        global $data, $config;
-
-        if (!$config->multidomain){
-            $this->domains = array();
-            $this->domain_names = array();
-
-            $this->domains[$config->domain] = array('did' => $config->default_did,
-                                                    'name' => $config->domain,
-                                                    'disabled' => false,
-                                                    'canon' => true);
-            $this->domain_names[$config->default_did][] = $config->domain;
-            return true;
-        }
-
-        $o = array('order_by' => 'canon',   //canonical domain names will be first
-                   'order_desc' => true);
-
-        $data->add_method('get_domain');
-        if (false === $domains = $data->get_domain($o)) return false;
-
-        $this->domains = array();
-        $this->domain_names = array();
-
-        foreach($domains as $k => $v){
-            $this->domains[$v['name']] = &$domains[$k];
-            $this->domain_names[$v['did']][] = $v['name'];
-        }
-
-        return true;
-    }
-
-    /**
-     *  Return array of domains indexed by domain names
-     *
-     *  @return array               array of domains or FALSE on error
-     */
-    function &get_domains(){
-
-        if (is_null($this->domains) and false === $this->load_domains())
-            return false;
-
-        return $this->domains;
-    }
-
-    /**
-     *  Return name of domain with given did
-     *
-     *  If canonical name is set, is returned preferentially
-     *  On error this function return FALSE. If domain with given $did doesn't
-     *  exist, NULL is returned
-     *
-     *  @param  string  $did    domain id
-     *  @return string          domain name or FALSE on error
-     */
-    function get_domain_name($did){
-
-        if (is_null($this->domain_names) and false === $this->load_domains())
-            return false;
-
-        if (!isset($this->domain_names[$did][0])) return null;
-
-        return $this->domain_names[$did][0];
-    }
-
-    /**
-     *  Return array of all names of domain with given did
-     *
-     *  On error this function return FALSE. If domain with given $did doesn't
-     *  exist, NULL is returned
-     *
-     *  @param  string  $did    domain id
-     *  @return array           array of domain names or FALSE on error
-     */
-    function get_domain_names($did){
-
-        if (is_null($this->domain_names) and false === $this->load_domains())
-            return false;
-
-        if (!isset($this->domain_names[$did])) return null;
-
-        return $this->domain_names[$did];
-    }
-
-    /**
-     *  Return ID of domain with given domain name
-     *
-     *  On error this function return FALSE. If domain with given name doesn't
-     *  exist, NULL is returned
-     *
-     *  @param  string  $domainname domain name
-     *  @return string              domain ID or FALSE on error
-     */
-    function get_did($domainname){
-
-        if (is_null($this->domain_names) and false === $this->load_domains())
-            return false;
-
-        if (!isset($this->domains[$domainname]['did'])) return null;
-
-        return $this->domains[$domainname]['did'];
-    }
-
-    /**
-     *  Return array of all alocated domain IDs
-     *
-     *  @return array   array of domain IDs or FALSE on error
-     */
-    function get_all_dids(){
-
-        if (is_null($this->domain_names) and false === $this->load_domains())
-            return false;
-
-        return array_keys($this->domain_names);
-    }
-
-
-    /**
-     *  Return array of pairs (ID, name)
-     *
-     *  array is indexed by IDs
-     *
-     *  @return array   array or FALSE on error
-     */
-
-    function get_id_name_pairs(){
-
-        if (is_null($this->domain_names) and false === $this->load_domains())
-            return false;
-
-        $out = array();
-
-        foreach($this->domain_names as $k => $v)
-            $out[$k] = $v[0];
-
-        return $out;
-    }
-
-
-    /**
-     *  Sort array of domains by single levels of domain name.
-     *
-     *  Sort by top-level (e.g. .org) then by 2nd level (e.g. iptel in
-     *  'iptel.org') etc.
-     *
-     *  Keys of array are preserved
-     *
-     *  @param  array
-     *  @return none
-     */
-    function sort_domains(&$domains){
-
-        uasort($domains, array('Domains', 'sort_cmp_funct'));
-    }
-
-
-    /**
-     *  Comparsion function for sort_domains()
-     *
-     *  @access private
-     */
-    function sort_cmp_funct($a, $b){
-
-        /*  separate the domain names to top-level and the rest
-            top-level parts are in x_tail variable, the rests are in x_nose
-         */
-        if (false === $dot = strrpos($a, ".")){ $a_nose=""; $a_tail=$a; }
-        else {$a_nose=substr($a, 0, $dot); $a_tail=substr($a, $dot+1);}
-
-        if (false === $dot = strrpos($b, ".")){ $b_nose=""; $b_tail=$b; }
-        else {$b_nose=substr($b, 0, $dot); $b_tail=substr($b, $dot+1);}
-
-        /* domain names are equal */
-        if ($a_tail == $b_tail and $a_tail=='') return 0;
-
-        /* top-levels are equal call this function recursively to the rests of domain names */
-        if ($a_tail == $b_tail) return Domains::sort_cmp_funct($a_nose, $b_nose);
-
-        /* compare the top levels */
-        if ($a_tail < $b_tail) return -1;
-        else return 1;
-    }
-
-
-    /**
-     *  Generate DID for new domain
-     *
-     *  @static
-     *  @param  string  domainname  new name of domain
-     *  @return string              did or FALSE on error
-     */
-    function generate_new_did($domainname){
-        global $data, $config;
-
-        $an = &$config->attr_names;
-        $errors = array();
-
-        /* get format of did to generate */
-        $ga = &Global_attrs::singleton();
-        if (false === $format = $ga->get_attribute($an['did_format'])) return false;
-
-
-        switch ($format){
-        /* numeric DID */
-        case 1:
-            $data->add_method('get_new_domain_id');
-            if (false === $did = $data->get_new_domain_id(null, $errors)) {
-                ErrorHandler::add_error($errors);
-                return false;
-            }
-            break;
-
-        /* UUID by rfc4122 */
-        case 2:
-            $did = rfc4122_uuid();
-
-            /* check if did doesn't exists */
-            $dh = &Domains::singleton();
-            if (false === $dids = $dh->get_all_dids()) return false;
-
-            while (in_array($did, $dids, true)){
-                $did = rfc4122_uuid();
-            }
-            break;
-
-        /* DID as 'domainname' */
-        case 0:
-        default:  /* if format of UIDs is not set, assume the first choice */
-
-            if (!$domainname) $domainname = "default_domain";   // if domain name is not provided
-            $did = $domainname;
-
-            /* check if did doesn't exists */
-            $dh = &Domains::singleton();
-            if (false === $dids = $dh->get_all_dids()) return false;
-
-            $i = 0;
-            while (in_array($did, $dids, true)){
-                $did = $domainname."_".$i++;
-            }
-            break;
-        }
-
-        return $did;
-    }
-}
-
 
 
 /**

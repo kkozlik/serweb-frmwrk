@@ -220,9 +220,6 @@ class CData_Layer{
                     require_once ($_SERWEB["datadir"] . "method.".$item.".php");
                 }
 
-                //agregate methods of required class to this object
-                my_aggregate_methods($this, "CData_Layer_".$item);
-
                 //add method to $_data_layer_loaded_methods array
                 $this->_data_layer_loaded_methods[] = $item;
 

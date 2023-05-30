@@ -27,8 +27,6 @@ $config->default_lang = 'en-utf-8';
 */
 $config->force_lang = '';
 
-$config->do_not_set_lang_by_domain=true;
-
 /* ------------------------------------------------------------*/
 /* Default timezone                                            */
 /* ------------------------------------------------------------*/
