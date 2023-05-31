@@ -42,7 +42,7 @@ class Auth {
 	 * constructor
 	 */
 
-	function Auth(){
+	public function __construct(){
 	}
 
 	function check_feature($f){

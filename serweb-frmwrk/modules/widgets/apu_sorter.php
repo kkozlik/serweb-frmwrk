@@ -59,7 +59,7 @@ class apu_sorter extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_sorter(){
+    public function __construct(){
         parent::apu_base_class();
 
         /* set default values to $this->opt */

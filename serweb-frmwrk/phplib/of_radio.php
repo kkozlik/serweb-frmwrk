@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *  OOHForms: radio
  *
  *  @author   Copyright (c) 1998 by Jay Bloodworth
@@ -17,7 +17,7 @@ class of_radio extends of_element {
     var $valid_e;
 
     // Constructor
-    function of_radio($a) {
+    public function __construct($a) {
         $this->setup_element($a);
     }
 
@@ -43,9 +43,9 @@ class of_radio extends of_element {
         }
 
         $str .= "<input type='radio' name='$this->name' id='".$this->name."_$val' value=\"".htmlspecialchars($val, ENT_QUOTES)."\"";
-        if ($this->extrahtml) 
+        if ($this->extrahtml)
             $str .= " $this->extrahtml";
-        if ($this->value==$val) 
+        if ($this->value==$val)
             $str .= " checked";
         $str .= " class=\"inpRadio";
         if (!empty($this->class)){
@@ -71,7 +71,7 @@ class of_radio extends of_element {
 
     function self_get_frozen($val,$which, &$count) {
         $str = "";
-    
+
         $x = 0;
         if ($this->value==$val) {
             $x = 1;
@@ -81,14 +81,14 @@ class of_radio extends of_element {
             $str .= "<table border=1>";
         }
         $str .= "<tr><td>&nbsp</tr></td></table>\n";
-    
+
         $count = $x;
         return $str;
     }
-  
+
     function self_get_js($ndx_array) {
         $str = "";
-    
+
         if ($this->valid_e) {
             $n = $this->name;
             $str .= "var l = f.${n}.length;\n";

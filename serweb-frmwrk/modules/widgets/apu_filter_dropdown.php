@@ -59,7 +59,7 @@ class apu_filter_dropdown extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_filter_dropdown(){
+    public function __construct(){
         global $lang_str;
         parent::apu_base_class();
 
@@ -80,8 +80,6 @@ class apu_filter_dropdown extends apu_base_class{
 
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['b_ok']);
-
-
     }
 
     function set_base_apu(&$apu){

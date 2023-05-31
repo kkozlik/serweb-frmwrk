@@ -54,7 +54,7 @@ class apu_refresh extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_refresh(){
+    public function __construct(){
         global $lang_str;
         parent::apu_base_class();
 

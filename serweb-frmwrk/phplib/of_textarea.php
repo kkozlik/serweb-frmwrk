@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *	OOHForms: textarea
  *
  *	@author   Copyright (c) 1998 by Jay Bloodworth
@@ -27,7 +27,7 @@ class of_textarea extends of_element {
   var $valid_e;
 
   // Constructor
-  function of_textarea($a) {
+  public function __construct($a) {
     $this->setup_element($a);
   }
 
@@ -35,9 +35,9 @@ class of_textarea extends of_element {
     $str  = "";
     $str .= "<textarea name='$this->name' id='$this->name'";
     $str .= " rows='$this->rows' cols='$this->cols'";
-    if ($this->wrap) 
+    if ($this->wrap)
       $str .= " wrap='$this->wrap'";
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
       $str .= " $this->extrahtml";
 
     if (!empty($this->class)){
@@ -60,7 +60,7 @@ class of_textarea extends of_element {
     }
 
     $str .= ">" . htmlspecialchars($this->value) ."</textarea>";
-    
+
     $count = 1;
     return $str;
   }
@@ -74,7 +74,7 @@ class of_textarea extends of_element {
     $str .= "<table border=1><tr><td>\n";
     $str .=  nl2br($this->value);
     $str .= "\n</td></tr></table>\n";
-    
+
     $count = 1;
     return $str;
   }
@@ -131,25 +131,25 @@ class of_textarea extends of_element {
     if (!is_array($val)) $val = array($val);
     reset($val);
     while (list($k,$v) = each($val)) {
-      if ($this->length_e && 
-            ((strlen($v) < $this->minlength) || 
+      if ($this->length_e &&
+            ((strlen($v) < $this->minlength) ||
              (!is_null($this->maxlength) && (strlen($v) > $this->maxlength))))
         return $this->length_e;
-        
+
       if ($this->min_length_e && (strlen($v) < $this->minlength))
         return $this->min_length_e;
-        
+
       if ($this->max_length_e && (strlen($v) > $this->maxlength))
         return $this->max_length_e;
-        
-      if ($this->valid_e && (((isset($this->icase) and $this->icase) && 
+
+      if ($this->valid_e && (((isset($this->icase) and $this->icase) &&
             !preg_match('/'.$this->valid_regex.'/i', $v)) ||
            (!(isset($this->icase) and $this->icase) &&
             !preg_match('/'.$this->valid_regex.'/', $v))))
         return $this->valid_e;
     }
     return false;
-  } 
+  }
 } // end TEXTAREA
 
 ?>

@@ -59,9 +59,9 @@ class apu_filter extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_filter(){
+    public function __construct(){
         global $lang_str;
-        parent::apu_base_class();
+        parent::__construct();
 
         /* set default values to $this->opt */
         $this->opt['filter_name'] =         '';
