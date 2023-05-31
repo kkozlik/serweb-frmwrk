@@ -40,10 +40,10 @@ if (isset($GLOBALS['_phplib_page_open']['auth'])){
          *  contructor
          */
 
-        function phplib_Auth(){
+        public function __construct(){
             global $config;
-            /* call parent's constructor */
-            $this->Auth();
+
+            parent::__construct();
 
             $this->lifetime = $config->auth_lifetime;
             $this->auth['adm_domains'] = null;
