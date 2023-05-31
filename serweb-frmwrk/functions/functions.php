@@ -1077,8 +1077,10 @@ function sw_log_exception(Throwable $e, $priority = PEAR_LOG_CRIT){
 function action_log($screen_name, $action, $msg=null, $success = true, $opt = array()){
     global $config;
 
+    $eh = ErrorHandler::singleton();
+
     $opt['action_str'] = is_array($action) ? $action['action'] : $action;
-    $opt['errors'] = ErrorHandler::get_errors_array();
+    $opt['errors'] = $eh->get_errors_array();
 
     if (!empty($config->custom_act_log_function)){
         call_user_func($config->custom_act_log_function, $screen_name, $action, $msg, $success, $opt);

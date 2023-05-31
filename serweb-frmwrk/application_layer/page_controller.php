@@ -816,9 +816,10 @@ class page_controller{
      *  @return none                    this function finish execution of script
      */
     function reload($get_param=array()){
-        global $sess;
+        global $sess; //TODO: replace with phplib_session class
 
-        $errors = ErrorHandler::get_errors_array();
+        $eh = ErrorHandler::singleton();
+        $errors = $eh->get_errors_array();
 
         if ($this->messages or $errors){
             $msg_id = uniqID();
@@ -926,8 +927,10 @@ class page_controller{
      *  @access private
      */
     function _create_html_form(){
+        $eh = ErrorHandler::singleton();
+
         foreach($this->apu_objects as $key=>$val){
-            $this->apu_objects[$key]->create_html_form(ErrorHandler::get_errors_array());
+            $this->apu_objects[$key]->create_html_form($eh->get_errors_array());
         }
 
         if ($this->shared_html_form) {
@@ -963,10 +966,12 @@ class page_controller{
                 }
             }
 
+            $eh = ErrorHandler::singleton();
+
             /* validate html form by all application units */
             foreach($this->apu_objects as $key=>$val){
                 if (isset($this->apu_objects[$key]->action['validate_form']) and $this->apu_objects[$key]->action['validate_form']){
-                    if (false === $this->apu_objects[$key]->validate_form(ErrorHandler::get_errors_array())) {
+                    if (false === $this->apu_objects[$key]->validate_form($eh->get_errors_array())) {
                         return false;
                     }
                 }
@@ -1029,10 +1034,12 @@ class page_controller{
                  !(isset($this->apu_objects[$key]->action['reload']) and $this->apu_objects[$key]->action['reload']))
                continue;
 
+            $eh = ErrorHandler::singleton();
+
             /* call the action method */
             $_apu = &$this->apu_objects[$key];
             $_method = "action_".$this->apu_objects[$key]->action['action'];
-            $err_ref = ErrorHandler::get_errors_array();
+            $err_ref = $eh->get_errors_array();
             $_retval = call_user_func_array(array(&$_apu, $_method), array(&$err_ref));
 
             /* check for the error */
@@ -1291,8 +1298,9 @@ class page_controller{
             $cfg->domains_path =        $config->domains_path;
             $smarty->assign("cfg", $cfg);
 
+            $eh = ErrorHandler::singleton();
+            $errors = $eh->get_errors_array();
 
-            $errors = ErrorHandler::get_errors_array();
             $page_attributes['errors']=&$errors;
             $page_attributes['message']=&$this->messages;
             $page_attributes['nonce'] = $this->get_nonce();
