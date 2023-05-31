@@ -23,7 +23,7 @@ class Ctab{
      *  @param  string  $name       Name of tab. If starting by '@' is translated by $lang_str array
      *  @param  string  $page       Script which generate html page after click on this tab
      */
-    function Ctab($enabled, $name, $page){
+    public function __construct($enabled, $name, $page){
         $this->name = $name;
         $this->page = $page;
         $this->enabled = $enabled;
@@ -313,7 +313,7 @@ class Shm_Semaphore{
      *  @param  int     $max_acquire    The number of processes that can acquire the semaphore simultaneously
      *  @param  int     $perm           permission bits
      */
-    function Shm_Semaphore($path_name, $proj, $max_acquire = 1, $perm=0666){
+    public function __construct($path_name, $proj, $max_acquire = 1, $perm=0666){
         $key = ftok($path_name, $proj);
         $this->max_acquire = $max_acquire;
         $this->perm = $perm;
@@ -361,7 +361,7 @@ class Filter {
     var $asterisks=true;
     var $case_sensitive = false;
 
-    function Filter($name, $value=null, $op="=", $asterisks=false, $case_sensitive=false){
+    public function __construct($name, $value=null, $op="=", $asterisks=false, $case_sensitive=false){
         $this->name = $name;
         $this->value = $value;
         $this->op = $op;
@@ -476,7 +476,7 @@ class ModuleCallback{
     /** callback function */
     var $fn;
 
-    function ModuleCallback($module, $fn){
+    public function __construct($module, $fn){
         $this->module = $module;
         $this->fn = $fn;
     }
