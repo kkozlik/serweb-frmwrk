@@ -1157,8 +1157,8 @@ function log_errors($err_object, &$errors){
     $errors[] = $err_message;
 
     $userInfo = "";
-    if (method_exists($e->pear_err, 'getUserInfo')) $userInfo = $e->pear_err->getUserInfo();
-    $log_message = $e->pear_err->getMessage()." - ".$userInfo;
+    if (method_exists($err_object, 'getUserInfo')) $userInfo = $err_object->getUserInfo();
+    $log_message = $err_object->getMessage()." - ".$userInfo;
 
     //if custom log function is defined, use it for log errors
     if (!empty($config->custom_log_function)){

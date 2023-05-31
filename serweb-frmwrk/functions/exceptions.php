@@ -4,6 +4,9 @@
 Class PearErrorException extends RuntimeException {
     var $pear_err;
 
+    /**
+     * @param mixed $err_obj
+     */
     public function __construct($err_obj){
         parent::__construct($err_obj->getMessage());
 
