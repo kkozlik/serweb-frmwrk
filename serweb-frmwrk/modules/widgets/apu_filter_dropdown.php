@@ -42,6 +42,7 @@ class apu_filter_dropdown extends apu_base_class{
     var $form_elements;
     var $get_params = array();
     var $filter_applied = false;
+    protected $base_apu = null;
 
 
     /**

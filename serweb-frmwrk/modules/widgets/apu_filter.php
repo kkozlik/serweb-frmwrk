@@ -42,6 +42,7 @@ class apu_filter extends apu_base_class{
     var $labels = array();
     var $get_params = array();
     var $filter_applied = false;
+    protected $base_apu = null;
 
 
     /**

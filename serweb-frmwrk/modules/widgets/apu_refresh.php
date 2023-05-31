@@ -37,7 +37,7 @@
 class apu_refresh extends apu_base_class{
     var $form_elements;
     var $get_params = array();
-    var $base_apu = null;
+    protected $base_apu = null;
 
 
     /**

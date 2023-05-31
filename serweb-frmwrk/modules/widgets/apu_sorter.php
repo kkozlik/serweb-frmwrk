@@ -41,6 +41,8 @@ class apu_sorter extends apu_base_class{
     var $form_elements;
     var $col_to_sort = null;
     var $get_params = array();
+    protected $base_apu = null;
+    protected $sort_columns;
 
 
     /**
