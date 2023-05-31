@@ -41,13 +41,6 @@ class Session {
 
 
   /**
-   * This Array contains the registered things
-   *
-   * @var  array
-   */
-  var $pt = array();
-
-  /**
   * Current session id.
   *
   * @var  string
@@ -339,69 +332,6 @@ class Session {
 
 
   /**
-   * Register the variable(s) that should become persistent.
-   *
-   * @param   mixed String with the name of one or more variables seperated by comma
-   *                 or a list of variables names: "foo"/"foo,bar,baz"/{"foo","bar","baz"}
-   * @access public
-   */
-  function register ($var_names) {
-    if (!is_array($var_names)) {
-      // spaces spoil everything
-      $var_names = trim($var_names);
-      $var_names=explode(",", $var_names);
-    }
-
-    reset($var_names);
-    while ( list(,$thing) = each($var_names) ) {
-      $thing=trim($thing);
-      if ( $thing ) {
-        $this->pt[$thing] = true;
-      }
-    }
-  } // end func register
-
-
-  /**
-   * see if a variable is registered in the current session
-   *
-   * @param  $name a string with the variable name
-   * @return false if variable not registered true on success.
-   * @access public
-   */
-  function is_registered($name) {
-    if (isset($this->pt[$name]) && $this->pt[$name] == true)
-      return true;
-    return false;
-  } // end func is_registered
-
-
-
-  /**
-   * Recall the session registration for named variable(s)
-   *
-   * @param	  mixed   String with the name of one or more variables seperated by comma
-   *                   or a list of variables names: "foo"/"foo,bar,baz"/{"foo","bar","baz"}
-   * @access public
-   */
-  function unregister($var_names) {
-    if (!is_array($var_names)) {
-      // spaces spoil everything
-      $var_names = trim($var_names);
-      $var_names=explode(",", $var_names);
-    }
-
-    reset($var_names);
-    while (list(,$var_name) = each($var_names)) {
-      $var_name = trim($var_name);
-      if ($var_name) {
-        unset($this->pt[$var_name]);
-      }
-    }
-  } // end func unregister
-
-
-  /**
    * Delete the cookie holding the session id.
    *
    * RFC: is this really needed? can we prune this function?
@@ -493,14 +423,6 @@ class Session {
 
 
   /**
-   * @see url()
-   */
-  function purl($url) {
-    print $this->url($url);
-  } // end func purl
-
-
-  /**
    * Get current request URL.
    *
    * WARNING: I'm not sure with the $this->url() call. Can someone check it?
@@ -522,142 +444,6 @@ class Session {
 
 
   /**
-   * Print the current URL
-   * @return void
-   */
-  function pself_url() {
-    print $this->self_url();
-  } // end func pself_url
-
-
-  /**
-   * Stores session id in a hidden variable (part of a form).
-   *
-   * @return string
-   * @access public
-   */
-  function get_hidden_session() {
-
-    if ($this->trans_id_enabled)
-      return "";
-    else
-      return sprintf('<input type="hidden" name="%s" value="%s">',
-                    $this->name,
-                    $this->id
-      );
-
-  } // end fun get_hidden_session
-
-
-  /**
-   * @see  get_hidden_session
-   * @return   void
-   */
-  function hidden_session() {
-    print $this->get_hidden_session();
-  } // end func hidden_session
-
-
-
-  /**
-   * Prepend variables passed into an array to a query string.
-   *
-   * @param  array   $qarray an array with var=>val pairs
-   * @param  string  $query_string probably getenv ('QUERY_STRING')
-   * @return string  the resulting quetry string, of course :)
-   * @access public
-   */
-  function add_query($qarray, $query_string = '') {
-
-    ('' == $query_string) && ($query_string = getenv ('QUERY_STRING'));
-    $qstring = $query_string . (strrpos ($query_string, '?') == false ? '?' : '&');
-
-    foreach ($qarray as $var => $val) {
-      $qstring .= sprintf ( '%s=%s&', $var, urlencode ($val)) ;
-    }
-
-    return $qstring;
-  } // end func add_query
-
-
-  /**
-   * @see  add_query()
-   */
-  function padd_query ($qarray, $query_string = '') {
-    print $this->add_query($qarray, $query_string);
-  } // end func padd_query
-
-  /**
-   * appends a serialized representation of $$var
-   * at the end of $str.
-   *
-   * To be able to serialize an object, the object must implement
-   * a variable $classname (containing the name of the class as string)
-   * and a variable $persistent_slots (containing the names of the slots
-   * to be saved as an array of strings).
-   *
-   * @return string
-   */
-  function serialize($var, &$str) {
-    static $t,$l,$k;
-
-    ## Determine the type of $$var
-    eval("\$t = gettype(\$$var);");
-    switch ( $t ) {
-
-      case "array":
-        ## $$var is an array. Enumerate the elements and serialize them.
-        eval("reset(\$$var); \$l = gettype(list(\$k)=each(\$$var));");
-        $str .= "\$$var = array(); ";
-        while ( "array" == $l ) {
-          ## Structural recursion
-          $this->serialize($var."['".preg_replace("/([\\'])/", "\\\\1", $k)."']", $str);
-          eval("\$l = gettype(list(\$k)=each(\$$var));");
-        }
-
-      break;
-      case "object":
-        ## $$var is an object. Enumerate the slots and serialize them.
-        eval("\$k = \$${var}->classname; \$l = reset(\$${var}->persistent_slots);");
-        $str.="\$$var = new $k; ";
-        while ( $l ) {
-          ## Structural recursion.
-          $this->serialize($var."->".$l, $str);
-          eval("\$l = next(\$${var}->persistent_slots);");
-        }
-
-      break;
-
-      case "integer":
-      case "double":
-      case "float":
-        eval("\$l = \$$var;");
-        $str.="\$$var = ".$l."; ";
-
-      break;
-
-      case "boolean":
-        eval("\$l = \$$var;");
-        $str.="\$$var = ".($l ? "TRUE" : "FALSE")."; ";
-      break;
-
-      case "NULL":
-        $str.="\$$var = NULL; ";
-
-      break;
-
-      case "string":
-      default:
-        ## $$var is an atom. Extract it to $l, then generate code.
-        eval("\$l = \$$var;");
-        $str.="\$$var = '".preg_replace("/([\\'])/", "\\\\1", $l)."'; ";
-      break;
-    }
-  } // end func serialze
-
-
-
-  /**
    * freezes all registered things ( scalar variables, arrays, objects )
    * by saving all registered things to $_SESSION.
    *
@@ -666,21 +452,6 @@ class Session {
    *
    */
   function freeze() {
-    $str="";
-
-    if($this->pt){
-      $this->serialize("this->pt", $str);
-
-      reset($this->pt);
-      while ( list($thing) = each($this->pt) ) {
-        $thing=trim($thing);
-        if ( $thing ) {
-          $this->serialize("GLOBALS['".$thing."']", $str);
-        }
-      }
-    }
-
-    $_SESSION[$this->name] = $str;
   }
 
   /**
@@ -688,10 +459,6 @@ class Session {
    *
    */
   function thaw() {
-    if (!empty($_SESSION[$this->name])){
-      eval(sprintf(";%s",$_SESSION[$this->name]));
-    }
-
   }
 
   /**
