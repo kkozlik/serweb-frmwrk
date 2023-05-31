@@ -597,7 +597,6 @@ class page_controller{
      *  @return string
      */
     function url($url, $unique = true){
-        global $sess;
 
         /* collect all get params to one string */
         $get_param = implode('&', $this->global_get_params_to_str_array());
@@ -612,7 +611,7 @@ class page_controller{
             $url .= ($get_param ? $param_separator.$get_param : '');
         }
 
-        if ($sess instanceof Session) return $sess->url($url);
+        if (PHPlib::$session instanceof Session) return PHPlib::$session->url($url);
         else return $url;
     }
 
@@ -816,7 +815,6 @@ class page_controller{
      *  @return none                    this function finish execution of script
      */
     function reload($get_param=array()){
-        global $sess; //TODO: replace with phplib_session class
 
         $eh = ErrorHandler::singleton();
         $errors = $eh->get_errors_array();
@@ -840,8 +838,8 @@ class page_controller{
         $url = $this->url_for_reload.$param_separator."kvrk=".uniqID("").
                             ($get_param ? '&'.$get_param : '');
 
-        if ($sess instanceof Session)   Header("Location: ".$sess->url($url));
-        else                            Header("Location: ".$url);
+        if (PHPlib::$session instanceof Session)   Header("Location: ".PHPlib::$session->url($url));
+        else                                       Header("Location: ".$url);
 
         /* break the script execution */
         page_close();

@@ -301,7 +301,6 @@ class form {
   }
 
   function get_finish($after="",$before="") {
-    global $sess;
     $str = "";
 
     if ($this->hidden) {
@@ -309,8 +308,8 @@ class form {
       while (list($k,$elname) = each($this->hidden))
         $str .= $this->get_element($elname);
     }
-    if (is_object($sess) && ($sess->mode == "get")) {
-      $str .= sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />\n", $sess->name, $sess->id);
+    if (is_object(PHPlib::$session) && (PHPlib::$session->mode == "get")) {
+      $str .= sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />\n", PHPlib::$session->name, PHPlib::$session->id);
     }
     $str .= "</form>";
 

@@ -58,14 +58,13 @@ if (isset($GLOBALS['_phplib_page_open']['auth'])){
          */
 
         function auth_loginform() {
-            global $sess;
             global $_SERWEB;
 
             $this->auth['adm_domains'] = null;
 
             //user is not logged in, forward to login screen
             if (!isset($this->auth["uid"]) or is_null($this->auth["uid"])){
-                Header("Location: ".$sess->url("index.php"));
+                Header("Location: ".PHPlib::$session->url("index.php"));
                 exit;
             }
 
