@@ -326,8 +326,16 @@ class Creg{
      *
      * @return string
      */
-    function get_hostname_regex(){
-        return $this->host;
+    public function get_hostname_regex(){
+        return $this->hostname;
+    }
+
+    public function get_ipv4address_regex(){
+        return $this->ipv4address;
+    }
+
+    public function get_ipv6address_regex(){
+        return $this->ipv6address;
     }
 
     /**
