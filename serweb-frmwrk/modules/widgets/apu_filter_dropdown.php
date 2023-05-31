@@ -45,15 +45,6 @@ class apu_filter_dropdown extends apu_base_class{
 
 
     /**
-     *  return required data layer methods - static class
-     *
-     *  @return array   array of required data layer methods
-     */
-    function get_required_data_layer_methods(){
-        return array();
-    }
-
-    /**
      *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
