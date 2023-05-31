@@ -186,80 +186,78 @@ class CData_Layer{
 
         $loaded_modules = getLoadedModules();
 
-        foreach($_data_layer_required_methods as $item) {
+        $item = reset($_data_layer_required_methods);
+        do{
+            if (in_array($item, $this->_data_layer_loaded_methods)) continue;  //skip already loaded methods
 
-            if (false ===  array_search($item, $this->_data_layer_loaded_methods)){ //if required method isn't loaded yet, load it
+            $file_found = false;
+            //require class with method definition
+            if (file_exists($_SERWEB["datadir"] . "customized/method.".$item.".php")){
+                //if exists customized version of method, require it
+                require_once ($_SERWEB["datadir"] . "customized/method.".$item.".php");
 
-                $file_found = false;
-                //require class with method definition
-                if (file_exists($_SERWEB["datadir"] . "customized/method.".$item.".php")){
-                    //if exists customized version of method, require it
-                    require_once ($_SERWEB["datadir"] . "customized/method.".$item.".php");
+                $file_found = true;
+            }
 
-                    $file_found = true;
-                }
-
-                if (!$file_found){
-                    //try found file in modules
-                    foreach($loaded_modules as $module){
-                        if (file_exists($_SERWEB["modulesdir"] . $module."/method.".$item.".php")){
-                            require_once ($_SERWEB["modulesdir"] . $module."/method.".$item.".php");
-                            $file_found = true;
-                            break;
-                        }
-                        elseif (file_exists($_SERWEB["coremodulesdir"] . $module."/method.".$item.".php")){
-                            require_once ($_SERWEB["coremodulesdir"] . $module."/method.".$item.".php");
-                            $file_found = true;
-                            break;
-                        }
+            if (!$file_found){
+                //try found file in modules
+                foreach($loaded_modules as $module){
+                    if (file_exists($_SERWEB["modulesdir"] . $module."/method.".$item.".php")){
+                        require_once ($_SERWEB["modulesdir"] . $module."/method.".$item.".php");
+                        $file_found = true;
+                        break;
+                    }
+                    elseif (file_exists($_SERWEB["coremodulesdir"] . $module."/method.".$item.".php")){
+                        require_once ($_SERWEB["coremodulesdir"] . $module."/method.".$item.".php");
+                        $file_found = true;
+                        break;
                     }
                 }
+            }
 
-                if (!$file_found){
-                    //otherwise require default version
-                    require_once ($_SERWEB["datadir"] . "method.".$item.".php");
-                }
+            if (!$file_found){
+                //otherwise require default version
+                require_once ($_SERWEB["datadir"] . "method.".$item.".php");
+            }
 
-                //add method to $_data_layer_loaded_methods array
-                $this->_data_layer_loaded_methods[] = $item;
+            //add method to $_data_layer_loaded_methods array
+            $this->_data_layer_loaded_methods[] = $item;
 
-                //add methods required by currently loaded method to $_data_layer_required_methods array
-                $class_methods = get_class_methods("CData_Layer_".$item);
+            //add methods required by currently loaded method to $_data_layer_required_methods array
+            $class_methods = get_class_methods("CData_Layer_".$item);
 
-                if (in_array('_get_required_methods', $class_methods)){
+            if (in_array('_get_required_methods', $class_methods)){
+                $_data_layer_required_methods =
+                    array_merge($_data_layer_required_methods,
+                                call_user_func(array("CData_Layer_".$item, '_get_required_methods')));
+            }
+            else{
+                $class_vars = get_class_vars("CData_Layer_".$item);
+                if (isset($class_vars['required_methods']) and is_array($class_vars['required_methods'])){
                     $_data_layer_required_methods =
                         array_merge($_data_layer_required_methods,
-                                    call_user_func(array("CData_Layer_".$item, '_get_required_methods')));
+                                    $class_vars['required_methods']);
                 }
-                else{
-                    $class_vars = get_class_vars("CData_Layer_".$item);
-                    if (isset($class_vars['required_methods']) and is_array($class_vars['required_methods'])){
-                        $_data_layer_required_methods =
-                            array_merge($_data_layer_required_methods,
-                                        $class_vars['required_methods']);
-                    }
-                }
-
-                // build map of data layer methods, so we can later easily found
-                // class where the method is defined
-                foreach($class_methods as $method){
-                    // skip special method: '_get_required_methods'
-                    if ($method == '_get_required_methods') continue;
-
-                    $class_name = "CData_Layer_".$item;
-
-                    // check for duplicities
-                    if (isset(self::$method_class_map[$method])){
-                        if (self::$method_class_map[$method] == $class_name) continue;
-
-                        throw new Exception("Cannot redefine data layer function 'CData_Layer_$item:$method' already defined in class: ".self::$method_class_map[$method]);
-                    }
-
-                    self::$method_class_map[$method] = $class_name;
-                }
-
             }
-        }
+
+            // build map of data layer methods, so we can later easily found
+            // class where the method is defined
+            foreach($class_methods as $method){
+                // skip special method: '_get_required_methods'
+                if ($method == '_get_required_methods') continue;
+
+                $class_name = "CData_Layer_".$item;
+
+                // check for duplicities
+                if (isset(self::$method_class_map[$method])){
+                    if (self::$method_class_map[$method] == $class_name) continue;
+
+                    throw new Exception("Cannot redefine data layer function 'CData_Layer_$item:$method' already defined in class: ".self::$method_class_map[$method]);
+                }
+
+                self::$method_class_map[$method] = $class_name;
+            }
+        } while (false !== ($item = next($_data_layer_required_methods)));
     }
 
     /**
