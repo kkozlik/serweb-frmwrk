@@ -322,20 +322,45 @@ class Creg{
     }
 
     /**
+     * return regular expression for validate user part of uri
+     *
+     * @return string
+     */
+    public function get_user_regex() : string{
+        return $this->user;
+    }
+
+    /**
      * return regular expression for validate hostname
      *
      * @return string
      */
-    public function get_hostname_regex(){
+    public function get_hostname_regex() : string{
         return $this->hostname;
     }
 
-    public function get_ipv4address_regex(){
+    public function get_ipv4address_regex() : string{
         return $this->ipv4address;
     }
 
-    public function get_ipv6address_regex(){
+    public function get_ipv6address_regex() : string{
         return $this->ipv6address;
+    }
+
+    public function get_param_name_regex() : string{
+        return $this->pname;
+    }
+
+    public function get_param_value_regex() : string{
+        return $this->pvalue;
+    }
+
+    public function get_sip_header_name_regex() : string{
+        return $this->sip_header_name;
+    }
+
+    public function get_sip_header_value_regex() : string{
+        return $this->sip_header_value;
     }
 
     /**
