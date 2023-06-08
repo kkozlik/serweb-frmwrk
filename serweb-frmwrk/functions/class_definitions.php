@@ -551,7 +551,7 @@ class Validator{
      *  @return bool
      */
     function validate_int_range($value, $min, $max, $err_msg, $var_name=null){
-        $reg = &Creg::singleton();  // get instance of Creg class
+        $reg = Creg::singleton();  // get instance of Creg class
         if (!$reg->is_natural_num($value)) return 1;
         $value = (int)$value;
 
@@ -574,8 +574,8 @@ class Validator{
      *  @return bool
      */
     function validate_IPv4_reg($value, $err_msg, $var_name=null){
-        $reg = &Creg::singleton();  // get instance of Creg class
-        if (!preg_match("/^".$reg->ipv4address."$/", $value)){
+        $reg = Creg::singleton();  // get instance of Creg class
+        if (!preg_match("/^".$reg->get_ipv4address_regex()."$/", $value)){
             ErrorHandler::add_error(
                 str_replace(array("#VALUE#", "<name>"),
                             array($value, $var_name),
@@ -594,7 +594,7 @@ class Validator{
      *  @return bool
      */
     function validate_IPv4_range($value, $err_msg, $var_name=null){
-        $reg = &Creg::singleton();  // get instance of Creg class
+        $reg = Creg::singleton();  // get instance of Creg class
         if (!$reg->is_ipv4address($value)) return 1;
 
         if (!$reg->ipv4address_check_part_range($value)){
@@ -630,7 +630,7 @@ class Validator{
      *  @return bool
      */
     function validate_IPv4mask($value, $err_msg, $var_name=null){
-        $reg = &Creg::singleton();  // get instance of Creg class
+        $reg = Creg::singleton();  // get instance of Creg class
         if (empty($value)) return false;
 
         $value_a = explode("/", $value, 2);
