@@ -98,13 +98,6 @@ class page_controller{
      */
     var $standard_html_output = true;
 
-    /** instance of Creg class
-     *  for backward compatibility, shouldn't be used
-     *  instead of this use your own variable and Creg::singleton method
-     *  @deprec
-     */
-    var $reg;
-
     /** flag if the check to permissions to user should be performed */
     var $check_perms_to_user = false;
     /** flag if the check to permissions to domain should be performed */
@@ -127,8 +120,6 @@ class page_controller{
 
     /* constructor */
     function __construct(){
-
-        $this->reg = Creg::singleton();             // create regular expressions class
 
         $eh = &ErrorHandler::singleton();
         $this->errors = clone_array($eh->get_errors_array());
