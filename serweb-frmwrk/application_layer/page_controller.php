@@ -1359,7 +1359,7 @@ class page_controller{
         catch(PDOException $e){
 
             $log_message = "DB query failed";
-            if ($e->query){
+            if (property_exists($e, 'query')){
                 $log_message .= ":\n{$e->query}";
             }
 
