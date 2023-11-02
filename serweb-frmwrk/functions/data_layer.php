@@ -453,7 +453,7 @@ class CData_Layer{
     }
 
     function set_num_rows($num_rows){
-        $this->num_rows=$num_rows;
+        $this->num_rows=(int)$num_rows;
     }
 
     function get_num_rows(){
@@ -461,7 +461,7 @@ class CData_Layer{
     }
 
     function set_act_row($act_row){
-        $this->act_row=$act_row;
+        $this->act_row=(int)$act_row;
     }
 
     function get_act_row(){
@@ -473,7 +473,7 @@ class CData_Layer{
     }
 
     function set_showed_rows($showed_rows){
-        $this->showed_rows=$showed_rows;
+        $this->showed_rows=(int)$showed_rows;
     }
 
     function get_res_from(){

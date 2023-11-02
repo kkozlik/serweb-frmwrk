@@ -9,6 +9,7 @@
 * make it compatible with php 8
 * cleanup of old obsoleted stuff
 * When logging a request, log also request method
+* Make sure that `num_rows`, `act_row` and `showed_rows` properties of data layer are integers
 
 Version 2.2.3
 ==============
