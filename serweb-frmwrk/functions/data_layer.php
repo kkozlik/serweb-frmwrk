@@ -838,6 +838,40 @@ class CData_Layer{
         }
     }
 
+    /**
+     * This is replacement of sql function from_unixtime(). It converts unix
+     * timestamp to datetime in format 'YYYY-MM-DD HH:MM:SS'
+     *
+     * The from_unixtime() implementation in MariaDB is limited to 31bits so
+     * it have issues with time after '2038-01-19 05:14:07'
+     *
+     * @param int $ts
+     * @return string
+     */
+    public static function from_unixtime($ts){
+        return gmdate("Y-m-d H:i:s", $ts);
+    }
+
+    /**
+     * This is replacement of sql function UNIX_TIMESTAMP(). It converts datetime
+     * in format 'YYYY-MM-DD HH:MM:SS.ffffff' to unix timestamp.
+     *
+     * The UNIX_TIMESTAMP() implementation in MariaDB is limited to 31bits so
+     * it have issues with time after '2038-01-19 05:14:07'
+     *
+     * @param string $datetime
+     * @return int
+     */
+    public static function unix_timestamp($datetime){
+        $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s+', $datetime, new DateTimeZone('GMT'));
+        if (false === $date){
+            sw_log(__CLASS__."::".__FUNCTION__."() - Error while parsing '$datetime' time");
+            return null;
+        }
+
+        return $date->format('U');
+    }
+
 }
 
 /**

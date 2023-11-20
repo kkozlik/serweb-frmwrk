@@ -10,6 +10,7 @@
 * cleanup of old obsoleted stuff
 * When logging a request, log also request method
 * Make sure that `num_rows`, `act_row` and `showed_rows` properties of data layer are integers
+* New functions from_unixtime and unix_timestamp added to DataLayer
 
 Version 2.2.3
 ==============

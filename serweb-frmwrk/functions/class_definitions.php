@@ -439,6 +439,18 @@ class Filter {
 
         return $var." ".$this->op." ".(float)$val;
     }
+
+    public function ts_to_sql_datetime($var=null){
+        global $data;
+
+        if (is_null($var)) $var = $this->name;
+        if ($this->op == "is_null")     return $var." is null";
+
+        $val = $data->from_unixtime($this->value);
+
+        return $var." ".$this->op." '".addslashes($val)."'";
+    }
+
 }
 
 /**
