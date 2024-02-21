@@ -42,16 +42,8 @@ class apu_filter extends apu_base_class{
     var $labels = array();
     var $get_params = array();
     var $filter_applied = false;
+    protected $base_apu = null;
 
-
-    /**
-     *  return required data layer methods - static class
-     *
-     *  @return array   array of required data layer methods
-     */
-    function get_required_data_layer_methods(){
-        return array();
-    }
 
     /**
      *  return array of strings - required javascript files
@@ -67,9 +59,9 @@ class apu_filter extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_filter(){
+    public function __construct(){
         global $lang_str;
-        parent::apu_base_class();
+        parent::__construct();
 
         /* set default values to $this->opt */
         $this->opt['filter_name'] =         '';

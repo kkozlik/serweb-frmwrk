@@ -37,17 +37,8 @@
 class apu_refresh extends apu_base_class{
     var $form_elements;
     var $get_params = array();
-    var $base_apu = null;
+    protected $base_apu = null;
 
-
-    /**
-     *  return required data layer methods - static class
-     *
-     *  @return array   array of required data layer methods
-     */
-    function get_required_data_layer_methods(){
-        return array();
-    }
 
     /**
      *  return array of strings - required javascript files
@@ -63,7 +54,7 @@ class apu_refresh extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_refresh(){
+    public function __construct(){
         global $lang_str;
         parent::apu_base_class();
 

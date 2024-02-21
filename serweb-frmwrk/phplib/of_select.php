@@ -19,7 +19,7 @@ class of_select extends of_element {
     var $valid_e;
 
     // Constructor
-    function of_select($a) {
+    public function __construct($a) {
         $this->setup_element($a);
         if ($a["type"]=="select multiple") $this->multiple=1;
     }

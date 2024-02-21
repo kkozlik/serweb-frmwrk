@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *	OOHForms: text
  *
  *	@author   Copyright (c) 1998 by Jay Bloodworth
@@ -24,7 +24,7 @@ class of_text extends of_element {
   var $size;
 
   // Constructor
-  function of_text($a) {
+  public function __construct($a) {
     $this->setup_element($a);
     if ($a["type"]=="password")
       $this->pass=1;
@@ -32,19 +32,19 @@ class of_text extends of_element {
 
   function self_get($val,$which, &$count) {
     $str = "";
-    
+
     if (is_array($this->value))
       $v = htmlspecialchars($this->value[$which], ENT_QUOTES);
-    else 
+    else
       $v = htmlspecialchars($this->value, ENT_QUOTES);
     $n = $this->name . ($this->multiple ? "[]" : "");
     $str .= "<input name='$n' id='$n' value=\"$v\"";
     $str .= ($this->pass)? " type='password'" : " type='text'";
     if ($this->maxlength)
       $str .= " maxlength='$this->maxlength'";
-    if ($this->size) 
+    if ($this->size)
       $str .= " size='$this->size'";
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
       $str .= " $this->extrahtml";
 
     $str .= ($this->pass)? " class=\"inpPassword" : " class=\"inpText";
@@ -70,22 +70,22 @@ class of_text extends of_element {
 
 
     $str .= " />";
-    
+
     $count = 1;
     return $str;
   }
 
   function self_get_frozen($val,$which, &$count) {
     $str = "";
-    
+
     if (is_array($this->value))
       $v = $this->value[$which];
-    else 
+    else
       $v = $this->value;
     $n = $this->name . ($this->multiple ? "[]" : "");
     $str .= "<input type='hidden' name='$n' value=\"".htmlspecialchars($v, ENT_QUOTES)."\" />\n";
     $str .= "<table border=1><tr><td>$v</td></tr></table>\n";
-    
+
     $count = 1;
     return $str;
   }
@@ -94,7 +94,7 @@ class of_text extends of_element {
     $str = "";
 /* 	rewrited by KK indexing elements by $ndx_array is unusable for me
 
-    
+
     reset($ndx_array);
     while (list($k,$n) = each($ndx_array)) {
       if ($this->length_e) {
@@ -115,7 +115,7 @@ class of_text extends of_element {
         $str .= "  }\n}\n";
       }
     }
-*/    
+*/
       if ($this->length_e) {
         $str .= "if (f.elements['".$this->name."'].value.length < $this->minlength) {\n";
         $str .= "  alert(\"".str_replace("\n", '\n', addslashes($this->length_e))."\".replace('#VALUE#', f.elements['".$this->name."'].value));\n";
@@ -149,14 +149,14 @@ class of_text extends of_element {
     while (list($k,$v) = each($val)) {
       if ($this->length_e && (strlen($v) < $this->minlength))
         return str_replace("#VALUE#", $v, $this->length_e);
-      if ($this->valid_e && (((isset($this->icase) and $this->icase) && 
+      if ($this->valid_e && (((isset($this->icase) and $this->icase) &&
             !preg_match('/'.$this->valid_regex.'/i', $v)) ||
            (!(isset($this->icase) and $this->icase) &&
             !preg_match('/'.$this->valid_regex.'/', $v))))
         return str_replace("#VALUE#", $v, $this->valid_e);
     }
     return false;
-  } 
+  }
 
 } // end TEXT
 

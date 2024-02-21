@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *	Object Oriented HTML Forms
  *
  *	@author   Copyright (c) 1998 by Jay Bloodworth
@@ -21,10 +21,10 @@ class of_element {
   var $php_validate = true;
   var $skip_validation = false;
   var $form; //reference to the html form (set during element creation)
-  var $js_trim_value = false; // register javascript event handler trimming 
+  var $js_trim_value = false; // register javascript event handler trimming
                               // whitespaces at beginning and end of value
-  
-  function marshal_dispatch($m,$func) {   
+
+  function marshal_dispatch($m,$func) {
     $vname = $this->name;
 
 	if (0 == strcasecmp($m, 'post'))
@@ -37,10 +37,10 @@ class of_element {
     return $this->$func($val);
 
   }
-  
+
   function self_get($val, $which, &$count) {
   }
-  
+
   function self_show($val, $which) {
     $count = 0;
     print $this->self_get($val, $which, $count);
@@ -63,7 +63,7 @@ class of_element {
 
   function self_get_js($ndx_array) {
   }
-  
+
   function self_print_js($ndx_array) {
     print $this->self_get_js($ndx_array);
   }
@@ -100,7 +100,7 @@ class of_hidden extends of_element {
 
   var $hidden=1;
 
-  function of_hidden($a) {
+  public function __construct($a) {
     $this->setup_element($a);
   }
 
@@ -116,7 +116,7 @@ class of_hidden extends of_element {
         $str .=" $this->extrahtml";
       $str .= " />";
     }
-    
+
     return $str;
   }
 } // end HIDDEN
@@ -128,13 +128,13 @@ class of_reset extends of_element {
 
   var $src;
 
-  function of_reset($a) {
+  public function __construct($a) {
     $this->setup_element($a);
   }
 
   function self_get($val, $which, &$count) {
     $str = "<input name='$this->name' type=reset value=\"".htmlspecialchars($val, ENT_QUOTES)."\"";
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
       $str .= " $this->extrahtml";
     $str .= " class=\"inpReset";
     if (!empty($this->class)){
@@ -147,7 +147,7 @@ class of_reset extends of_element {
     }
 
     $str .= " />";
-    
+
     return $str;
   }
 } // end RESET
@@ -159,20 +159,20 @@ class of_submit extends of_element {
 
   var $src;
 
-  function of_submit($a) {    
+  public function __construct($a) {
     $this->setup_element($a);
   }
 
   function self_get($val, $which, &$count) {
     $str = "";
-    
+
     $sv = empty($val) ? $this->value : $val;
     $str .= "<input name='$this->name' value=\"".htmlspecialchars($sv, ENT_QUOTES)."\"";
-    if ($this->src) 
+    if ($this->src)
       $str .= " type='image' src='$this->src'";
-    else 
+    else
       $str .= " type='submit'";
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
       $str .= " $this->extrahtml";
     $str .= $this->src ? " class=\"inpImage" : " class=\"inpSubmit";
     if (!empty($this->class)){
@@ -185,10 +185,10 @@ class of_submit extends of_element {
     }
 
     $str .= " />";
-    
+
     return $str;
   }
-  
+
   function self_load_defaults($val) {
     // SUBMIT will not change its value
   }
@@ -201,26 +201,26 @@ class of_button extends of_element {
 
   var $src;
 
-  function of_button($a) {    
+  public function __construct($a) {
     $this->setup_element($a);
   }
 
   function self_get($val, $which, &$count) {
     $str = "";
-    
+
     $sv = empty($val) ? $this->value : $val;
     $str .= "<button name='$this->name' id='$this->name' value=\"".htmlspecialchars($sv, ENT_QUOTES)."\"";
 
     if (empty($this->button_type)) $this->button_type="submit";
 
     switch ($this->button_type){
-    case "reset": 
+    case "reset":
         $str .= ' type="reset" class="inpReset';
         break;
-    case "button": 
+    case "button":
         $str .= ' type="button" class="inpButton';
         break;
-    default: 
+    default:
         $str .= ' type="submit" class="inpSubmit';
     }
 
@@ -229,7 +229,7 @@ class of_button extends of_element {
 	}
     $str .= "\""; //end of class attribute
 
-    if ($this->extrahtml) 
+    if ($this->extrahtml)
         $str .= " $this->extrahtml";
 
     if (!empty($this->disabled)){
@@ -237,12 +237,12 @@ class of_button extends of_element {
     }
 
     $str .= " >";
-    $str .= !empty($this->content) ? $this->content : $this->value; 
+    $str .= !empty($this->content) ? $this->content : $this->value;
     $str .= "</button>";
-    
+
     return $str;
   }
-  
+
   function self_load_defaults($val) {
     // BUTTON will not change its value
   }
@@ -258,20 +258,20 @@ class form {
   var $isfile;
   var $n;
 
-  function form(){
+  public function __construct(){
   	$this->elements=array();
   }
-  
+
   function get_start($jvs_name="",$method="",$action="",$target="",$form_name="") {
     global $PHP_SELF;
-    
+
     $str = "";
 
-    /* if form name is not set and jvs_name is, use it for form name*/    
+    /* if form name is not set and jvs_name is, use it for form name*/
     if ($jvs_name and !$form_name) $form_name = $jvs_name;
     /* form name still is not set - use some value for it  */
     if (!$form_name) $form_name = "oohform";
-    
+
     $this->jvs_name = "";
     $this->n = 0;
     if (!$method) $method = "POST";
@@ -290,9 +290,9 @@ class form {
       $this->jvs_name = $jvs_name;
       $str .= " onsubmit=\"return ${jvs_name}_Validator(this)\"";
     }
-    
+
     $str .= ">";
-    
+
     return $str;
   }
 
@@ -301,29 +301,28 @@ class form {
   }
 
   function get_finish($after="",$before="") {
-    global $sess;
     $str = "";
-    
+
     if ($this->hidden) {
       reset($this->hidden);
-      while (list($k,$elname) = each($this->hidden)) 
+      while (list($k,$elname) = each($this->hidden))
         $str .= $this->get_element($elname);
     }
-    if (is_object($sess) && ($sess->mode == "get")) {
-      $str .= sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />\n", $sess->name, $sess->id);
+    if (is_object(PHPlib::$session) && (PHPlib::$session->mode == "get")) {
+      $str .= sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />\n", PHPlib::$session->name, PHPlib::$session->id);
     }
     $str .= "</form>";
 
     if ($this->jvs_name) {
       $jvs_name = $this->jvs_name;
       $str .= "<script type='text/javascript' >\n<!--\n";
-      
+
       foreach($this->elements as $k=>$v){
             $el = $v["ob"];
             //print_r($el);
             if ($el->type=="of_textarea" and $el->maxlength){
 
-                // register event listeners to textarea 
+                // register event listeners to textarea
                 $str .="
                     var el=document.getElementById('".$el->name."');
                     el.my_max_length = ".$el->maxlength.";
@@ -340,7 +339,7 @@ class form {
                     phplib_ctl.add_event(document.getElementById('".$el->name."'), 'blur', phplib_ctl.oh_trim);";
             }
       }
-      
+
       $str .= "\nfunction ${jvs_name}_Validator(f) {\n";
 
       if (strlen($before))
@@ -365,29 +364,29 @@ class form {
 
       $str .= "}\n//-->\n</script>";
     }
-    
+
     return $str;
   }
-  
+
   function finish($after="",$before="") {
     print $this->get_finish($after, $before);
   }
-  
+
   function add_element($el) {
 
-    if (!is_array($el)) 
+    if (!is_array($el))
       return false;
-    
+
     $cv_tab = array("select multiple"=>"select", "image"=>"submit");
-    if (isset($cv_tab[$el["type"]])) 
+    if (isset($cv_tab[$el["type"]]))
       $t = ("of_" . $cv_tab[$el["type"]]);
     else
       $t = ("of_" . $el["type"]);
-    
+
     // translate names like $foo[int] to $foo{int} so that they can cause no
     // harm in $this->elements
     # Original match
-    # if (preg_match("/(\w+)\[(d+)\]/i", $el[name], $regs)) { 
+    # if (preg_match("/(\w+)\[(d+)\]/i", $el[name], $regs)) {
     if (preg_match("/([a-zA-Z_]+)\[([0-9]+)\]/", $el["name"], $regs)) {
        $el["name"] = sprintf("%s{%s}", $regs[1], $regs[2]);
        $el["multiple"] = true;
@@ -396,7 +395,7 @@ class form {
     $el->type = $t; # as suggested by Michael Graham (magog@the-wire.com)
     $el->form = &$this;
 
-    if (isset($el->isfile) and $el->isfile) 
+    if (isset($el->isfile) and $el->isfile)
       $this->isfile = true;
     $this->elements[$el->name]["ob"] = $el;
     if (isset($el->hidden) and $el->hidden)
@@ -407,7 +406,7 @@ class form {
     $str = "";
     $x   = 0;
     $flag_nametranslation = false;
-    
+
     // see add_element: translate $foo[int] to $foo{int}
 #   Original pattern
 #   if (preg_match("/(w+)\[(\d+)\]/i", $name, $regs) {
@@ -416,19 +415,19 @@ class form {
        $name = sprintf("%s{%s}", $regs[1], $regs[2]);
        $flag_nametranslation = true;
     }
-    
-    if (!isset($this->elements[$name])) 
-      return false; 
+
+    if (!isset($this->elements[$name]))
+      return false;
 
     if (!isset($this->elements[$name]["which"]))
       $this->elements[$name]["which"] = 0;
-   
+
     $el = $this->elements[$name]["ob"];
     if (true == $flag_nametranslation)
-      $el->name = $org_name; 
+      $el->name = $org_name;
 
-    if (false === $value) 
-       $value = $el->value; 
+    if (false === $value)
+       $value = $el->value;
 
     if (isset($this->elements[$name]["frozen"]) and $this->elements[$name]["frozen"])
       $str .= $el->self_get_frozen($value,$this->elements[$name]["which"]++, $x);
@@ -436,7 +435,7 @@ class form {
       $str .= $el->self_get($value,$this->elements[$name]["which"]++, $x);
     $this->elements[$name]["ndx_array"][] = $this->n;
     $this->n += $x;
-    
+
     return $str;
   }
 

@@ -17,7 +17,7 @@ class of_checkbox extends of_element {
   var $checked;
 
   // Constructor
-  function of_checkbox($a) {
+  public function __construct($a) {
     $this->setup_element($a);
   }
 

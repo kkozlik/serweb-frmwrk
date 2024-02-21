@@ -41,16 +41,9 @@ class apu_sorter extends apu_base_class{
     var $form_elements;
     var $col_to_sort = null;
     var $get_params = array();
+    protected $base_apu = null;
+    protected $sort_columns;
 
-
-    /**
-     *  return required data layer methods - static class
-     *
-     *  @return array   array of required data layer methods
-     */
-    function get_required_data_layer_methods(){
-        return array();
-    }
 
     /**
      *  return array of strings - required javascript files
@@ -66,7 +59,7 @@ class apu_sorter extends apu_base_class{
      *
      *  initialize internal variables
      */
-    function apu_sorter(){
+    public function __construct(){
         parent::apu_base_class();
 
         /* set default values to $this->opt */

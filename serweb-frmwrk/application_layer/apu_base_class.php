@@ -83,7 +83,7 @@ class apu_base_class{
     }
 
     /* return required data layer methods - static class */
-    function get_required_data_layer_methods(){
+    public static function get_required_data_layer_methods(){
         return array();
     }
 

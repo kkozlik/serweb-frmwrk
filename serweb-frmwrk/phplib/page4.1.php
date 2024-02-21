@@ -9,77 +9,75 @@
  *	@return none
  */
 function page_open($feature, $what=null) {
-	global $_SERWEB;
-	static $loaded_features = array();
+    global $_SERWEB;
+    static $loaded_features = array();
 
-	if (is_null($what)) $what = array('sess', 'auth', 'perm');
-	if (is_string($what)) $what = array($what);
+    if (is_null($what)) $what = array('sess', 'auth', 'perm');
+    if (is_string($what)) $what = array($what);
 
 
-	if (in_array("sess", $what) and !in_array("sess", $loaded_features)){
-		if (isset($feature["sess"])) {
-			global $sess;
-			$sess = new $feature["sess"];
-			$sess->start();
+    if (in_array("sess", $what) and !in_array("sess", $loaded_features)){
+        if (isset($feature["sess"])) {
 
-			## Load the auto_init-File, if one is specified.
-			if (($sess->auto_init != "") && !$sess->in) {
-				$sess->in = 1;
-				include($_SERWEB["phplibdir"] . $sess->auto_init);
-				if ($sess->secure_auto_init != "") {
-					$sess->freeze();
-				}
-			}
+            $sess = new $feature["sess"];
+            $sess->start();
 
-			PHPlib::$session = $sess;
-			$loaded_features[] = 'sess';
-		}
-	}
+            ## Load the auto_init-File, if one is specified.
+            if (($sess->auto_init != "") && !$sess->in) {
+                $sess->in = 1;
+                include($_SERWEB["phplibdir"] . $sess->auto_init);
+                if ($sess->secure_auto_init != "") {
+                    $sess->freeze();
+                }
+            }
 
-	if (in_array("auth", $what) and !in_array("auth", $loaded_features) and
-	    in_array("sess", $loaded_features)){
+            PHPlib::$session = $sess;
+            $loaded_features[] = 'sess';
+        }
+    }
 
-		# the auth feature depends on sess
-		if (isset($feature["auth"])) {
-			if (isset($_SESSION['auth']) and is_object($_SESSION['auth'])) {
-				$_SESSION['auth'] = $_SESSION['auth']->check_feature($feature["auth"]);
-			} else {
-				$_SESSION['auth'] = new $feature["auth"];
-			}
-			$_SESSION['auth']->start();
+    if (in_array("auth", $what) and !in_array("auth", $loaded_features) and
+        in_array("sess", $loaded_features)){
 
-			PHPlib::$auth = $_SESSION['auth'];
-			$loaded_features[] = 'auth';
-		}
-	}
+        # the auth feature depends on sess
+        if (isset($feature["auth"])) {
+            if (isset($_SESSION['auth']) and is_object($_SESSION['auth'])) {
+                $_SESSION['auth'] = $_SESSION['auth']->check_feature($feature["auth"]);
+            } else {
+                $_SESSION['auth'] = new $feature["auth"];
+            }
+            $_SESSION['auth']->start();
 
-	if (in_array("perm", $what) and !in_array("perm", $loaded_features) and
-	    in_array("auth", $loaded_features)){
+            PHPlib::$auth = $_SESSION['auth'];
+            $loaded_features[] = 'auth';
+        }
+    }
 
-		# the perm feature depends on auth (and sess)
-		if (isset($feature["perm"])) {
-			global $perm;
+    if (in_array("perm", $what) and !in_array("perm", $loaded_features) and
+        in_array("auth", $loaded_features)){
 
-			if (!is_object($perm)) {
-				$perm = new $feature["perm"];
-				$perm->set_auth_obj($_SESSION['auth']);
+        # the perm feature depends on auth (and sess)
+        if (isset($feature["perm"])) {
+            global $perm;
 
-				PHPlib::$perm = $perm;
-				$loaded_features[] = 'perm';
-			}
-		}
-	}
+            if (!is_object($perm)) {
+                $perm = new $feature["perm"];
+                $perm->set_auth_obj($_SESSION['auth']);
+
+                PHPlib::$perm = $perm;
+                $loaded_features[] = 'perm';
+            }
+        }
+    }
 
 }
-
 
 
 /**
  *	@return none
  */
 function page_close() {
-	global $sess;
-	if (is_object($sess)) {
-		$sess->freeze();
-	}
+    if (is_object(PHPlib::$session)) {
+        PHPlib::$session->freeze();
+    }
 }

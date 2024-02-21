@@ -106,7 +106,7 @@ class Growable_Forms{
      *
      *  @param  OohForm     $form                   HTML form used by the invoking APU
      *  @param  string      $form_name              name attribute of the html form
-     *  @param  function    $add_item_to_form_fn    callback function creating form
+     *  @param  callable    $add_item_to_form_fn    callback function creating form
      *                                              entries for one item
      *  @param  string      $item_class             name of PHP class representing one item
      *  @param  string      $add_item_url           URL that is accessed via AJAX
@@ -116,8 +116,8 @@ class Growable_Forms{
      *  @param  string      $smarty_template        filename of smarty template
      *                                              for one item
      */
-    function Growable_Forms(&$form, $form_name, $add_item_to_form_fn,
-                            $item_class, $add_item_url, $smarty_template){
+    function __construct(&$form, $form_name, $add_item_to_form_fn,
+                         $item_class, $add_item_url, $smarty_template){
 
         $this->f =                      &$form;
         $this->form_name =              $form_name;

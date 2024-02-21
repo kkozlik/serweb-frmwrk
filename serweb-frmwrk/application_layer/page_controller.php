@@ -98,13 +98,6 @@ class page_controller{
      */
     var $standard_html_output = true;
 
-    /** instance of Creg class
-     *  for backward compatibility, shouldn't be used
-     *  instead of this use your own variable and Creg::singleton method
-     *  @deprec
-     */
-    var $reg;
-
     /** flag if the check to permissions to user should be performed */
     var $check_perms_to_user = false;
     /** flag if the check to permissions to domain should be performed */
@@ -127,8 +120,6 @@ class page_controller{
 
     /* constructor */
     function __construct(){
-
-        $this->reg = Creg::singleton();             // create regular expressions class
 
         $eh = &ErrorHandler::singleton();
         $this->errors = clone_array($eh->get_errors_array());
@@ -427,7 +418,7 @@ class page_controller{
      * return required data layer methods - static class
      * @static
      */
-    function get_required_data_layer_methods(){
+    public static function get_required_data_layer_methods(){
         return array();
     }
 
@@ -597,7 +588,6 @@ class page_controller{
      *  @return string
      */
     function url($url, $unique = true){
-        global $sess;
 
         /* collect all get params to one string */
         $get_param = implode('&', $this->global_get_params_to_str_array());
@@ -612,7 +602,7 @@ class page_controller{
             $url .= ($get_param ? $param_separator.$get_param : '');
         }
 
-        if ($sess instanceof Session) return $sess->url($url);
+        if (PHPlib::$session instanceof Session) return PHPlib::$session->url($url);
         else return $url;
     }
 
@@ -816,9 +806,9 @@ class page_controller{
      *  @return none                    this function finish execution of script
      */
     function reload($get_param=array()){
-        global $sess;
 
-        $errors = ErrorHandler::get_errors_array();
+        $eh = ErrorHandler::singleton();
+        $errors = $eh->get_errors_array();
 
         if ($this->messages or $errors){
             $msg_id = uniqID();
@@ -839,8 +829,8 @@ class page_controller{
         $url = $this->url_for_reload.$param_separator."kvrk=".uniqID("").
                             ($get_param ? '&'.$get_param : '');
 
-        if ($sess instanceof Session)   Header("Location: ".$sess->url($url));
-        else                            Header("Location: ".$url);
+        if (PHPlib::$session instanceof Session)   Header("Location: ".PHPlib::$session->url($url));
+        else                                       Header("Location: ".$url);
 
         /* break the script execution */
         page_close();
@@ -926,8 +916,10 @@ class page_controller{
      *  @access private
      */
     function _create_html_form(){
+        $eh = ErrorHandler::singleton();
+
         foreach($this->apu_objects as $key=>$val){
-            $this->apu_objects[$key]->create_html_form(ErrorHandler::get_errors_array());
+            $this->apu_objects[$key]->create_html_form($eh->get_errors_array());
         }
 
         if ($this->shared_html_form) {
@@ -963,10 +955,12 @@ class page_controller{
                 }
             }
 
+            $eh = ErrorHandler::singleton();
+
             /* validate html form by all application units */
             foreach($this->apu_objects as $key=>$val){
                 if (isset($this->apu_objects[$key]->action['validate_form']) and $this->apu_objects[$key]->action['validate_form']){
-                    if (false === $this->apu_objects[$key]->validate_form(ErrorHandler::get_errors_array())) {
+                    if (false === $this->apu_objects[$key]->validate_form($eh->get_errors_array())) {
                         return false;
                     }
                 }
@@ -1029,10 +1023,12 @@ class page_controller{
                  !(isset($this->apu_objects[$key]->action['reload']) and $this->apu_objects[$key]->action['reload']))
                continue;
 
+            $eh = ErrorHandler::singleton();
+
             /* call the action method */
             $_apu = &$this->apu_objects[$key];
             $_method = "action_".$this->apu_objects[$key]->action['action'];
-            $err_ref = ErrorHandler::get_errors_array();
+            $err_ref = $eh->get_errors_array();
             $_retval = call_user_func_array(array(&$_apu, $_method), array(&$err_ref));
 
             /* check for the error */
@@ -1291,8 +1287,9 @@ class page_controller{
             $cfg->domains_path =        $config->domains_path;
             $smarty->assign("cfg", $cfg);
 
+            $eh = ErrorHandler::singleton();
+            $errors = $eh->get_errors_array();
 
-            $errors = ErrorHandler::get_errors_array();
             $page_attributes['errors']=&$errors;
             $page_attributes['message']=&$this->messages;
             $page_attributes['nonce'] = $this->get_nonce();
@@ -1362,7 +1359,7 @@ class page_controller{
         catch(PDOException $e){
 
             $log_message = "DB query failed";
-            if ($e->query){
+            if (property_exists($e, 'query')){
                 $log_message .= ":\n{$e->query}";
             }
 
