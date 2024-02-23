@@ -1,3 +1,13 @@
+serweb-frmwrk (2.3.0) stable; urgency=medium
+
+  * make it compatible with php 8
+  * cleanup of old obsoleted stuff
+  * When logging a request, log also request method
+  * Make sure that `num_rows`, `act_row` and `showed_rows` properties of data layer are integers
+  * New functions from_unixtime and unix_timestamp added to DataLayer
+
+ -- root <root@ok1kpi.cz>  Fri, 23 Feb 2024 21:41:33 +0100
+
 serweb-frmwrk (2.2.4) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
