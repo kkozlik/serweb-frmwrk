@@ -904,6 +904,14 @@ Growable_Forms_ctl.prototype.add_item = function(){
         url = this.on_add_mod_url(this, url);
     }
 
+    if (!url){
+        // cancel the add_item action if the on_add_mod_url return empty value
+        this.insert_in_proggress--;
+        this.check_max_items();
+
+        return;
+    }
+
     var http_request = ajax_async_request(url, null, this.add_item_callback.bindObj(this));
 };
 
