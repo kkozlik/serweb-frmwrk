@@ -572,6 +572,10 @@ Growable_Forms_ctl.prototype.init = function(form_name){
     if (null != this.html_add_link_id){
         var spanEl = document.getElementById(this.html_add_link_id);
         if (null != spanEl) {
+            if (spanEl.tagName == "BUTTON") {
+                spanEl.addEventListener('click', self.add_item.bind(self));
+            }
+
             spanEl.querySelectorAll('a, button').forEach(
                 function(element){
                     element.addEventListener('click', self.add_item.bind(self));

@@ -367,14 +367,18 @@ function enable_link(en, parentEl){
 
     var linkEls = parentEl.getElementsByTagName('a');
     var buttonEls = parentEl.getElementsByTagName('button');
+    var buttonEl = null;
 
-    if (buttonEls.length > 0){
+    if (parentEl.tagName == "BUTTON") buttonEl = parentEl;
+    else if (buttonEls.length > 0)    buttonEl = buttonEls[0];
+
+    if (null != buttonEl){
         // if '<button>' is used instead of '<a>'
 
-        var disabledClass = buttonEls[0].getAttribute('data-disClass');
-        if (disabledClass) buttonEls[0].classList.toggle(disabledClass, !en);
+        var disabledClass = buttonEl.getAttribute('data-disClass');
+        if (disabledClass) buttonEl.classList.toggle(disabledClass, !en);
 
-        buttonEls[0].disabled = !en;
+        buttonEl.disabled = !en;
         return;
     }
 
