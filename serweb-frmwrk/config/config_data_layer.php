@@ -12,8 +12,8 @@ global $config;
 
         $config->data_sql=new stdClass();
 
-        $config->data_sql->abstraction_layer="DB";          //database abstraction layer. Use:
-                                                            // * "DB" for pear-db (default)
+        $config->data_sql->abstraction_layer="PDO";         //database abstraction layer. Use:
+                                                            // * "DB" for pear-db
                                                             // * "MDB2" for pear-mdb2
                                                             // * "PDO" for PHP Data Objects (built in)
 

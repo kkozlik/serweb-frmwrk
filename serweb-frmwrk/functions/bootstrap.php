@@ -56,11 +56,6 @@ if (isset($_SERWEB["onconfigload"]) and is_callable($_SERWEB["onconfigload"])){
     call_user_func($_SERWEB["onconfigload"]);
 }
 
-/** require database abstraction layer */
-if ($config->data_sql->abstraction_layer=="MDB2")   require_once 'MDB2.php';
-elseif ($config->data_sql->abstraction_layer=="DB") require_once 'DB.php';
-elseif ($config->data_sql->abstraction_layer=="PDO") require_once 'pdo_extension.php';
-
 /** create log instance */
 if ($config->enable_logging){
     require_once 'Log.php';

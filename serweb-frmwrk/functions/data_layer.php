@@ -31,19 +31,20 @@ class CData_Layer{
     var $act_row=0, $num_rows=0;        //used when result returns too many rows
     var $showed_rows;                   //how many rows from result display
 
-    var $_data_layer_loaded_methods=array();
+    private $_data_layer_loaded_methods=array();
 
-    var $name = "auth_user";            //name of instance
+    private $name = "auth_user";        //name of instance
 
     var $db_collation = null;
     var $db_charset = null;
 
     /** Contain DSN (Data Source Name) of DB Host in string and in parsed form */
-    var $db_host = array();
+    private $db_host = array();
 
+    private $db_config;
 
-    var $transaction_rollback = false;
-    var $transaction_semaphore = 0;
+    protected $transaction_rollback = false;
+    protected $transaction_semaphore = 0;
 
     static $method_class_map = array();
 
@@ -54,7 +55,7 @@ class CData_Layer{
     /**
      *  Handle call of unknow methods
      */
-    function __call($method, $args){
+    public function __call($method, $args){
 
         // check if the method is known and retrieve class containing it
         if (!isset(self::$method_class_map[$method])){
@@ -74,9 +75,10 @@ class CData_Layer{
      *   Constructor
      */
 
-    function __construct(){
+    public function __construct(){
         global $config;
         $this->showed_rows = &$config->num_of_showed_items;
+        $this->set_dbconfig($config->data_sql);
     }
 
     /**
@@ -89,7 +91,6 @@ class CData_Layer{
      */
 
     public static function &create(){
-        global $config;
 
         $obj = new CData_Layer();
 
@@ -139,6 +140,34 @@ class CData_Layer{
         return $instances[$instance_name];
     }
 
+    public function get_instance_name(){
+        return $this->name;
+    }
+
+    public function get_dbconfig() : ?object{
+        return $this->db_config;
+    }
+
+    public function set_dbconfig(object $cfg) : void{
+        $this->db_config = $cfg;
+
+        // Load DB abstraction layer
+        if ($this->is_MDB2_used())  require_once 'MDB2.php';
+        if ($this->is_DB_used())    require_once 'DB.php';
+        if ($this->is_PDO_used())   require_once 'pdo_extension.php';
+    }
+
+    public function is_DB_used() : bool {
+        return $this->db_config->abstraction_layer == "DB";
+    }
+
+    public function is_MDB2_used() : bool {
+        return $this->db_config->abstraction_layer == "MDB2";
+    }
+
+    public function is_PDO_used() : bool {
+        return $this->db_config->abstraction_layer == "PDO";
+    }
 
     /**
      *   dynamicaly agregate aditional methods
@@ -324,31 +353,34 @@ class CData_Layer{
         }
     }
 
+    private function make_MDB2_dsn(string $db_type, array $cfg) : string{
+        return $db_type."://".
+                $cfg['user'].":".
+                $cfg['pass']."@".
+                $cfg['host'].
+                    (empty($cfg['port'])?
+                        "":
+                        ":".$cfg['port'])."/".
+                $cfg['name'];
+    }
+
     /**
      *  Set object variable (@see db_host) by given config values
      *
      *  @param string $db_type  Type of Data Source
-     *  @param string $cfg      $config->data_sql->host
+     *  @param array  $cfg      $config->data_sql->host
      */
-    private function set_this_db_host($db_type, $cfg){
-        global $config;
+    private function set_this_db_host(string $db_type, array $cfg) : void{
 
-        $this->db_host['dsn'] =  $db_type."://".
-                                 $cfg['user'].":".
-                                 $cfg['pass']."@".
-                                 $cfg['host'].
-                                     (empty($cfg['port'])?
-                                         "":
-                                         ":".$cfg['port'])."/".
-                                 $cfg['name'];
-
-        if ($config->data_sql->abstraction_layer=="MDB2"){
+        if ($this->is_MDB2_used()){
+            $this->db_host['dsn'] =  $this->make_MDB2_dsn($db_type, $cfg);
             $this->db_host['parsed'] = MDB2::parseDSN($this->db_host['dsn']);
         }
-        elseif($config->data_sql->abstraction_layer=="DB"){
+        elseif($this->is_DB_used()){
+            $this->db_host['dsn'] =  $this->make_MDB2_dsn($db_type, $cfg);
             $this->db_host['parsed'] = DB::parseDSN($this->db_host['dsn']);
         }
-        else{
+        else{ // assume PDO is used
             if ($cfg['dsn']) $this->db_host['pdo_dsn'] = $cfg['dsn'];
             else{
                 $this->db_host['pdo_dsn'] = $db_type.
@@ -360,9 +392,9 @@ class CData_Layer{
             }
 
             $this->db_host['parsed']['phptype'] = $db_type;
-            $this->db_host['parsed']['username'] = $cfg['user'];
-            $this->db_host['parsed']['password'] = $cfg['pass'];
-            $this->db_host['parsed']['database'] = $cfg['name'];
+            $this->db_host['parsed']['username'] = isset($cfg['user']) ? $cfg['user'] : null;
+            $this->db_host['parsed']['password'] = isset($cfg['pass']) ? $cfg['pass'] : null;
+            $this->db_host['parsed']['database'] = isset($cfg['name']) ? $cfg['name'] : null;
         }
     }
 
@@ -371,13 +403,12 @@ class CData_Layer{
      *  connect to sql database
      */
     function connect_to_db(){
-        global $config;
 
         if ($this->db) return $this->db;
 
         $this->trigger_event("pre_connect");
 
-        $cfg=&$config->data_sql;
+        $cfg = $this->get_dbconfig();
 
         $num=count($cfg->host); //get number of SQL servers that we can use
 
@@ -393,17 +424,17 @@ class CData_Layer{
             $isError = false;
             $exception = null;
 
-            if ($config->data_sql->abstraction_layer=="MDB2"){
+            if ($this->is_MDB2_used()){
                 $db = MDB2::connect($this->db_host['parsed'], true);
                 $isError = MDB2::isError($db);
                 $codeFailed = MDB2_ERROR_CONNECT_FAILED;
             }
-            elseif ($config->data_sql->abstraction_layer=="MDB2"){
+            elseif ($this->is_DB_used()){
                 $db = DB::connect($this->db_host['parsed'], true);
                 $isError = DB::isError($db);
                 $codeFailed = DB_ERROR_CONNECT_FAILED;
             }
-            else{
+            else{ // assume PDO
                 try {
                     $db = new Serweb_PDO($this->db_host['pdo_dsn'],
                                          $this->db_host['parsed']['username'],
@@ -485,7 +516,6 @@ class CData_Layer{
     }
 
     function get_res_to(){
-        global $config;
         return ((($this->get_act_row()+$this->get_showed_rows())<$this->get_num_rows())?
                 ($this->get_act_row()+$this->get_showed_rows()):
                 $this->get_num_rows());
@@ -517,12 +547,11 @@ class CData_Layer{
 
 
     function dbIsError($res){
-        global $config;
 
-        if ($config->data_sql->abstraction_layer=="MDB2"){
+        if ($this->is_MDB2_used()){
             return MDB2::isError($res);
         }
-        elseif ($config->data_sql->abstraction_layer=="DB"){
+        elseif ($this->is_DB_used()){
             return DB::isError($res);
         }
         else{   // PDO
@@ -534,7 +563,6 @@ class CData_Layer{
      *  Start a transaction on the current connection
      */
     function transaction_start(){
-        global $config;
 
         $this->connect_to_db();
 
@@ -546,7 +574,7 @@ class CData_Layer{
 
         /* don't call "start transaction" in nested transactions */
         if ($this->transaction_semaphore == 0){
-            if ($config->data_sql->abstraction_layer=="PDO"){
+            if ($this->is_PDO_used()){
                 $res=$this->db->beginTransaction();
             }
             else{
@@ -564,7 +592,6 @@ class CData_Layer{
      *  Commit the transaction on the current connection
      */
     function transaction_commit(){
-        global $config;
 
         $this->transaction_semaphore--;
 
@@ -575,7 +602,7 @@ class CData_Layer{
 
         /* don't call "commit" in nested transactions or if rollback was called */
         if ($this->transaction_semaphore == 0 and !$this->transaction_rollback){
-            if ($config->data_sql->abstraction_layer=="PDO"){
+            if ($this->is_PDO_used()){
                 $res=$this->db->commit();
             }
             else{
@@ -591,11 +618,10 @@ class CData_Layer{
      *  Rollback changes done due the transaction
      */
     function transaction_rollback(){
-        global $config;
 
         $this->transaction_rollback = true;
 
-        if ($config->data_sql->abstraction_layer=="PDO"){
+        if ($this->is_PDO_used()){
             $res=$this->db->rollBack();
         }
         else{
@@ -878,6 +904,7 @@ class CData_Layer{
  * Common ancestor class for the data layer methods
  */
 class CData_Layer_Common{
+    /** @var CData_Layer */
     public $dl; //reference to data layer object
 
     public static function _get_required_methods(){
@@ -886,11 +913,16 @@ class CData_Layer_Common{
 }
 
 class CData_Layer_Event{
+    /** @var string */
     public $name;
+
+    /** @var CData_Layer */
     public $dl;
+
+    /** @var bool */
     public $stop_propagation;
 
-    public function __construct($name){
+    public function __construct(string $name){
         $this->name = $name;
         $this->stop_propagation = false;
     }
