@@ -757,7 +757,7 @@ class CData_Layer{
         if (!count($set)) return (" ".$this->get_sql_bool(false)." ");
 
         if ($quote){
-            foreach($set as $k=>$v) $set[$k] = "'".addslashes($v)."'";
+            foreach($set as $k=>$v) $set[$k] = "'".$this->escape_string($v)."'";
         }
 
         $set = implode(", ", $set);
@@ -814,7 +814,7 @@ class CData_Layer{
         case "S":
             if (is_null($val)) return "NULL";
         case "s":
-            return "'".addslashes($val)."'";
+            return "'".$this->escape_string($val)."'";
 
         case "N":
             if (is_null($val)) return "NULL";
@@ -845,6 +845,15 @@ class CData_Layer{
             return "";
         }
 
+    }
+
+    public function escape_string(?string $str) : string {
+        if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+            return SQLite3::escapeString($str);
+        }
+        else {
+            return addslashes($str);
+        }
     }
 
     /**
