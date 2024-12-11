@@ -2,6 +2,7 @@
 * growable-forms: add_link does not have to be enclosed in div or span
 * improvements to data layer - allow different config for every connection
 * fix sql escaping for sqlite
+* fix for prepared statements with Serweb_PDO
 
 Version 2.3.0
 ==============

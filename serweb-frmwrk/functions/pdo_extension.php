@@ -28,7 +28,7 @@ class Serweb_PDO extends PDO{
     /**
      * Overrides exec() method saving the statement to the thrown exception
      */
-    public function exec($statement){
+    public function exec(string $statement): int|false{
         try {
             $t = parent::exec($statement);
         }
@@ -65,10 +65,10 @@ class Serweb_PDOStatement extends PDOStatement{
     * @param array $values
     * @return bool              Returns TRUE on success or FALSE on failure.
     */
-   public function execute($values = array()){
+   public function execute(?array $values = null) : bool{
 
-      $this->_debugValues = $values;
       $this->_ValuePos    = 0;
+      if (!is_null($values)) $this->_debugValues = $values;
 
       try {
          $t = parent::execute($values);
@@ -79,6 +79,40 @@ class Serweb_PDOStatement extends PDOStatement{
       }
 
       return $t;
+   }
+
+   /**
+    * Overrides bindValue function and save the param values into internal var
+    *
+    * @param string|integer $param
+    * @param mixed $value
+    * @param [type] $type
+    * @return boolean
+    */
+   public function bindValue(string|int $param, mixed $value, int $type = PDO::PARAM_STR): bool{
+      // Add the optional colon if $param do not contain it
+      $key = $param[0]==':' ? $param : ":$param";
+      $this->_debugValues[$key] = $value;
+
+      return parent::bindValue($param, $value, $type);
+   }
+
+   /**
+    * Overrides bindParam function and save the param values into internal var
+    *
+    * @param string|integer $param
+    * @param mixed $var
+    * @param integer $type
+    * @param integer $maxLength
+    * @param mixed $driverOptions
+    * @return boolean
+    */
+   public function bindParam(string|int $param, mixed &$var, int $type = PDO::PARAM_STR, int $maxLength = 0, mixed $driverOptions = null): bool{
+      // Add the optional colon if $param do not contain it
+      $key = $param[0]==':' ? $param : ":$param";
+      $this->_debugValues[$key] = &$var;
+
+      return parent::bindParam($param, $var, $type, $maxLength, $driverOptions);
    }
 
    /**
