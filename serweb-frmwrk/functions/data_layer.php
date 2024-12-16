@@ -562,7 +562,7 @@ class CData_Layer{
     /**
      *  Start a transaction on the current connection
      */
-    function transaction_start(){
+    function transaction_start(array $opts=[]){
 
         $this->connect_to_db();
 
@@ -575,7 +575,25 @@ class CData_Layer{
         /* don't call "start transaction" in nested transactions */
         if ($this->transaction_semaphore == 0){
             if ($this->is_PDO_used()){
-                $res=$this->db->beginTransaction();
+                if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+                    $type = "";
+                    if (isset($opts['sqlite_lock_type'])){
+                        if (in_array(
+                                strtolower($opts['sqlite_lock_type']),
+                                ['deferred', 'immediate', 'exclusive'])
+                        ){
+                            $type = $opts['sqlite_lock_type'];
+                        }
+                        else{
+                            throw new Exception("Invalid value {$opts['sqlite_lock_type']} for 'sqlite_lock_type' option");
+                        }
+                    }
+                    $q = "begin $type transaction";
+                    $this->db->query($q);
+                }
+                else{
+                    $res=$this->db->beginTransaction();
+                }
             }
             else{
                 $res=$this->db->query("start transaction");
@@ -603,7 +621,12 @@ class CData_Layer{
         /* don't call "commit" in nested transactions or if rollback was called */
         if ($this->transaction_semaphore == 0 and !$this->transaction_rollback){
             if ($this->is_PDO_used()){
-                $res=$this->db->commit();
+                if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+                    $this->db->query("commit");
+                }
+                else{
+                    $res=$this->db->commit();
+                }
             }
             else{
                 $res=$this->db->query("commit");
@@ -622,7 +645,12 @@ class CData_Layer{
         $this->transaction_rollback = true;
 
         if ($this->is_PDO_used()){
-            $res=$this->db->rollBack();
+                if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+                    $this->db->query("rollback");
+                }
+                else{
+                    $res=$this->db->rollBack();
+                }
         }
         else{
             $res=$this->db->query("rollback");

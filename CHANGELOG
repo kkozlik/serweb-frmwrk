@@ -3,6 +3,7 @@
 * improvements to data layer - allow different config for every connection
 * fix sql escaping for sqlite
 * fix for prepared statements with Serweb_PDO
+* allow deferred, immediate and exclusive transactions for sqlite
 
 Version 2.3.0
 ==============
