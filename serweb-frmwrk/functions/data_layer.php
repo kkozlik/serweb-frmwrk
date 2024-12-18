@@ -169,6 +169,10 @@ class CData_Layer{
         return $this->db_config->abstraction_layer == "PDO";
     }
 
+    public function get_db_type() : string {
+        return $this->db_host['parsed']['phptype'];
+    }
+
     /**
      *   dynamicaly agregate aditional methods
      *   $m is string or array
