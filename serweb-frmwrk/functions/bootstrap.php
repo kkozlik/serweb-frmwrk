@@ -16,6 +16,9 @@ global $_SERWEB;
 /** Create default object holding configuration */
 if (!isset($config)) $config = new stdclass();
 
+if (file_exists(dirname(__FILE__) . "/../vendor/autoload.php")) {
+    require_once(dirname(__FILE__) . "/../vendor/autoload.php");
+}
 require_once(dirname(__FILE__) . "/set_dirs.php");
 
 /** require class defintions */
