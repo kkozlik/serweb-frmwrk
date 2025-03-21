@@ -16,9 +16,14 @@ global $_SERWEB;
 /** Create default object holding configuration */
 if (!isset($config)) $config = new stdclass();
 
+# Load vendor on production FS.
+# Or load vendor on local repo.
 if (file_exists(dirname(__FILE__) . "/../vendor/autoload.php")) {
     require_once(dirname(__FILE__) . "/../vendor/autoload.php");
+} else if (file_exists(dirname(__FILE__) . "/../../vendor/autoload.php")) {
+    require_once(dirname(__FILE__) . "/../../vendor/autoload.php");
 }
+
 require_once(dirname(__FILE__) . "/set_dirs.php");
 
 /** require class defintions */
