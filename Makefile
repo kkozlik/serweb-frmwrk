@@ -11,7 +11,7 @@ FILES_DOC	= \
 	INSTALL.txt \
 	COPYING \
 	CHANGELOG
-FILES_EXAMPLE = $(shell find	example-app -type f)
+FILES_EXAMPLE = $(shell find example-app -type f)
 # configuration to deploy
 FILES_ETC	= $(shell cd ${NAME}/config ; find . -type f)
 
@@ -26,7 +26,15 @@ INSTALL_DEPS = \
 	$(DEST_SERWEB_DOC)/example-app/pages/js/core \
 	$(DEST_SERWEB_DOC)/example-app/pages/styles/core \
 	$(addprefix $(DEST_SERWEB_ETC)/,$(FILES_ETC)) \
-	$(DESTDIR)/usr/share/serweb-frmwrk/config
+	$(DESTDIR)/usr/share/serweb-frmwrk/config \
+	${DEST_SERWEB}/vendor
+
+
+vendor:
+	composer install
+
+${DEST_SERWEB}/vendor: vendor ## Deploy serweb-frmwrk' fetched composer deps.
+	cp -rf $< $@
 
 $(DEST_SERWEB)/%:	${NAME}/% ## Deploy framework files to destdir (% subtitute to ${FILES})
 	install -m 0644 -D $< $@
