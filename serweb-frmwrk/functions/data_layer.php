@@ -823,6 +823,60 @@ class CData_Layer{
     }
 
     /**
+     * Return SQL comparison of string column with given string
+     *
+     * @param string $col
+     * @param string $op
+     * @param string $str
+     * @param boolean $case_sensitive
+     * @return string
+     */
+    public function get_sql_string_comparison(string $col, string $op, string $str, bool $case_sensitive = false) : string{
+        $r_val = $this->escape_string($str);
+
+        if ($case_sensitive){
+            if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+                return "$col $op '$r_val' COLLATE BINARY";
+            }
+            else {
+                return "$col $op BINARY '$r_val'";
+            }
+        }
+        else {
+            if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+                return "$col $op '$r_val' COLLATE NOCASE";
+            }
+            else {
+                return "lower($col) $op lower('$r_val')";
+            }
+        }
+    }
+
+    /**
+     * Return SQL comparison of number column with given number
+     *
+     * @param string $col
+     * @param string $op
+     * @param integer|float $val
+     * @return string
+     */
+    public function get_sql_number_comparison(string $col, string $op, int|float $val) : string{
+        return "$col $op $val";
+    }
+
+    /**
+     * Return SQL comparison of boolean column with given boolean value
+     *
+     * @param string $col
+     * @param boolean $is_true
+     * @return string
+     */
+    public function get_sql_bool_comparison(string $col, bool $is_true) : string{
+        if ($is_true)   return "($col)";
+        else            return "!($col)";
+    }
+
+    /**
      *  Format value to it can be used in sql query
      *
      *  Type of value is one of:

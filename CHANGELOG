@@ -4,6 +4,7 @@
 * fix sql escaping for sqlite
 * fix for prepared statements with Serweb_PDO
 * allow deferred, immediate and exclusive transactions for sqlite
+* fix sql escaping for sqlite done by Filter class
 
 Version 2.3.0
 ==============

@@ -369,8 +369,8 @@ class Filter {
         $this->case_sensitive = $case_sensitive;
     }
 
-    function to_sql($var=null, $int=false){
-        global $data;
+    function to_sql($var=null, $int=false, ?CData_Layer $db=null){
+        if (!$db) $db = $GLOBALS['data'];
 
         if (is_null($var)) $var = $this->name;
         if ($this->op == "is_null")     return $var." is null";
@@ -388,38 +388,23 @@ class Filter {
             if ($this->asterisks) $val = "%".$val."%";
         }
 
-        if ($this->op == "in"){
-            return $data->get_sql_in($var, $val, !$int);
-        }
+        if ($this->op == "in") return $db->get_sql_in($var, $val, !$int);
 
-
-        if ($int)   return $var." ".$this->op." ".(int)$val;
-        else {
-            if ($this->case_sensitive){
-                return $var." ".$this->op." BINARY '".addslashes($val)."'";
-            }
-            else{
-                return "lower(".$var.") ".$this->op." lower('".addslashes($val)."')";
-            }
-        }
-
+        if ($int)   return $db->get_sql_number_comparison($var, $this->op, (int)$val);
+        else        return $db->get_sql_string_comparison($var, $this->op, $val, $this->case_sensitive);
     }
 
-    function to_sql_bool($var=null){
+    function to_sql_bool($var=null, ?CData_Layer $db=null){
+        if (!$db) $db = $GLOBALS['data'];
 
         if (is_null($var)) $var = $this->name;
         if ($this->op == "is_null")     return $var." is null";
 
-        $val = $this->value;
-        if ($val){
-            return "(".$var.")";
-        }
-        else{
-            return "!(".$var.")";
-        }
+        return $db->get_sql_bool_comparison($var, (bool)$this->value);
     }
 
-    function to_sql_float($var=null){
+    function to_sql_float($var=null, ?CData_Layer $db=null){
+        if (!$db) $db = $GLOBALS['data'];
 
         if (is_null($var)) $var = $this->name;
         if ($this->op == "is_null")     return $var." is null";
@@ -437,18 +422,18 @@ class Filter {
             if ($this->asterisks) $val = "%".$val."%";
         }
 
-        return $var." ".$this->op." ".(float)$val;
+        return $db->get_sql_number_comparison($var, $this->op, (float)$val);
     }
 
-    public function ts_to_sql_datetime($var=null){
-        global $data;
+    public function ts_to_sql_datetime($var=null, ?CData_Layer $db=null){
+        if (!$db) $db = $GLOBALS['data'];
 
         if (is_null($var)) $var = $this->name;
         if ($this->op == "is_null")     return $var." is null";
 
-        $val = $data->from_unixtime($this->value);
+        $val = $db->from_unixtime($this->value);
 
-        return $var." ".$this->op." '".addslashes($val)."'";
+        return $db->get_sql_string_comparison($var, $this->op, $val, $this->case_sensitive);
     }
 
 }
