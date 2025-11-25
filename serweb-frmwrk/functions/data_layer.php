@@ -170,6 +170,8 @@ class CData_Layer{
     }
 
     public function get_db_type() : string {
+        if (!isset($this->db_host['parsed'])) $this->connect_to_db();
+
         return $this->db_host['parsed']['phptype'];
     }
 
@@ -685,7 +687,7 @@ class CData_Layer{
         if (is_null($offset)) $offset = $this->get_act_row();
         if (is_null($limit))  $limit  = $this->get_showed_rows();
 
-        if ($this->db_host['parsed']['phptype'] == 'pgsql'){
+        if ($this->get_db_type() == 'pgsql'){
             return " limit ".$limit." offset ".$offset;
         }
         else {
@@ -701,7 +703,7 @@ class CData_Layer{
      */
     function get_sql_concat_funct($arguments = array()){
 
-        if ($this->db_host['parsed']['phptype'] == 'pgsql'){
+        if ($this->get_db_type() == 'pgsql'){
             $start     = "";
             $separator = " || ";
             $finish    = "";
@@ -731,7 +733,7 @@ class CData_Layer{
      *  @return string
      */
     function get_sql_cast_to_int_funct($argument){
-        if ($this->db_host['parsed']['phptype'] == 'mysql'){
+        if ($this->get_db_type() == 'mysql'){
             return " cast(".$argument." as signed integer) ";
         }
         else {
@@ -749,7 +751,7 @@ class CData_Layer{
      *  @return string
      */
     function get_sql_regex_match($patern, $string, $opt = null){
-        if ($this->db_host['parsed']['phptype'] == 'mysql'){
+        if ($this->get_db_type() == 'mysql'){
             return $string." REGEXP \"".$patern."\"";
         }
         else {
@@ -765,7 +767,7 @@ class CData_Layer{
      *  @return string
      */
     function get_sql_bool($argument){
-        if ($this->db_host['parsed']['phptype'] == 'mysql'){
+        if ($this->get_db_type() == 'mysql'){
             return $argument ? "1" : "0";
         }
         else {
@@ -835,7 +837,7 @@ class CData_Layer{
         $r_val = $this->escape_string($str);
 
         if ($case_sensitive){
-            if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+            if ($this->get_db_type() == 'sqlite'){
                 return "$col $op '$r_val' COLLATE BINARY";
             }
             else {
@@ -843,7 +845,7 @@ class CData_Layer{
             }
         }
         else {
-            if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+            if ($this->get_db_type() == 'sqlite'){
                 return "$col $op '$r_val' COLLATE NOCASE";
             }
             else {
@@ -910,7 +912,7 @@ class CData_Layer{
         case "B":
             if (is_null($val)) return "NULL";
         case "b":
-            if ($this->db_host['parsed']['phptype'] == 'mysql'){
+            if ($this->get_db_type() == 'mysql'){
                 return $val ? "1" : "0";
             }
             else {
@@ -920,7 +922,7 @@ class CData_Layer{
         case "I":
             if (is_null($val)) return "NULL";
         case "i":
-            if ($this->db_host['parsed']['phptype'] == 'pgsql'){
+            if ($this->get_db_type() == 'pgsql'){
                 return "'".pg_escape_bytea($val)."'::bytea";
             }
             else {
@@ -934,7 +936,7 @@ class CData_Layer{
     }
 
     public function escape_string(?string $str) : string {
-        if ($this->db_host['parsed']['phptype'] == 'sqlite'){
+        if ($this->get_db_type() == 'sqlite'){
             return SQLite3::escapeString($str);
         }
         else {
@@ -951,7 +953,7 @@ class CData_Layer{
 
     function sql_unescape_binary($val){
 
-        if ($this->db_host['parsed']['phptype'] == 'pgsql'){
+        if ($this->get_db_type() == 'pgsql'){
             return pg_unescape_bytea($val);
         }
         else {
