@@ -364,9 +364,9 @@ class Filter {
     public function __construct($name, $value=null, $op="=", $asterisks=false, $case_sensitive=false){
         $this->name = $name;
         $this->value = $value;
-        $this->op = $op;
+        $this->op = (string)$op;
         $this->asterisks = $asterisks;
-        $this->case_sensitive = $case_sensitive;
+        $this->case_sensitive = (bool)$case_sensitive;
     }
 
     function to_sql($var=null, $int=false, ?CData_Layer $db=null){
@@ -391,7 +391,7 @@ class Filter {
         if ($this->op == "in") return $db->get_sql_in($var, $val, !$int);
 
         if ($int)   return $db->get_sql_number_comparison($var, $this->op, (int)$val);
-        else        return $db->get_sql_string_comparison($var, $this->op, $val, $this->case_sensitive);
+        else        return $db->get_sql_string_comparison($var, $this->op, (string)$val, $this->case_sensitive);
     }
 
     function to_sql_bool($var=null, ?CData_Layer $db=null){
