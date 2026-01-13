@@ -7,6 +7,7 @@
 * fix sql escaping for sqlite done by Filter class
 * Enhance regexp matching SIP URI to also match part after '?'
 * Fix validation of TEL URI
+* Fix validation of SIP URI - validate IPv6 address if it is used in host part
 
 Version 2.3.0
 ==============

@@ -425,6 +425,17 @@ class Creg{
     }
 
     /**
+     * Check if given string is in format of IPv6 address (including square brackets)
+     *
+     * @param string $adr
+     * @return boolean
+     */
+    public function is_ipv6address(string $adr) : bool {
+        if (preg_match(pregize("^".$this->ipv6reference."$"), $adr)) return true;
+        else return false;
+    }
+
+    /**
      *  check if all parts of given IPv4 address are in range 0-255
      *
      *  @param  string  $adr    IPv4 address
@@ -768,12 +779,18 @@ class Creg{
             $uri_domain = $this->get_domainname($sip_addr);
             $uri_port = $this->get_port($sip_addr);
 
-            if ( ($this->is_ipv4address($uri_domain) and
-                  !$this->ipv4address_check_part_range($uri_domain)) or
+            if ($this->is_ipv4address($uri_domain)) {
+                if (!$this->ipv4address_check_part_range($uri_domain)) return false;
+            }
+            elseif ($this->is_ipv6address($uri_domain)){
+                // remove square brackets
+                $ipv6_addr = substr($uri_domain, 1, -1);
+                if (!$this->check_ipv6_address($ipv6_addr)){
+                    return false;
+                }
+            }
 
-                 (false !== $uri_port and
-                  !$this->port_check_range($uri_port))){
-
+            if (false !== $uri_port and !$this->port_check_range($uri_port)){
                 return false;
             }
         }
