@@ -198,7 +198,7 @@ class Creg{
         $this->phonedigit = "[0-9]|".$this->visual_separator;
         $this->phonedigit_hex = "[0-9a-fA-F*#]|".$this->visual_separator;
 
-        $this->local_number_digits = "((".$this->phonedigit_hex.")*[0-9a-fA-F*#])(".$this->phonedigit_hex.")*)";
+        $this->local_number_digits = "((".$this->phonedigit_hex.")*[0-9a-fA-F*#](".$this->phonedigit_hex.")*)";
         $this->global_number_digits = "(\\+(".$this->phonedigit.")*[0-9](".$this->phonedigit.")*)";
 
         $this->phone_context = $this->hostname."|".$this->global_number_digits;
@@ -778,6 +778,19 @@ class Creg{
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Check if given tel URI is valid by RFC3966
+     *
+     * @param string $tel_uri
+     * @return boolean
+     */
+    public function check_tel_uri(string $tel_uri) : bool{
+        if (!preg_match(pregize("^".$this->tel_uri."$"), $tel_uri)){
+            return false;
+        }
         return true;
     }
 

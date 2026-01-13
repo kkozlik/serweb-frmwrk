@@ -6,6 +6,7 @@
 * allow deferred, immediate and exclusive transactions for sqlite
 * fix sql escaping for sqlite done by Filter class
 * Enhance regexp matching SIP URI to also match part after '?'
+* Fix validation of TEL URI
 
 Version 2.3.0
 ==============
