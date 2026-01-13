@@ -57,6 +57,12 @@ class Creg{
     protected $lr_param;
     protected $other_param;
 
+    protected $hnv_unreserved;
+    protected $hname;
+    protected $hvalue;
+    protected $header;
+    protected $headers;
+
     protected $address;
     protected $sip_address;
     protected $sips_address;
@@ -82,8 +88,6 @@ class Creg{
 
     protected $sip_header_name;
     protected $sip_header_value;
-    protected $sip_header;
-    protected $sip_header_js;
 
     protected $phonenumber;
     protected $phonenumber_strict;
@@ -165,7 +169,21 @@ class Creg{
                     $this->lr_param."|".$this->other_param.")";
         $this->uri_parameters="((;".$this->uri_parameter.")*)";
 
-        $this->address="(".$this->user."@)?".$this->host."(:".$this->port.")?".$this->uri_parameters;
+        // hnv-unreserved  =  "[" / "]" / "/" / "?" / ":" / "+" / "$"
+        $this->hnv_unreserved = "[\\[\\]/?:+\\$]";
+        // hname           =  1*( hnv-unreserved / unreserved / escaped )
+        $this->hname = "((".$this->hnv_unreserved."|".$this->unreserved."|".$this->escaped.")+)";
+        // hvalue          =  *( hnv-unreserved / unreserved / escaped )
+        $this->hvalue = "((".$this->hnv_unreserved."|".$this->unreserved."|".$this->escaped.")*)";
+        // header          =  hname "=" hvalue
+        $this->header = $this->hname."=".$this->hvalue;
+        // headers         =  "?" header *( "&" header )
+        $this->headers = "(\\?".$this->header."(\\&".$this->header.")*)";
+
+
+        // SIP-URI   =  "sip:" [ userinfo ] hostport uri-parameters [ headers ]
+        // SIPS-URI  =  "sips:" [ userinfo ] hostport uri-parameters [ headers ]
+        $this->address="(".$this->user."@)?".$this->host."(:".$this->port.")?".$this->uri_parameters."(".$this->headers.")?";
 
         /** Regex matching sip uri. See RFC 3261 chapter 25.1 */
         $this->sip_address="[sS][iI][pP]:".$this->address;
@@ -203,15 +221,6 @@ class Creg{
         $this->sip_header_name  = "(\\[|]|\\\\|[-\"'!@#$%^&*()?*+,./;<>=_{}|~A-Za-z0-9])+";
         /** reg.exp. validating value of sip header */
         $this->sip_header_value = "(\\[|]|\\\\|[-\"'!@#$%^&*()?*+,./;<>=_{}|~A-Za-z0-9:])+";
-
-        /** reg.exp. validating sip header name
-         *  @deprec  this is some old not correct defintion replaced by $this->sip_header_name
-         */
-        $this->sip_header="([^][ ()<>@,;:\\\\=\"/?{}]+)";
-        /** same regex, but for use in javascript
-         *  @deprec  this is some old not correct defintion replaced by $this->sip_header_name
-         */
-        $this->sip_header_js="([^\\]\\[ ()<>@,;:\\\\=\"/?{}]+)";
 
 
         /** regex for phonenumber which could contain some characters as: - / <space> this characters should be removed */
