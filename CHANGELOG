@@ -8,6 +8,7 @@
 * Enhance regexp matching SIP URI to also match part after '?'
 * Fix validation of TEL URI
 * Fix validation of SIP URI - validate IPv6 address if it is used in host part
+* Do not double set sesstion cookie
 
 Version 2.3.0
 ==============

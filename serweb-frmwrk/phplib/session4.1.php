@@ -195,8 +195,6 @@ class Session {
       sw_log(__CLASS__."::".__FUNCTION__."(): Session already exists. ID: {$this->id}", PEAR_LOG_DEBUG);
     }
 
-    $this->set_cookie();
-
     # set the  mode for this run
     if ( isset($this->fallback_mode)
       && ("get" == $this->fallback_mode)
@@ -486,7 +484,20 @@ class Session {
         $lifetime = 0;
       }
 
-      session_set_cookie_params($lifetime, $this->cookie_path, $this->cookie_domain, $this->cookie_secure, $this->cookie_httponly);
+      if (PHP_VERSION_ID < 70300){
+          // Code for PHP < 7.3.0 - that does not support $options parameter and 'samesite' key
+          session_set_cookie_params($lifetime, $this->cookie_path, $this->cookie_domain, $this->cookie_secure, $this->cookie_httponly);
+      }
+      else {
+          session_set_cookie_params([
+              "lifetime" => $lifetime,
+              "path" => $this->cookie_path,
+              "domain" => $this->cookie_domain,
+              "secure" => $this->cookie_secure,
+              "httponly" => $this->cookie_httponly,
+              "samesite" => $this->cookie_samesite,
+        ]);
+      }
   } // end func set_tokenname
 
 
