@@ -971,8 +971,15 @@ class CData_Layer{
      * @param int $ts
      * @return string
      */
-    public static function from_unixtime($ts){
-        return gmdate("Y-m-d H:i:s", $ts);
+    public function from_unixtime($ts){
+        $datetime = gmdate("Y-m-d H:i:s", $ts);
+
+        if ($this->get_db_type() == 'sqlite'){
+            // In SQLite, we append 'Z' to indicate UTC time
+            $datetime .= "Z";
+        }
+
+        return $datetime;
     }
 
     /**
@@ -985,8 +992,13 @@ class CData_Layer{
      * @param string $datetime
      * @return int
      */
-    public static function unix_timestamp($datetime){
-        $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s+', $datetime, new DateTimeZone('GMT'));
+    public function unix_timestamp($datetime){
+        $has_timezone = preg_match('/(Z|[+\-]\d{2}(:?\d{2})?)$/i', $datetime) === 1;
+        if ($has_timezone){
+            $date = new DateTimeImmutable($datetime);
+        } else {
+            $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s+', $datetime, new DateTimeZone('GMT'));
+        }
         if (false === $date){
             sw_log(__CLASS__."::".__FUNCTION__."() - Error while parsing '$datetime' time");
             return null;

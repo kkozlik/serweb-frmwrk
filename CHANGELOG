@@ -9,6 +9,7 @@
 * Fix validation of TEL URI
 * Fix validation of SIP URI - validate IPv6 address if it is used in host part
 * Do not double set sesstion cookie
+* Store timezone in DATETIME fields in sqlite
 
 Version 2.3.0
 ==============
