@@ -875,6 +875,17 @@ class Creg{
      */
     function check_ipv6_address($ip_addr){
 
+        // Accept zone id (RFC 6874) in plain form: fe80::1%eth0
+        $zone_id = "";
+        $percent_pos = strpos($ip_addr, '%');
+        if ($percent_pos !== false){
+            $zone_id = substr($ip_addr, $percent_pos + 1);
+            $ip_addr = substr($ip_addr, 0, $percent_pos);
+            if ($zone_id === '' || !preg_match('/^[A-Za-z0-9._~-]+$/', $zone_id)){
+                return false;
+            }
+        }
+
         // fast exit for localhost
         if (strlen($ip_addr) < 3) return $ip_addr == '::';
 

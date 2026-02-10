@@ -10,6 +10,7 @@
 * Fix validation of SIP URI - validate IPv6 address if it is used in host part
 * Do not double set sesstion cookie
 * Store timezone in DATETIME fields in sqlite
+* Check for IPv6 also accept zone id (RFC 6874) in plain form: fe80::1%eth0
 
 Version 2.3.0
 ==============
