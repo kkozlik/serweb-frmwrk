@@ -288,7 +288,7 @@ class form {
     $str .= " target='$target'";
     if ($jvs_name) {
       $this->jvs_name = $jvs_name;
-      $str .= " onsubmit=\"return ${jvs_name}_Validator(this)\"";
+      $str .= " onsubmit=\"return {$jvs_name}_Validator(this)\"";
     }
 
     $str .= ">";
@@ -340,7 +340,7 @@ class form {
             }
       }
 
-      $str .= "\nfunction ${jvs_name}_Validator(f) {\n";
+      $str .= "\nfunction {$jvs_name}_Validator(f) {\n";
 
       if (strlen($before))
         $str .= "$before\n";
