@@ -230,7 +230,7 @@ class OohForm {
 
         if (!$validator_str) return "";
 
-        $str  = "function ${name}(f) {\n";
+        $str  = "function {$name}(f) {\n";
         $str .= $validator_str;
         $str .= "return true;\n";
         $str .= "}\n";

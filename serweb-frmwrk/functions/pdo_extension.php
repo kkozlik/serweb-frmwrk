@@ -42,9 +42,11 @@ class Serweb_PDO extends PDO{
     /**
      * Overrides query() method saving the statement to the thrown exception
      */
-    public function query($statement, ...$params){
+    public function query(string $statement, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false{
         try {
-            $t = parent::query($statement, ...$params);
+            $t = $fetchMode !== null
+                ? parent::query($statement, $fetchMode, ...$fetchModeArgs)
+                : parent::query($statement);
         }
         catch (PDOException $e) {
             $e->query =  $statement;
