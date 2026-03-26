@@ -129,10 +129,13 @@ class Serweb_PDOStatement extends PDOStatement{
 
       if (!$replaced) return $q;
 
-      return preg_replace_callback('/(:([0-9a-z_]+)|(\?))/i', array(
-         $this,
-         '_debugReplace'
-      ), $q);
+      // The regex matches quoted strings ('...') first, before named (:param) or positional (?)
+      // placeholders. When a quoted string is matched, the callback returns it unchanged,
+      // preventing false matches on colon-separated values inside strings (e.g. '2026-03-26 10:31:00').
+      return preg_replace_callback("/'[^']*'|(:([0-9a-z_]+)|(\?))/i", function($m) {
+         if ($m[0][0] === "'") return $m[0]; // skip quoted strings
+         return $this->_debugReplace($m);
+      }, $q);
    }
 
    /**
@@ -144,9 +147,10 @@ class Serweb_PDOStatement extends PDOStatement{
    protected function _debugReplace($m){
 
       if ($m[1] == '?') {
-         $v = $this->_debugValues[$this->_ValuePos++];
+         $v = $this->_debugValues[$this->_ValuePos++] ?? null;
       }
       else {
+         if (!array_key_exists($m[1], $this->_debugValues)) return $m[0];
          $v = $this->_debugValues[$m[1]];
       }
       if ($v === null) {
