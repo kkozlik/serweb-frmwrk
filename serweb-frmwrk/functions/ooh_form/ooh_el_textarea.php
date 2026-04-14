@@ -12,6 +12,7 @@ class OohElTextarea extends OohElCommon {
     protected $min_length_err;
     protected $max_length_err;
     protected $valid_regex;
+    protected $valid_regex_js;
     protected $valid_err;
 
 
@@ -30,11 +31,11 @@ class OohElTextarea extends OohElCommon {
         if ($this->cols)    $str .= " cols='$this->cols'";
         if ($this->wrap)    $str .= " wrap='$this->wrap'";
 
-        if ($id)                    $str .= " id='$id'";
-        if ($class)                 $str .= " class=\"$class\"";
-        if ($title)                 $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
-        if ($placeholder)           $str .= " placeholder='".htmlspecialchars($placeholder, ENT_QUOTES)."'";
-        if ($extrahtml)             $str .= " $extrahtml";
+        if ($id !== '')             $str .= " id='$id'";
+        if ($class !== '')          $str .= " class=\"$class\"";
+        if ($title !== '')          $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
+        if ($placeholder !== '')    $str .= " placeholder='".htmlspecialchars($placeholder, ENT_QUOTES)."'";
+        if ($extrahtml !== '')      $str .= " $extrahtml";
         if ($this->is_disabled())   $str .= " disabled";
 
         $str .= ">" . htmlspecialchars($this->value) ."</textarea>";

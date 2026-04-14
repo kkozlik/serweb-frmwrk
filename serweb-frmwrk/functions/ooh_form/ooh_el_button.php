@@ -23,10 +23,10 @@ class OohElButton extends OohElCommon {
             default:        $str .= ' type="submit"';
         }
 
-        if ($id)                    $str .= " id='$id'";
-        if ($class)                 $str .= " class=\"$class\"";
-        if ($title)                 $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
-        if ($extrahtml)             $str .= " $extrahtml";
+        if ($id !== '')             $str .= " id='$id'";
+        if ($class !== '')          $str .= " class=\"$class\"";
+        if ($title !== '')          $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
+        if ($extrahtml !== '')      $str .= " $extrahtml";
         if ($this->is_disabled())   $str .= " disabled";
 
         $str .= " >";

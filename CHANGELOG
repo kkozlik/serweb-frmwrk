@@ -12,6 +12,7 @@
 * Store timezone in DATETIME fields in sqlite
 * Check for IPv6 also accept zone id (RFC 6874) in plain form: fe80::1%eth0
 * Fix SQL paramater replacement in Serweb_PDOStatement
+* OOH form - allow placeholder of value '0'
 
 Version 2.3.0
 ==============

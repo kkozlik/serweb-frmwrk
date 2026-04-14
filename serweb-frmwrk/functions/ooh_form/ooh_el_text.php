@@ -37,11 +37,11 @@ class OohElText extends OohElCommon {
         if ($this->maxlength)       $str .= " maxlength='$this->maxlength'";
         if ($this->size)            $str .= " size='$this->size'";
 
-        if ($id)                    $str .= " id='$id'";
-        if ($class)                 $str .= " class=\"$class\"";
-        if ($title)                 $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
-        if ($placeholder)           $str .= " placeholder='".htmlspecialchars($placeholder, ENT_QUOTES)."'";
-        if ($extrahtml)             $str .= " $extrahtml";
+        if ($id !== '')             $str .= " id='$id'";
+        if ($class !== '')          $str .= " class=\"$class\"";
+        if ($title !== '')          $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
+        if ($placeholder !== '')    $str .= " placeholder='".htmlspecialchars($placeholder, ENT_QUOTES)."'";
+        if ($extrahtml !== '')      $str .= " $extrahtml";
         if ($this->is_disabled())   $str .= " disabled";
 
         $str .= " />";

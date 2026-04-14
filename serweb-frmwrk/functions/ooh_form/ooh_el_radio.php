@@ -27,10 +27,10 @@ class OohElRadio extends OohElCommon {
 
         $str = "<input type='radio' name='{$this->name}' value=\"".htmlspecialchars($val, ENT_QUOTES)."\"";
 
-        if ($id)                    $str .= " id='$id'";
-        if ($class)                 $str .= " class=\"$class\"";
-        if ($title)                 $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
-        if ($extrahtml)             $str .= " $extrahtml";
+        if ($id !== '')             $str .= " id='$id'";
+        if ($class !== '')          $str .= " class=\"$class\"";
+        if ($title !== '')          $str .= " title='".htmlspecialchars($title, ENT_QUOTES)."'";
+        if ($extrahtml !== '')      $str .= " $extrahtml";
         if ($disabled)              $str .= " disabled";
 
         if ($this->value == $val)   $str .= " checked";
