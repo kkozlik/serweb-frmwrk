@@ -26,7 +26,7 @@
 class apu_base_class{
     /** associative array of application unit options */
     var $opt=array();
-
+    /** @var array */
     var $action;
     /** unified number of instance of this class */
     var $instance;
@@ -54,7 +54,7 @@ class apu_base_class{
 
     function __construct(){
         global $lang_str;
-        $this->action="";
+
         /* set instance id for identification this object when multiple instances is used */
         $this->opt['instance_id']=get_class($this).apu_base_class::get_Instance();
 
