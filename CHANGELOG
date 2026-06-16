@@ -1,3 +1,4 @@
+* fix transaction_rollback() to execute SQL ROLLBACK only once even when called from nested transaction context
 * growable-forms: on_add_mod_url handler function could cancel the add action if return empty value
 * growable-forms: add_link does not have to be enclosed in div or span
 * improvements to data layer - allow different config for every connection
