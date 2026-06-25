@@ -648,15 +648,17 @@ class CData_Layer{
      */
     function transaction_rollback(){
 
-        $already_rolled_back = $this->transaction_rollback;
+        $already_rolled_back  = $this->transaction_rollback;
+        $transaction_was_open = ($this->transaction_semaphore > 0);
 
         $this->transaction_rollback = true;
         $this->transaction_semaphore = 0;
 
-        /* Execute SQL only on the first rollback call. Subsequent calls
-         * (e.g. from outer catch blocks) are no-ops — the flag and zeroed
-         * semaphore ensure that any following commit() is also skipped. */
-        if (!$already_rolled_back){
+        /* Execute SQL only on the first rollback call and only if a transaction
+         * was actually started (semaphore > 0).  If transaction_start() itself
+         * threw (e.g. BEGIN IMMEDIATE timed out), the semaphore was never
+         * incremented, so there is nothing to roll back. */
+        if (!$already_rolled_back && $transaction_was_open){
             if ($this->is_PDO_used()){
                     if ($this->db_host['parsed']['phptype'] == 'sqlite'){
                         $this->db->query("rollback");
