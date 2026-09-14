@@ -1122,6 +1122,32 @@ function sw_log($message, $priority = null, $opts=[]){
 }
 
 /**
+ * Change the maximum level of the active logger (if logging is enabled),
+ * without callers needing to touch $GLOBALS['serwebLog'] directly.
+ *
+ * @param int $level PEAR_LOG_* value; messages above this level are discarded.
+ */
+function sw_set_log_level(int $level): void {
+    global $serwebLog;
+
+    if ($serwebLog){
+        $serwebLog->setMask(Log::MAX($level));
+    }
+}
+
+/**
+ * Change the ident string of the active logger (if logging is enabled),
+ * without callers needing to touch $GLOBALS['serwebLog'] directly.
+ */
+function sw_set_log_ident(string $ident): void {
+    global $serwebLog;
+
+    if ($serwebLog){
+        $serwebLog->setIdent($ident);
+    }
+}
+
+/**
  * Write an exceptio into serweb log
  *
  * @param Throwable $e
@@ -1216,8 +1242,14 @@ function log_errors($err_object, &$errors){
 
         //if matchng frame is not found, use last_frame
         if (!$last_frame) {
-            //if logging is enabled
-            if ($serwebLog){
+            //if custom log function is defined, use it for log errors
+            if (!empty($config->custom_log_function)){
+                call_user_func($config->custom_log_function, PEAR_LOG_ERR,
+                                "function: LOG ERRORS - bad parametr ".$funct,
+                                __FILE__, __LINE__);
+            }
+            //otherwise if logging is enabled, use default log function
+            elseif ($serwebLog){
                 $serwebLog->log("function: LOG ERRORS - bad parametr ".$funct, PEAR_LOG_ERR);
             }
 

@@ -137,6 +137,15 @@ $config->ooh_form_cfg = [
 $config->custom_log_function = null;
 $config->custom_act_log_function = null;
 
+/* You can specify a custom function to replace the default logic that builds
+ * the $serwebLog instance (based on $config->log_file/$config->log_level).
+ * The function takes no arguments and must return a ?Log instance:
+ *
+ * $config->custom_log_init_function = "my_log_init";
+ */
+
+$config->custom_log_init_function = null;
+
 /* When you enable logging be sure if you have instaleld PEAR package
    Log. See http://pear.php.net/manual/en/installation.getting.php
    for more information

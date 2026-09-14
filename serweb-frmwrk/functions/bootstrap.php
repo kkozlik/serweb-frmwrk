@@ -68,7 +68,14 @@ if (isset($_SERWEB["onconfigload"]) and is_callable($_SERWEB["onconfigload"])){
 if ($config->enable_logging){
     require_once 'Log.php';
 
-    function enable_logging(){
+    /**
+     * Build the default Log instance to use as $serwebLog, based on
+     * $config->log_file / $config->log_level.
+     *
+     * Set $config->custom_log_init_function to a callable with the same
+     * signature (no arguments, returns a ?Log) to replace this entirely.
+     */
+    function init_logging(): ?Log {
         global $config;
 
         $handler = "file";
@@ -118,9 +125,12 @@ if ($config->enable_logging){
             $conf = array_merge($conf, $config->log_options);
         }
 
-        $GLOBALS['serwebLog'] = Log::singleton($handler, $name, $ident, $conf, $level);
+        return Log::singleton($handler, $name, $ident, $conf, $level);
     }
-    enable_logging();
+
+    $GLOBALS['serwebLog'] = !empty($config->custom_log_init_function)
+        ? call_user_func($config->custom_log_init_function)
+        : init_logging();
 
 }
 else{
