@@ -15,6 +15,7 @@
 * Fix SQL paramater replacement in Serweb_PDOStatement
 * OOH form - allow placeholder of value '0'
 * Allow customizing logger initialization and changing its level/ident without touching $serwebLog directly
+* apu_sorter: log sort-order changes under their own 'sort' action instead of reusing the generic 'update' action name
 
 Version 2.3.0
 ==============

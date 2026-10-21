@@ -142,7 +142,7 @@ class apu_sorter extends apu_base_class{
             $msg = "Sorting order changed to sort entries by '".$this->col_to_sort."'";
             if ($this->session['reverse_order']) $msg .= " in reverse order";
 
-            action_log($this->base_apu->opt['screen_name'], $this->action, $msg);
+            action_log($this->base_apu->opt['screen_name'], "sort", $msg);
         }
 
         if (!empty($this->session['get_param'])) {
